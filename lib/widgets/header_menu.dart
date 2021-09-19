@@ -72,42 +72,46 @@ class HeaderMenu extends StatelessWidget {
                     ),
                     SizedBox(width: 50.0,),
                     //User Avatar
-                    Row(
-                       mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Container(
-                          width: 60.0,
-                          height: 60.0,
-                          decoration: BoxDecoration(
-                            color: const Color(0xffffffff),
-                            image: DecorationImage(
-                              image: AssetImage('assets/images/profile_pic.png'),
-                              fit: BoxFit.cover,
-                            ),
-                            borderRadius: BorderRadius.all( Radius.circular(50.0)),
-                            border: Border.all(
-                              color: Color(0xFF2fb0b2),
-                              width: 4.0,
+                    Expanded(
+                      child: Row(
+                         mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: 60.0,
+                            height: 60.0,
+                            decoration: BoxDecoration(
+                              color: const Color(0xffffffff),
+                              image: DecorationImage(
+                                image: AssetImage('assets/images/profile_pic.png'),
+                                fit: BoxFit.cover,
+                              ),
+                              borderRadius: BorderRadius.all( Radius.circular(50.0)),
+                              border: Border.all(
+                                color: Color(0xFF2fb0b2),
+                                width: 4.0,
+                              ),
                             ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top:10.0, left: 5.0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              //User name
-                              Text("Emmanuel Kiyai", style: TextStyle(fontWeight: FontWeight.w700),),
-                              SizedBox(height:5.0),
-                              //user role
-                              Text("Administrator", style: TextStyle(fontWeight: FontWeight.w200, fontSize: 10),),
-                            ],
-                          ),
-                        )
-                      ],
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(top:10.0, left: 5.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  //User name
+                                  Text("Emmanuel Kiyai",overflow: TextOverflow.ellipsis, style: TextStyle(fontWeight: FontWeight.w700),),
+                                  SizedBox(height:5.0),
+                                  //user role
+                                  Text("Administrator",overflow: TextOverflow.ellipsis, style: TextStyle(fontWeight: FontWeight.w200, fontSize: 10),),
+                                ],
+                              ),
+                            ),
+                          )
+                        ],
 
+                      ),
                     )
                   ],
                 ),
