@@ -4,7 +4,7 @@ class SideMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 10,
+      elevation: 2,
       shadowColor: Colors.grey,
       child: Container(
         decoration: BoxDecoration(
@@ -104,6 +104,17 @@ class SideMenu extends StatelessWidget {
                 title: 'Help & Support',
                 onTap: () {},
               ),
+              SizedBox(height: 20.0,),
+              _SideMenuIconTab(
+                iconData: "assets/icons/settings.png",
+                title: 'Settings',
+                onTap: () {},
+              ),
+              _SideMenuIconTab(
+                iconData: "assets/icons/power-button.png",
+                title: 'Logout',
+                onTap: () {},
+              ),
             ],
           ),
         ),
@@ -132,7 +143,7 @@ class _SideMenuIconTab extends StatelessWidget {
         leading: Image.asset(
           iconData.toString(),
           color: Theme.of(context).primaryColorDark,
-          height: 24.0,
+          height: 22.0,
         ),
         title: Text(
           title,

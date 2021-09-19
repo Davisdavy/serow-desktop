@@ -1,16 +1,21 @@
+
+import 'dart:io';
 import 'package:desktop_window/desktop_window.dart';
 import 'package:flutter/foundation.dart';
-import 'package:serow/constants.dart';
-import 'dart:io';
-import 'package:serow/screens/main/main_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:serow/widgets/widgets.dart';
+import 'package:window_size/window_size.dart';
 
-void main() async {
+void main()  async{
   WidgetsFlutterBinding.ensureInitialized();
+  // if(Platform.isWindows || Platform.isLinux || Platform.isMacOS ){
+  //   setWindowMinSize(Size(942.0, 1050.0));
+  //   setWindowMaxSize(Size(942.0, 1050.0));
+  //   setWindowTitle("Serow");
+  // }
   if (!kIsWeb && (Platform.isMacOS || Platform.isLinux || Platform.isWindows)) {
     await DesktopWindow.setMinWindowSize(const Size(600, 700));
+    setWindowTitle("Serow POS");
   }
   runApp(MyApp());
 }
@@ -40,7 +45,7 @@ class MyApp extends StatelessWidget {
           ),
           bodyText1: TextStyle(
             color: Colors.blueGrey[700],
-            fontSize: 15.0,
+            fontSize: 14.0,
             fontWeight: FontWeight.w600,
             letterSpacing: 1.0,
           ),
@@ -70,22 +75,14 @@ class Shell extends StatelessWidget {
                 //side menu
                 SideMenu(),
                 //Main section(details,etc)
-                Flexible(
+                Expanded(
                   child: Container(
                     color: Color(0xFFf5f6fa),
                     width: double.infinity,
                     height: double.infinity,
                     child: Column(
                       children: [
-                        Card(
-                          elevation: 2,
-                          shadowColor: Colors.grey,
-                          child: Container(
-                            color: Colors.white,
-                            height: 54.0,
-                            width: double.infinity,
-                          ),
-                        )
+                        HeaderMenu(),
                       ],
                     ),
                   ),
