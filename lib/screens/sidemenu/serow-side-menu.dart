@@ -4,7 +4,7 @@ import 'package:serow/screens/sidemenu/serow-menu-title.dart';
 
 class SerowSideMenu extends StatelessWidget {
   const SerowSideMenu({
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override

@@ -45,8 +45,8 @@ class MyApp extends StatelessWidget {
             letterSpacing: 1.0,
           ),
           bodyText2: TextStyle(
-            color: Colors.grey[600],
-            fontWeight: FontWeight.w300,
+            color: Colors.blueGrey[600],
+            fontWeight: FontWeight.w400,
             fontSize: 15.0,
             letterSpacing: 1.0,
           ),

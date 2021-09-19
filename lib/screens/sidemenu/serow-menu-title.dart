@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 class SerowMenuTitle extends StatelessWidget {
   const SerowMenuTitle({
-    Key key,
-    @required this.title,
+    Key? key,
+    required this.title,
   }) : super(key: key);
 
   final String title;

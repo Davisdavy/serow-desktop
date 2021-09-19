@@ -1,7 +1,7 @@
 class RecentFile {
   final String icon, title, date, size;
 
-  RecentFile({this.icon, this.title, this.date, this.size});
+  RecentFile({required this.icon, required this.title, required this.date, required this.size});
 }
 
 List demoRecentFiles = [
