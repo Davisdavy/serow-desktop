@@ -3,10 +3,10 @@ import 'package:flutter_svg/svg.dart';
 
 class SerowListTitle extends StatelessWidget {
   const SerowListTitle({
-    Key? key,
-    required this.title,
-    required this.imageSrc,
-    required this.press,
+    Key key,
+     this.title,
+     this.imageSrc,
+     this.press,
   }) : super(key: key);
 
   final String title, imageSrc;

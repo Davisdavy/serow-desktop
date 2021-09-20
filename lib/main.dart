@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:desktop_window/desktop_window.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:serow/widgets/widgets.dart';
 import 'package:window_size/window_size.dart';
 
@@ -13,10 +14,11 @@ void main()  async{
   //   setWindowMaxSize(Size(942.0, 1050.0));
   //   setWindowTitle("Serow");
   // }
-  if (!kIsWeb && (Platform.isMacOS || Platform.isLinux || Platform.isWindows)) {
-    await DesktopWindow.setMinWindowSize(const Size(600, 700));
-    setWindowTitle("Serow POS");
-  }
+  // if (!kIsWeb && (Platform.isMacOS || Platform.isLinux || Platform.isWindows)) {
+  //   await DesktopWindow.setMinWindowSize(const Size(600, 700));
+  //   setWindowTitle("Serow POS");
+  // }
+  Get.put(SideMenu());
   runApp(MyApp());
 }
 

@@ -1,4 +1,4 @@
-const OverViewPageRoute = 'Overview';
+const overViewPageRoute = 'Overview';
 const NotificationsPageRoute = 'Notifications';
 const ProductsPageRoute = 'Products';
 const CustomersPageRoute = 'Customers';
@@ -11,3 +11,21 @@ const TeamPageRoute = 'Team';
 const FAQPageRoute = 'FAQ';
 const HelpSupportPageRoute = 'Help';
 const SettingPageRoute = 'Settings';
+const AuthenticationPageRoute = 'Authentication';
+
+List sideMenuItems = [
+  overViewPageRoute,
+  NotificationsPageRoute,
+  ProductsPageRoute,
+  CustomersPageRoute,
+  SuppliersPageRoute,
+  AccountsPageRoute,
+  ReportsPageRoute,
+  OrdersPageRoute,
+  Predictions,
+  TeamPageRoute,
+  FAQPageRoute,
+  HelpSupportPageRoute,
+  SettingPageRoute,
+  AuthenticationPageRoute
+];

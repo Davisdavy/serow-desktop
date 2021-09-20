@@ -7,12 +7,12 @@ class CloudStorageInfo {
   final Color color;
 
   CloudStorageInfo(
-      {required this.svgSrc,
-      required this.title,
-      required this.totalStorage,
-      required this.numOfFiels,
-        required this.percentage,
-        required this.color});
+      { this.svgSrc,
+       this.title,
+       this.totalStorage,
+       this.numOfFiels,
+         this.percentage,
+         this.color});
 }
 
 List demoMyFiels = [
