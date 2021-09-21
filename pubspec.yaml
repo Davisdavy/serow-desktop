@@ -34,6 +34,7 @@ dependencies:
   provider: ^5.0.0
   get:
   data_table_2: ^2.0.3
+  intl:
   desktop_window:
   window_size:
     git:
