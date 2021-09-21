@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class HeaderMenu extends StatelessWidget {
-  const HeaderMenu({Key key}) : super(key: key);
+  const HeaderMenu({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

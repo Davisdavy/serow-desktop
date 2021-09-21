@@ -4,21 +4,25 @@ import 'package:desktop_window/desktop_window.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:serow/controllers/menu_controller.dart';
+import 'package:serow/controllers/navigation_controller.dart';
+import 'package:serow/layout.dart';
 import 'package:serow/widgets/widgets.dart';
 import 'package:window_size/window_size.dart';
 
 void main()  async{
   WidgetsFlutterBinding.ensureInitialized();
+  Get.put(MenuController());
+  Get.put(NavigationController());
   // if(Platform.isWindows || Platform.isLinux || Platform.isMacOS ){
   //   setWindowMinSize(Size(942.0, 1050.0));
   //   setWindowMaxSize(Size(942.0, 1050.0));
   //   setWindowTitle("Serow");
   // }
-  // if (!kIsWeb && (Platform.isMacOS || Platform.isLinux || Platform.isWindows)) {
-  //   await DesktopWindow.setMinWindowSize(const Size(600, 700));
-  //   setWindowTitle("Serow POS");
-  // }
-  Get.put(SideMenu());
+  if (!kIsWeb && (Platform.isMacOS || Platform.isLinux || Platform.isWindows)) {
+    await DesktopWindow.setMinWindowSize(const Size(980, 700));
+    setWindowTitle("Serow");
+  }
   runApp(MyApp());
 }
 
@@ -59,41 +63,41 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: Shell(),
+      home: Layout(),
     );
   }
 }
-
-class Shell extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: [
-          Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                //side menu
-                SideMenu(),
-                //Main section(details,etc)
-                Expanded(
-                  child: Container(
-                    color: Color(0xFFf5f6fa),
-                    width: double.infinity,
-                    height: double.infinity,
-                    child: Column(
-                      children: [
-                        HeaderMenu(),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
+//
+// class Shell extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: Column(
+//         children: [
+//           Expanded(
+//             child: Row(
+//               mainAxisAlignment: MainAxisAlignment.start,
+//               children: [
+//                 //side menu
+//                 SideMenu(),
+//                 //Main section(details,etc)
+//                 Expanded(
+//                   child: Container(
+//                     color: Color(0xFFf5f6fa),
+//                     width: double.infinity,
+//                     height: double.infinity,
+//                     child: Column(
+//                       children: [
+//                         HeaderMenu(),
+//                       ],
+//                     ),
+//                   ),
+//                 ),
+//               ],
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }

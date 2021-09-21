@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:serow/controllers/controllers.dart';
+import 'package:serow/constants.dart';
+import 'package:serow/controllers/controller.dart';
 import 'package:serow/responsive.dart';
 import 'package:serow/routes/routes.dart';
-import 'package:serow/widgets/custom_text.dart';
 import 'package:serow/widgets/side_menu_item.dart';
-//
+
+import 'custom_text.dart';
 // class SideMenu extends StatelessWidget {
 //   @override
 //   Widget build(BuildContext context) {
@@ -113,7 +114,7 @@ import 'package:serow/widgets/side_menu_item.dart';
 //               SizedBox(height: 20.0,),
 //               _SideMenuIconTab(
 //                 iconData: "assets/icons/settings.png",
-//                 title: 'Settings',
+//                 title: 'settings',
 //                 onTap: () {},
 //               ),
 //               _SideMenuIconTab(
@@ -134,10 +135,10 @@ import 'package:serow/widgets/side_menu_item.dart';
 //   final VoidCallback onTap;
 //
 //   const _SideMenuIconTab({
-//     Key key,
-//      this.iconData,
-//      this.title,
-//      this.onTap,
+//     Key? key,
+//      required this.iconData,
+//     required this.title,
+//     required this.onTap,
 //   }) : super(key: key);
 //
 //   @override
@@ -161,77 +162,68 @@ import 'package:serow/widgets/side_menu_item.dart';
 //     );
 //   }
 // }
-
-
 class SideMenu extends StatelessWidget {
-  const SideMenu({ Key key }) : super(key: key);
+  const SideMenu({ Key? key }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     double _width = MediaQuery.of(context).size.width;
 
-    return Expanded(
-      child: Container(
-        color: Colors.white,
-        child: Expanded(
-          child: ListView(
-            shrinkWrap: true,
-            scrollDirection: Axis.vertical,
-            children: [
-              // if(ResponsiveWidget.isSmallScreen(context))
-              //   Column(
-              //     mainAxisSize: MainAxisSize.min,
-              //     children: [
-              //       SizedBox(
-              //         height: 40,
-              //       ),
-              //       Row(
-              //         children: [
-              //           SizedBox(width: _width / 48),
-              //           Padding(
-              //             padding: const EdgeInsets.only(right: 12),
-              //             child: Image.asset("assets/icons/logo.png"),
-              //           ),
-              //           Flexible(
-              //             child: CustomText(
-              //               text: "Dash",
-              //               size: 20,
-              //               weight: FontWeight.bold,
-              //               color: Colors.red,
-              //             ),
-              //           ),
-              //           SizedBox(width: _width / 48),
-              //         ],
-              //       ),
-              //       SizedBox(
-              //         height: 30,
-              //       ),
-              //     ],
-              //   ),
-              Divider(color: Colors.green.withOpacity(.1), ),
+    return Container(
+      color: Colors.white,
+      child: ListView(
+        children: [
+          if(ResponsiveWidget.isSmallScreen(context))
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(
+                  height: 40,
+                ),
+                Row(
+                  children: [
+                    SizedBox(width: _width / 48),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 12),
+                      child: Image.asset("assets/icons/logo-main.png"),
+                    ),
+                    Flexible(
+                      child: CustomText(
+                        text: "Dash",
+                        size: 20,
+                        weight: FontWeight.bold,
+                        color: secondaryColor,
+                      ),
+                    ),
+                    SizedBox(width: _width / 48),
+                  ],
+                ),
 
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: sideMenuItems
-                    .map((itemName) => SideMenuItem(
-                    itemName: itemName  == AuthenticationPageRoute ? "Log Out" : itemName,
-                    onTap: () {
-                      if(itemName == AuthenticationPageRoute){
+              ],
+            ),
+          // Divider(color: bgColor.withOpacity(.1), ),
 
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: sideMenuItems
+                .map((itemName) => SideMenuItem(
+                itemName: itemName == AuthenticationPageRoute ? "Log Out" :itemName,
+                onTap: () {
+                  if(itemName == AuthenticationPageRoute){
+                    // Get.offAllNamed(authenticationPageRoute);
+                    // menuController.changeActiveItemTo(overviewPageDisplayName);
 
-                      }
-                      if (!menuController.isActive(itemName)) {
-                        menuController.changeActiveItemTo(itemName);
-                        if(ResponsiveWidget.isSmallScreen(context))
-                          Get.back();
-
-                      }
-                    }))
-                    .toList(),
-              )
-            ],
-          ),
-        ),
+                  }
+                  if (!menuController.isActive(itemName)) {
+                    menuController.changeActiveItemTo(itemName);
+                    if(ResponsiveWidget.isSmallScreen(context))
+                      Get.back();
+                    navigationController.navigateTo(itemName);
+                  }
+                }))
+                .toList(),
+          )
+        ],
       ),
     );
   }
