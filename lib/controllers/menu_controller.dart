@@ -15,10 +15,10 @@ class MenuController extends GetxController {
   onHover(String itemName) {
     if (!isActive(itemName)) hoverItem.value = itemName;
   }
-
+  isActive(String itemName) => activeItem.value == itemName;
   isHovering(String itemName) => hoverItem.value == itemName;
 
-  isActive(String itemName) => activeItem.value == itemName;
+
 
   Widget returnIconFor(String itemName) {
     switch (itemName) {

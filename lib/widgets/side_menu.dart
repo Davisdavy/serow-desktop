@@ -163,7 +163,7 @@ import 'custom_text.dart';
 //   }
 // }
 class SideMenu extends StatelessWidget {
-  const SideMenu({ Key? key }) : super(key: key);
+  const SideMenu({ Key key }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

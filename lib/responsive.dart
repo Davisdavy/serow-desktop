@@ -10,14 +10,14 @@ const int customScreenSize = 1100;
 
 class ResponsiveWidget extends StatelessWidget {
   // the custom screen size is specific to this project
-  final Widget? largeScreen;
-  final Widget? mediumScreen;
-  final Widget? smallScreen;
-  final Widget? customScreen;
+  final Widget largeScreen;
+  final Widget mediumScreen;
+  final Widget smallScreen;
+  final Widget customScreen;
 
 
   const ResponsiveWidget({
-    Key? key,
+    Key key,
      this.largeScreen,
     this.mediumScreen,
     this.smallScreen, this.customScreen,
@@ -47,12 +47,12 @@ class ResponsiveWidget extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         if (constraints.maxWidth >= largeScreenSize) {
-          return largeScreen!;
+          return largeScreen;
         } else if (constraints.maxWidth < largeScreenSize &&
             constraints.maxWidth >= mediumScreenSize) {
-          return mediumScreen ?? largeScreen!;
+          return mediumScreen ?? largeScreen;
         } else {
-          return smallScreen ?? largeScreen!;
+          return smallScreen ?? largeScreen;
         }
       },
     );

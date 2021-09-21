@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:serow/constants.dart';
 import 'package:serow/widgets/custom_text.dart';
 class OverviewPage extends StatelessWidget {
-  const OverviewPage({Key? key}) : super(key: key);
+  const OverviewPage({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
