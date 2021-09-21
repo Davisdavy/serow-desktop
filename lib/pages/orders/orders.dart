@@ -7,7 +7,7 @@ class OrdersPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: CustomText(text:"Overview", color: secondaryColor,),
+      child: CustomText(text:"Orders", color: secondaryColor,),
     );
   }
 }

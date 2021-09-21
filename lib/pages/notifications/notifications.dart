@@ -7,7 +7,7 @@ class NotificationsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: CustomText(text:"Overview", color: secondaryColor,),
+      child: CustomText(text:"Notifications", color: secondaryColor,),
     );
   }
 }

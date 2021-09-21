@@ -11,12 +11,23 @@ class Layout extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
-     appBar: topNavigationBar(context, scaffoldKey),
-      drawer: Drawer(
-        child: SideMenu(),
+      body:LargeScreen(),
+      floatingActionButton: Stack(
+        children:[
+          Align(
+            alignment: Alignment.topRight,
+            child: Padding(
+              padding: const EdgeInsets.only(top:18.0),
+              child: Container(
+                width: MediaQuery.of(context).size.width / 1.27,
+                height: 60,
+                child: Container(
+                child: topNavigationBar(context, scaffoldKey),
+        ),
+              ),
+            ),
+          ),]
       ),
-      body: ResponsiveWidget(largeScreen: LargeScreen(),)
-
     );
   }
 }

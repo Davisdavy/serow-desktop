@@ -7,7 +7,7 @@ class PredictionsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: CustomText(text:"Overview", color: secondaryColor,),
+      child: CustomText(text:"Predictions", color: secondaryColor,),
     );
   }
 }

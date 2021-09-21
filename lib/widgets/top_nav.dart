@@ -4,47 +4,51 @@ import 'package:serow/constants.dart';
 AppBar topNavigationBar(BuildContext context, GlobalKey<ScaffoldState> key) =>
     AppBar(
       automaticallyImplyLeading: false,
-      elevation: 0,
+      elevation: 1,
       backgroundColor: Colors.white,
       title: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Flexible(
-            child: Container(
-              width: 280,
-              margin: EdgeInsets.only(top:1, bottom: 5.0, right:14.0),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey.shade300.withOpacity(0.6)),
-                color: Colors.grey.shade300.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              child: TextField(
-                decoration: InputDecoration(
-                    isDense: false,
-                    prefixIconConstraints: BoxConstraints(maxHeight: 18,),
-                    prefixIcon: Padding(
-                      padding: const EdgeInsets.only(left: 15.0, right: 5.0),
-                      child: Image.asset("assets/icons/search.png", ),
-                    ),
-                    border: InputBorder.none,
-                    hintText: "Search products, clients or anything",
-                    hintStyle: TextStyle(color: Colors.grey.shade500, fontSize: 11.0, fontWeight: FontWeight.w400),
-                    contentPadding: EdgeInsets.symmetric(
-                      vertical: 6.0,
-                    )
+            child: Padding(
+              padding: const EdgeInsets.only(top:8.0, bottom: 8.0),
+              child: Container(
+                width: 250,
+                height: 44,
+                margin: EdgeInsets.only(top:15, bottom: 15.0, right:100.0),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey.shade300.withOpacity(0.6)),
+                  color: Colors.grey.shade300.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                child: TextField(
+                  decoration: InputDecoration(
+                      isDense: false,
+                      prefixIconConstraints: BoxConstraints(maxHeight: 16,),
+                      prefixIcon: Padding(
+                        padding: const EdgeInsets.only(left: 15.0, right: 5.0),
+                        child: Image.asset("assets/icons/search.png", ),
+                      ),
+                      border: InputBorder.none,
+                      hintText: "Search products, clients or anything",
+                      hintStyle: TextStyle(color: Colors.grey.shade500, fontSize: 11.0, fontWeight: FontWeight.w400),
+                      contentPadding: EdgeInsets.symmetric(
+                        vertical: 0.0,
+                      )
+                  ),
                 ),
               ),
             ),
           ),
           Flexible(
             child: Padding(
-              padding: const EdgeInsets.only(right: 130.0),
+              padding: const EdgeInsets.only(right: 100.0),
               child: SizedBox(width: 200.0,),
             ),
           ),
           Flexible(
             child: Padding(
-              padding: const EdgeInsets.only(left: 88.0),
+              padding: const EdgeInsets.only(left: 5.0),
               child: Row(
                 //mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
