@@ -39,7 +39,7 @@ class MenuController extends GetxController {
       case ReportsPageRoute:
         return _customIcon("assets/icons/pie-chart.svg", itemName);
       case OrdersPageRoute:
-        return _customIcon("assets/icons/shopping.svg", itemName);
+        return _customIcon("assets/icons/shopping-bag.svg", itemName);
       case PredictionsPageRoute:
         return _customIcon("assets/icons/graph.svg", itemName);
       case TeamPageRoute:
@@ -47,7 +47,7 @@ class MenuController extends GetxController {
       case FAQPageRoute:
         return _customIcon("assets/icons/faq.svg", itemName);
       case HelpSupportPageRoute:
-        return _customIcon("assets/icons/cancel/help.svg", itemName);
+        return _customIcon("assets/icons/help.svg", itemName);
       case SettingPageRoute:
         return _customIcon("assets/icons/settings.svg", itemName);
       case AuthenticationPageRoute:

@@ -11,6 +11,7 @@ class Layout extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
+      extendBodyBehindAppBar: true,
       body:LargeScreen(),
       floatingActionButton: Stack(
         children:[
