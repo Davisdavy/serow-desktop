@@ -3,15 +3,7 @@ import 'package:serow/constants.dart';
 
 AppBar topNavigationBar(BuildContext context, GlobalKey<ScaffoldState> key) =>
     AppBar(
-
-      // leading:  Padding(
-      //   padding: const EdgeInsets.all(0.0),
-      //   child: Image.asset(
-      //     "assets/images/logo-main.png",
-      //
-      //   //  filterQuality: FilterQuality.high,
-      //   ),
-      // ),
+      automaticallyImplyLeading: false,
       elevation: 0,
       backgroundColor: Colors.white,
       title: Row(

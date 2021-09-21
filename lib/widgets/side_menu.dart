@@ -173,31 +173,11 @@ class SideMenu extends StatelessWidget {
       color: Colors.white,
       child: ListView(
         children: [
-          if(ResponsiveWidget.isSmallScreen(context))
+          // if(ResponsiveWidget.isSmallScreen(context))
             Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                SizedBox(
-                  height: 40,
-                ),
-                Row(
-                  children: [
-                    SizedBox(width: _width / 48),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 12),
-                      child: Image.asset("assets/icons/logo-main.png"),
-                    ),
-                    Flexible(
-                      child: CustomText(
-                        text: "Dash",
-                        size: 20,
-                        weight: FontWeight.bold,
-                        color: secondaryColor,
-                      ),
-                    ),
-                    SizedBox(width: _width / 48),
-                  ],
-                ),
+                Image.asset("assets/images/logo-main.png"),
 
               ],
             ),
