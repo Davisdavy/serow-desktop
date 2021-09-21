@@ -27,5 +27,5 @@ List sideMenuItems = [
   FAQPageRoute,
   HelpSupportPageRoute,
   SettingPageRoute,
-  AuthenticationPageRoute
+  AuthenticationPageRoute,
 ];

@@ -63,7 +63,7 @@ class MenuController extends GetxController {
     return SvgPicture.asset(
       icon.toString(),
       height: 16,
-      color: isHovering(itemName) ? primaryColor : Colors.grey,
+      color: isHovering(itemName) ? primaryColor : secondaryColor,
     );
   }
 }

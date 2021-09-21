@@ -176,9 +176,12 @@ class SideMenu extends StatelessWidget {
       children: [
         // if(ResponsiveWidget.isSmallScreen(context))
           Column(
-            mainAxisSize: MainAxisSize.min,
+            //mainAxisSize: MainAxisSize.min,
             children: [
-              Image.asset("assets/images/logo-main.png"),
+              Padding(
+                padding: const EdgeInsets.only(right:60.0),
+                child: Image.asset("assets/images/logo-main.png",),
+              ),
 
             ],
           ),

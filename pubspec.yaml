@@ -33,6 +33,7 @@ dependencies:
   fl_chart: ^0.35.0
   provider: ^5.0.0
   get:
+  data_table_2: ^2.0.3
   desktop_window:
   window_size:
     git:
