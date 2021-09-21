@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_svg/parser.dart';
 import 'package:get/get.dart';
 import 'package:serow/constants.dart';
 import 'package:serow/routes/routes.dart';
@@ -23,43 +25,44 @@ class MenuController extends GetxController {
   Widget returnIconFor(String itemName) {
     switch (itemName) {
       case OverviewPageRoute:
-        return _customIcon(Icons.trending_up, itemName);
+        return _customIcon("assets/icons/menu.svg", itemName);
       case NotificationsPageRoute:
-        return _customIcon(Icons.drive_eta, itemName);
+        return _customIcon("assets/icons/ringing.svg", itemName);
       case ProductsPageRoute:
-        return _customIcon(Icons.people_alt_outlined, itemName);
+        return _customIcon("assets/icons/product.svg", itemName);
       case CustomersPageRoute:
-        return _customIcon(Icons.exit_to_app, itemName);
+        return _customIcon("assets/icons/rating.svg", itemName);
       case SuppliersPageRoute:
-        return _customIcon(Icons.exit_to_app, itemName);
+        return _customIcon("assets/icons/production.svg", itemName);
       case AccountsPageRoute:
-        return _customIcon(Icons.exit_to_app, itemName);
+        return _customIcon("assets/icons/money-bag.svg", itemName);
       case ReportsPageRoute:
-        return _customIcon(Icons.exit_to_app, itemName);
+        return _customIcon("assets/icons/pie-chart.svg", itemName);
       case OrdersPageRoute:
-        return _customIcon(Icons.exit_to_app, itemName);
+        return _customIcon("assets/icons/shopping.svg", itemName);
       case PredictionsPageRoute:
-        return _customIcon(Icons.exit_to_app, itemName);
+        return _customIcon("assets/icons/graph.svg", itemName);
       case TeamPageRoute:
-        return _customIcon(Icons.exit_to_app, itemName);
+        return _customIcon("assets/icons/specialist-user.svg", itemName);
       case FAQPageRoute:
-        return _customIcon(Icons.exit_to_app, itemName);
+        return _customIcon("assets/icons/faq.svg", itemName);
       case HelpSupportPageRoute:
-        return _customIcon(Icons.exit_to_app, itemName);
+        return _customIcon("assets/icons/cancel/help.svg", itemName);
       case SettingPageRoute:
-        return _customIcon(Icons.exit_to_app, itemName);
+        return _customIcon("assets/icons/settings.svg", itemName);
       case AuthenticationPageRoute:
-        return _customIcon(Icons.exit_to_app, itemName);
+        return _customIcon("assets/icons/power-button.svg", itemName);
       default:
-        return _customIcon(Icons.exit_to_app, itemName);
+        return _customIcon("assets/icons/power-button.svg", itemName);
     }
   }
 
-  Widget _customIcon(IconData icon, String itemName) {
-    if (isActive(itemName)) return Icon(icon, size: 22, color: primaryColor);
+  Widget _customIcon(String icon, String itemName) {
+    if (isActive(itemName)) return SvgPicture.asset(icon, height: 18,fit: BoxFit.fitHeight,color: primaryColor);
 
-    return Icon(
-      icon,
+    return SvgPicture.asset(
+      icon.toString(),
+      height: 16,
       color: isHovering(itemName) ? primaryColor : Colors.grey,
     );
   }

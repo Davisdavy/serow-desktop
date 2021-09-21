@@ -57,6 +57,7 @@ flutter:
   assets:
     - assets/images/
     - assets/icons/
+    - assets/icons/cancel.svg
     - google-fonts/
   #   - images/a_dot_ham.jpeg
 

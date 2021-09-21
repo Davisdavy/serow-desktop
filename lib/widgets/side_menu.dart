@@ -185,7 +185,6 @@ class SideMenu extends StatelessWidget {
         // Divider(color: bgColor.withOpacity(.1), ),
 
         Column(
-
           mainAxisSize: MainAxisSize.min,
           children: sideMenuItems
               .map((itemName) => SideMenuItem(
