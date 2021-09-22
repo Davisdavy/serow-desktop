@@ -110,6 +110,7 @@ class _AvailableProductsState extends State<AvailableProducts>
 
   @override
   Widget build(BuildContext context) {
+
     return ListView(
       scrollDirection: Axis.vertical,
       shrinkWrap: true,
@@ -129,6 +130,7 @@ class _AvailableProductsState extends State<AvailableProducts>
           //   borderRadius: BorderRadius.circular(8),
           // ),
           child: PaginatedDataTable(
+
             rowsPerPage: _rowsPerPage.value,
             onRowsPerPageChanged: (value) {
               setState(() {
@@ -146,11 +148,19 @@ class _AvailableProductsState extends State<AvailableProducts>
             onSelectAll: _dessertsDataSource.selectAll,
             columns: [
               DataColumn2(
-                label: Text('Product'),
+                label: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 20.0),
+                      child: Text('Product'),
+                    )),
                 size: ColumnSize.S,
                 onSort: (columnIndex, ascending) =>
                     sort<String>((d) => d.name, columnIndex, ascending),
               ),
+
               DataColumn2(
                 label: Text('Supplier'),
                 numeric: true,

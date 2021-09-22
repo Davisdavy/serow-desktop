@@ -418,7 +418,11 @@ class DessertDataSource extends DataTableSource {
     }
     notifyListeners();
   }
-
+  final rowSpacer=DataCell(
+    SizedBox(
+      height: 50,
+    ),
+  );
   @override
   DataRow getRow(int index) {
     final format = NumberFormat.decimalPercentPattern(
@@ -458,13 +462,22 @@ class DessertDataSource extends DataTableSource {
             )
           ],
         ),),
-        DataCell(Text('${dessert.calories}')),
-        DataCell(Text(dessert.fat.toStringAsFixed(1))),
-        DataCell(Text('${dessert.carbs}')),
-        DataCell(Text(dessert.protein.toStringAsFixed(1))),
-        DataCell(Text('${dessert.sodium}')),
-        DataCell(Text('${format.format(dessert.calcium / 100)}')),
 
+        DataCell(Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("GSK Pharmaceuticals"),
+            SizedBox(height: 5.0,),
+            Text("Nairobi Kenya", style: TextStyle(color: Colors.grey),),
+          ],
+        )),
+        DataCell(Text('456Pcs')),
+        DataCell(Text('Ksh 70.0')),
+        DataCell(Text('Ksh 12,567,789.76')),
+        DataCell(Text('In Stock')),
+        DataCell(Icon(Icons.more_horiz),
+        )
       ],
     );
   }
