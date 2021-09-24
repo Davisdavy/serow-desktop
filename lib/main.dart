@@ -1,27 +1,27 @@
 
 import 'dart:io';
+
 import 'package:desktop_window/desktop_window.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:serow/controllers/menu_controller.dart';
 import 'package:serow/controllers/navigation_controller.dart';
-import 'package:serow/layout.dart';
-import 'package:serow/widgets/widgets.dart';
+import 'package:serow/pages/authentication/authentication_page.dart';
 import 'package:window_size/window_size.dart';
 
-void main()  async{
+void main()  {
   WidgetsFlutterBinding.ensureInitialized();
   Get.put(MenuController());
   Get.put(NavigationController());
-  // if(Platform.isWindows || Platform.isLinux || Platform.isMacOS ){
-  //   setWindowMinSize(Size(942.0, 1050.0));
-  //   setWindowMaxSize(Size(942.0, 1050.0));
-  //   setWindowTitle("Serow");
-  // }
-  if (!kIsWeb && (Platform.isMacOS || Platform.isLinux || Platform.isWindows)) {
-    await DesktopWindow.setMinWindowSize(const Size(980, 700));
+
+  if (Platform.isMacOS || Platform.isLinux || Platform.isWindows) {
+     // await DesktopWindow.setMinWindowSize(const Size(2080, 800));
+    // setWindowMinSize(Size(800, 950));
+    // setWindowMaxSize(Size(900, 1250));
     setWindowTitle("Serow");
+    setWindowMinSize(const Size(1100, 760));
+    setWindowMaxSize(Size.infinite);
+
   }
   runApp(MyApp());
 }
@@ -63,7 +63,8 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: Layout(),
+      navigatorKey: Get.key,
+      home: AuthenticationPage(),
     );
   }
 }

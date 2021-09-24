@@ -130,8 +130,7 @@ class _AvailableProductsState extends State<AvailableProducts>
           //   borderRadius: BorderRadius.circular(8),
           // ),
           child: PaginatedDataTable(
-
-            rowsPerPage: _rowsPerPage.value,
+            rowsPerPage: _rowsPerPage.value ,
             onRowsPerPageChanged: (value) {
               setState(() {
                 _rowsPerPage.value = value;
@@ -148,6 +147,7 @@ class _AvailableProductsState extends State<AvailableProducts>
             onSelectAll: _dessertsDataSource.selectAll,
             columns: [
               DataColumn2(
+
                 label: Container(
                     decoration: BoxDecoration(
                       color: Colors.white,

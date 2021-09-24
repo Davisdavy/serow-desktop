@@ -10,6 +10,7 @@ class MenuController extends GetxController {
   var activeItem = OverviewPageRoute.obs;
   var hoverItem = "".obs;
 
+
   changeActiveItemTo(String itemName) {
     activeItem.value = itemName;
   }
@@ -17,10 +18,10 @@ class MenuController extends GetxController {
   onHover(String itemName) {
     if (!isActive(itemName)) hoverItem.value = itemName;
   }
+
   isActive(String itemName) => activeItem.value == itemName;
+
   isHovering(String itemName) => hoverItem.value == itemName;
-
-
 
   Widget returnIconFor(String itemName) {
     switch (itemName) {
@@ -57,8 +58,12 @@ class MenuController extends GetxController {
     }
   }
 
+
+
   Widget _customIcon(String icon, String itemName) {
-    if (isActive(itemName)) return SvgPicture.asset(icon, height: 18,fit: BoxFit.fitHeight,color: primaryColor);
+    if (isActive(itemName))
+      return SvgPicture.asset(icon,
+          height: 16, fit: BoxFit.fitHeight, color: primaryColor);
 
     return SvgPicture.asset(
       icon.toString(),

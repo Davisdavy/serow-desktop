@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:serow/constants.dart';
 import 'package:serow/controllers/controller.dart';
+import 'package:serow/pages/authentication/authentication_page.dart';
 import 'package:serow/responsive.dart';
 import 'package:serow/routes/routes.dart';
 import 'package:serow/widgets/side_menu_item.dart';
@@ -168,7 +169,7 @@ class SideMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double _width = MediaQuery.of(context).size.width;
-
+    var sales = ["SALES"];
     return Container(
 
     color: Colors.white,
@@ -185,28 +186,141 @@ class SideMenu extends StatelessWidget {
 
             ],
           ),
-        // Divider(color: bgColor.withOpacity(.1), ),
-
         Column(
-          mainAxisSize: MainAxisSize.min,
-          children: sideMenuItems
-              .map((itemName) => SideMenuItem(
-              itemName: itemName == AuthenticationPageRoute ? "Log Out" :itemName,
-              onTap: () {
-                if(itemName == AuthenticationPageRoute){
-                  // Get.offAllNamed(authenticationPageRoute);
-                  // menuController.changeActiveItemTo(overviewPageDisplayName);
+          children:
+          sideMenuItems
+              .map((itemName) => Column(
+            children: [
+              SideMenuItem(
+                  itemName: itemName == AuthenticationPageRoute ? "Log Out" :itemName,
+                  onTap: () {
+                    if(itemName == AuthenticationPageRoute){
+                      Get.offAll(() => AuthenticationPage());
+                      // menuController.changeActiveItemTo(overviewPageDisplayName);
 
-                }
-                if (!menuController.isActive(itemName)) {
-                  menuController.changeActiveItemTo(itemName);
-                  // if(ResponsiveWidget.isSmallScreen(context))
-                  //   Get.back();
-                  navigationController.navigateTo(itemName);
-                }
-              }))
-              .toList(),
-        )
+                    }
+                    if (!menuController.isActive(itemName)) {
+                      menuController.changeActiveItemTo(itemName);
+                      // if(ResponsiveWidget.isSmallScreen(context))
+                      //   Get.back();
+                      navigationController.navigateTo(itemName);
+                    }
+                  }),
+            ],
+          ) ).toList()
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left:30.0, top: 5.0),
+          child: Text("SALES", style: TextStyle(color: Colors.grey, fontSize: 16),),
+        ),
+        Column(
+            mainAxisSize: MainAxisSize.min,
+            children:
+            sideItems1
+                .map((itemName) => Column(
+              children: [
+
+                SideMenuItem(
+                    itemName: itemName == AuthenticationPageRoute ? "Log Out" :itemName,
+                    onTap: () {
+                      if(itemName == AuthenticationPageRoute){
+                        Get.offAll(() => AuthenticationPage());
+                        // menuController.changeActiveItemTo(overviewPageDisplayName);
+
+                      }
+                      if (!menuController.isActive(itemName)) {
+                        menuController.changeActiveItemTo(itemName);
+                        // if(ResponsiveWidget.isSmallScreen(context))
+                        //   Get.back();
+                        navigationController.navigateTo(itemName);
+                      }
+                    }),
+              ],
+            ) ).toList()
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left:30.0, top: 5.0),
+          child: Text("MANAGE", style: TextStyle(color: Colors.grey, fontSize: 16),),
+        ),
+        Column(
+            mainAxisSize: MainAxisSize.min,
+            children:
+            sideItems2
+                .map((itemName) => Column(
+              children: [
+
+                SideMenuItem(
+                    itemName: itemName == AuthenticationPageRoute ? "Log Out" :itemName,
+                    onTap: () {
+                      if(itemName == AuthenticationPageRoute){
+                        Get.offAll(() => AuthenticationPage());
+                        // menuController.changeActiveItemTo(overviewPageDisplayName);
+
+                      }
+                      if (!menuController.isActive(itemName)) {
+                        menuController.changeActiveItemTo(itemName);
+                        // if(ResponsiveWidget.isSmallScreen(context))
+                        //   Get.back();
+                        navigationController.navigateTo(itemName);
+                      }
+                    }),
+              ],
+            ) ).toList()
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left:30.0,),
+          child: Text("OTHER", style: TextStyle(color: Colors.grey, fontSize: 16),),
+        ),
+        Column(
+            mainAxisSize: MainAxisSize.min,
+            children:
+            sideItems3
+                .map((itemName) => Column(
+              children: [
+
+                SideMenuItem(
+                    itemName: itemName == AuthenticationPageRoute ? "Log Out" :itemName,
+                    onTap: () {
+                      if(itemName == AuthenticationPageRoute){
+                        Get.offAll(() => AuthenticationPage());
+                        // menuController.changeActiveItemTo(overviewPageDisplayName);
+
+                      }
+                      if (!menuController.isActive(itemName)) {
+                        menuController.changeActiveItemTo(itemName);
+                        // if(ResponsiveWidget.isSmallScreen(context))
+                        //   Get.back();
+                        navigationController.navigateTo(itemName);
+                      }
+                    }),
+              ],
+            ) ).toList()
+        ),
+        Column(
+            mainAxisSize: MainAxisSize.min,
+            children:
+            sideItems4
+                .map((itemName) => Column(
+              children: [
+
+                SideMenuItem(
+                    itemName: itemName == AuthenticationPageRoute ? "Log Out" :itemName,
+                    onTap: () {
+                      if(itemName == AuthenticationPageRoute){
+                        Get.offAll(() => AuthenticationPage());
+                        // menuController.changeActiveItemTo(overviewPageDisplayName);
+
+                      }
+                      if (!menuController.isActive(itemName)) {
+                        menuController.changeActiveItemTo(itemName);
+                        // if(ResponsiveWidget.isSmallScreen(context))
+                        //   Get.back();
+                        navigationController.navigateTo(itemName);
+                      }
+                    }),
+              ],
+            ) ).toList()
+        ),
       ],
     ),
       );
