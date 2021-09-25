@@ -194,9 +194,9 @@ class _AvailableProductsState extends State<AvailableProducts>
               ),
               DataColumn2(
                 label: Icon(Icons.more_horiz),
-                // numeric: true,
-                // onSort: (columnIndex, ascending) =>
-                //     sort<num>((d) => d.calcium, columnIndex, ascending),
+                numeric: true,
+                onSort: (columnIndex, ascending) =>
+                    sort<num>((d) => d.calcium, columnIndex, ascending),
               ),
 
             ],

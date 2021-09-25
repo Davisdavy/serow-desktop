@@ -19,7 +19,7 @@ void main()  {
     // setWindowMinSize(Size(800, 950));
     // setWindowMaxSize(Size(900, 1250));
     setWindowTitle("Serow");
-    setWindowMinSize(const Size(1100, 760));
+    setWindowMinSize(const Size(1280, 760));
     setWindowMaxSize(Size.infinite);
 
   }

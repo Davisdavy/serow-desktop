@@ -48,7 +48,7 @@ class MenuController extends GetxController {
       case FAQPageRoute:
         return _customIcon("assets/icons/faq.svg", itemName);
       case HelpSupportPageRoute:
-        return _customIcon("assets/icons/help.svg", itemName);
+        return _customIcon("assets/icons/chat.svg", itemName);
       case SettingPageRoute:
         return _customIcon("assets/icons/settings.svg", itemName);
       case AuthenticationPageRoute:
