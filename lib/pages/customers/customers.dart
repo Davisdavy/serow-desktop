@@ -241,8 +241,9 @@ class CustomersPage extends StatelessWidget {
                                                   CrossAxisAlignment.start,
                                               children: [
                                                 Padding(
-                                                  padding: const EdgeInsets.only(
-                                                      left: 12.0),
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 12.0),
                                                   child: Material(
                                                       child: Text(
                                                     "First Name",
@@ -276,16 +277,14 @@ class CustomersPage extends StatelessWidget {
                                                                           fontSize:
                                                                               12),
                                                                   focusedBorder: OutlineInputBorder(
-                                                                      borderSide:
-                                                                          const BorderSide(
-                                                                              color:
-                                                                                  primaryColor,
-                                                                              width:
-                                                                                  0.4),
+                                                                      borderSide: const BorderSide(
+                                                                          color:
+                                                                              primaryColor,
+                                                                          width:
+                                                                              0.4),
                                                                       borderRadius:
-                                                                          BorderRadius
-                                                                              .circular(
-                                                                                  5)),
+                                                                          BorderRadius.circular(
+                                                                              5)),
                                                                   enabledBorder: OutlineInputBorder(
                                                                       borderSide: const BorderSide(
                                                                           color: Colors
@@ -293,9 +292,8 @@ class CustomersPage extends StatelessWidget {
                                                                           width:
                                                                               0.4),
                                                                       borderRadius:
-                                                                          BorderRadius
-                                                                              .circular(
-                                                                                  5))),
+                                                                          BorderRadius.circular(
+                                                                              5))),
                                                         ),
                                                       ),
                                                     ),
@@ -344,16 +342,14 @@ class CustomersPage extends StatelessWidget {
                                                                         fontSize:
                                                                             12),
                                                                 focusedBorder: OutlineInputBorder(
-                                                                    borderSide:
-                                                                        const BorderSide(
-                                                                            color:
-                                                                                primaryColor,
-                                                                            width:
-                                                                                0.4),
+                                                                    borderSide: const BorderSide(
+                                                                        color:
+                                                                            primaryColor,
+                                                                        width:
+                                                                            0.4),
                                                                     borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(
-                                                                                5)),
+                                                                        BorderRadius.circular(
+                                                                            5)),
                                                                 enabledBorder: OutlineInputBorder(
                                                                     borderSide: const BorderSide(
                                                                         color: Colors
@@ -361,9 +357,8 @@ class CustomersPage extends StatelessWidget {
                                                                         width:
                                                                             0.4),
                                                                     borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(
-                                                                                5))),
+                                                                        BorderRadius.circular(
+                                                                            5))),
                                                       ),
                                                     ),
                                                   ),
@@ -386,8 +381,9 @@ class CustomersPage extends StatelessWidget {
                                                   CrossAxisAlignment.start,
                                               children: [
                                                 Padding(
-                                                  padding: const EdgeInsets.only(
-                                                      left: 12.0),
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 12.0),
                                                   child: Material(
                                                       child: Text(
                                                     "Phone Number",
@@ -417,21 +413,17 @@ class CustomersPage extends StatelessWidget {
                                                                     //  labelText: "Email Address",
                                                                     hintText:
                                                                         "Phone Number",
-                                                                    hintStyle:
-                                                                        TextStyle(
-                                                                            fontSize:
-                                                                                12),
+                                                                    hintStyle: TextStyle(
+                                                                        fontSize:
+                                                                            12),
                                                                     focusedBorder: OutlineInputBorder(
-                                                                        borderSide:
-                                                                            const BorderSide(
-                                                                                color:
-                                                                                    primaryColor,
-                                                                                width:
-                                                                                    0.4),
-                                                                        borderRadius:
-                                                                            BorderRadius
-                                                                                .circular(
-                                                                                    5)),
+                                                                        borderSide: const BorderSide(
+                                                                            color:
+                                                                                primaryColor,
+                                                                            width:
+                                                                                0.4),
+                                                                        borderRadius: BorderRadius.circular(
+                                                                            5)),
                                                                     enabledBorder: OutlineInputBorder(
                                                                         borderSide: const BorderSide(
                                                                             color: Colors
@@ -439,9 +431,7 @@ class CustomersPage extends StatelessWidget {
                                                                             width:
                                                                                 0.4),
                                                                         borderRadius:
-                                                                            BorderRadius
-                                                                                .circular(
-                                                                                    5))),
+                                                                            BorderRadius.circular(5))),
                                                           ),
                                                         ),
                                                       ),
@@ -491,16 +481,14 @@ class CustomersPage extends StatelessWidget {
                                                                         fontSize:
                                                                             12),
                                                                 focusedBorder: OutlineInputBorder(
-                                                                    borderSide:
-                                                                        const BorderSide(
-                                                                            color:
-                                                                                primaryColor,
-                                                                            width:
-                                                                                0.4),
+                                                                    borderSide: const BorderSide(
+                                                                        color:
+                                                                            primaryColor,
+                                                                        width:
+                                                                            0.4),
                                                                     borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(
-                                                                                5)),
+                                                                        BorderRadius.circular(
+                                                                            5)),
                                                                 enabledBorder: OutlineInputBorder(
                                                                     borderSide: const BorderSide(
                                                                         color: Colors
@@ -508,9 +496,8 @@ class CustomersPage extends StatelessWidget {
                                                                         width:
                                                                             0.4),
                                                                     borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(
-                                                                                5))),
+                                                                        BorderRadius.circular(
+                                                                            5))),
                                                       ),
                                                     ),
                                                   ),
@@ -533,8 +520,9 @@ class CustomersPage extends StatelessWidget {
                                                   CrossAxisAlignment.start,
                                               children: [
                                                 Padding(
-                                                  padding: const EdgeInsets.only(
-                                                      left: 12.0),
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 12.0),
                                                   child: Material(
                                                       child: Text(
                                                     "Gender",
@@ -563,35 +551,32 @@ class CustomersPage extends StatelessWidget {
                                                                   //  labelText: "Email Address",
                                                                   suffixIcon:
                                                                       Padding(
-                                                                    padding:
-                                                                        const EdgeInsets
-                                                                                .all(
-                                                                            14.0),
-                                                                    child:
-                                                                        SvgPicture
-                                                                            .asset(
+                                                                    padding: const EdgeInsets
+                                                                            .all(
+                                                                        14.0),
+                                                                    child: SvgPicture
+                                                                        .asset(
                                                                       "assets/icons/chevron.svg",
                                                                       color: Colors
                                                                           .blueGrey,
                                                                       width: 10,
                                                                     ),
                                                                   ),
-                                                                  hintText: "Male",
+                                                                  hintText:
+                                                                      "Male",
                                                                   hintStyle:
                                                                       TextStyle(
                                                                           fontSize:
                                                                               12),
                                                                   focusedBorder: OutlineInputBorder(
-                                                                      borderSide:
-                                                                          const BorderSide(
-                                                                              color:
-                                                                                  primaryColor,
-                                                                              width:
-                                                                                  0.4),
+                                                                      borderSide: const BorderSide(
+                                                                          color:
+                                                                              primaryColor,
+                                                                          width:
+                                                                              0.4),
                                                                       borderRadius:
-                                                                          BorderRadius
-                                                                              .circular(
-                                                                                  5)),
+                                                                          BorderRadius.circular(
+                                                                              5)),
                                                                   enabledBorder: OutlineInputBorder(
                                                                       borderSide: const BorderSide(
                                                                           color: Colors
@@ -599,9 +584,8 @@ class CustomersPage extends StatelessWidget {
                                                                           width:
                                                                               0.4),
                                                                       borderRadius:
-                                                                          BorderRadius
-                                                                              .circular(
-                                                                                  5))),
+                                                                          BorderRadius.circular(
+                                                                              5))),
                                                         ),
                                                       ),
                                                     ),
@@ -665,16 +649,14 @@ class CustomersPage extends StatelessWidget {
                                                                         fontSize:
                                                                             12),
                                                                 focusedBorder: OutlineInputBorder(
-                                                                    borderSide:
-                                                                        const BorderSide(
-                                                                            color:
-                                                                                primaryColor,
-                                                                            width:
-                                                                                0.4),
+                                                                    borderSide: const BorderSide(
+                                                                        color:
+                                                                            primaryColor,
+                                                                        width:
+                                                                            0.4),
                                                                     borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(
-                                                                                5)),
+                                                                        BorderRadius.circular(
+                                                                            5)),
                                                                 enabledBorder: OutlineInputBorder(
                                                                     borderSide: const BorderSide(
                                                                         color: Colors
@@ -682,9 +664,8 @@ class CustomersPage extends StatelessWidget {
                                                                         width:
                                                                             0.4),
                                                                     borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(
-                                                                                5))),
+                                                                        BorderRadius.circular(
+                                                                            5))),
                                                       ),
                                                     ),
                                                   ),
@@ -735,30 +716,26 @@ class CustomersPage extends StatelessWidget {
                                                         hintText: "Address",
                                                         hintStyle: TextStyle(
                                                             fontSize: 12),
-                                                        focusedBorder:
-                                                            OutlineInputBorder(
-                                                                borderSide:
-                                                                    const BorderSide(
-                                                                        color:
-                                                                            primaryColor,
-                                                                        width:
-                                                                            0.4),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            5)),
-                                                        enabledBorder:
-                                                            OutlineInputBorder(
-                                                                borderSide:
-                                                                    const BorderSide(
-                                                                        color: Colors
-                                                                            .grey,
-                                                                        width:
-                                                                            0.4),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            5))),
+                                                        focusedBorder: OutlineInputBorder(
+                                                            borderSide:
+                                                                const BorderSide(
+                                                                    color:
+                                                                        primaryColor,
+                                                                    width: 0.4),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        5)),
+                                                        enabledBorder: OutlineInputBorder(
+                                                            borderSide:
+                                                                const BorderSide(
+                                                                    color: Colors
+                                                                        .grey,
+                                                                    width: 0.4),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        5))),
                                                   ),
                                                 ),
                                               ),
@@ -818,7 +795,7 @@ class CustomersPage extends StatelessWidget {
                                           ),
                                           Material(
                                             child: InkWell(
-                                              onTap: (){
+                                              onTap: () {
                                                 // Navigator.pop(context);
                                               },
                                               child: Container(
@@ -827,7 +804,8 @@ class CustomersPage extends StatelessWidget {
                                                 decoration: BoxDecoration(
                                                   color: primaryColor,
                                                   borderRadius:
-                                                      BorderRadius.circular(5.0),
+                                                      BorderRadius.circular(
+                                                          5.0),
                                                 ),
                                                 child: Row(
                                                   mainAxisAlignment:
