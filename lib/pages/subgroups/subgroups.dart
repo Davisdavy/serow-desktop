@@ -3,8 +3,8 @@ import 'package:get/get.dart';
 import 'package:serow/constants.dart';
 import 'package:serow/controllers/controller.dart';
 import 'package:serow/widgets/custom_text.dart';
-class SubCategoriesPage extends StatelessWidget {
-  const SubCategoriesPage({Key key}) : super(key: key);
+class SubGroupsPage extends StatelessWidget {
+  const SubGroupsPage({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

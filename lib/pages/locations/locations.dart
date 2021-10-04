@@ -3,8 +3,8 @@ import 'package:get/get.dart';
 import 'package:serow/constants.dart';
 import 'package:serow/controllers/controller.dart';
 import 'package:serow/widgets/custom_text.dart';
-class ShelvesPage extends StatelessWidget {
-  const ShelvesPage({Key key}) : super(key: key);
+class LocationsPage extends StatelessWidget {
+  const LocationsPage({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

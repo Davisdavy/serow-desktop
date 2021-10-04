@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_svg/parser.dart';
 import 'package:get/get.dart';
 import 'package:serow/constants.dart';
 import 'package:serow/routes/routes.dart';
