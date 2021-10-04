@@ -1,10 +1,17 @@
-import 'package:flutter/material.dart';
-
 const OverviewPageRoute = 'Overview';
 const NotificationsPageRoute = 'Notifications';
 const ProductsPageRoute = 'Products';
 const CustomersPageRoute = 'Customers';
 const SuppliersPageRoute = 'Suppliers';
+const BrandsPageRoute = 'Brands';
+const CategoriesPageRoute = 'Categories';
+const FormsPageRoute = 'forms';
+const GroupsPageRoute = 'Groups';
+const ItemsPageRoute = 'Items';
+const LocationsPageRoute = 'Locations';
+const ShelvesPageRoute = 'Shelves';
+const StrengthsPageRoute = 'Strengths';
+const SubgroupsPageRoute = 'Subgroups';
 const AccountsPageRoute = 'Accounts';
 const ReportsPageRoute = 'Reports';
 const OrdersPageRoute = 'Orders';
@@ -17,13 +24,6 @@ const AuthenticationPageRoute = 'Log Out';
 
 List sideMenuItems = [OverviewPageRoute, NotificationsPageRoute];
 
-
-// child: Column(
-// mainAxisAlignment: MainAxisAlignment.center,
-// children: <Widget>[
-// for(var item in list ) Text(item)
-// ],
-// ),
 List sideItems1 = [ProductsPageRoute, CustomersPageRoute, SuppliersPageRoute];
 
 List sideItems2 = [
@@ -41,4 +41,15 @@ List sideItems3 = [
 List sideItems4 = [
   SettingPageRoute,
   AuthenticationPageRoute,
+];
+List sideItems5 = [
+  BrandsPageRoute,
+  CategoriesPageRoute,
+  FormsPageRoute,
+  GroupsPageRoute,
+  ItemsPageRoute,
+  LocationsPageRoute,
+  ShelvesPageRoute,
+  StrengthsPageRoute,
+  SubgroupsPageRoute
 ];
