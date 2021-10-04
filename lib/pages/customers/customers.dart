@@ -1,13 +1,32 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:serow/constants.dart';
 import 'package:serow/controllers/controller.dart';
 import 'package:serow/widgets/custom_text.dart';
-import 'package:steps_indicator/steps_indicator.dart';
+import 'package:http/http.dart' as http;
 
-class CustomersPage extends StatelessWidget {
+class CustomersPage extends StatefulWidget {
   const CustomersPage({Key key}) : super(key: key);
+
+  @override
+  State<CustomersPage> createState() => _CustomersPageState();
+}
+
+class _CustomersPageState extends State<CustomersPage> {
+  String categoryId;
+
+  // Future<String> category() async{
+  //   var response = await http.get(Uri.parse("https://serow.herrings.co.ke/api/v1/customers/categories/"),
+  //   headers: {
+  //     "Accept":"application/json"
+  //   });
+  //   var responseBody = json.decode(source)
+  //
+  // }
+
 
   @override
   Widget build(BuildContext context) {
@@ -623,50 +642,27 @@ class CustomersPage extends StatelessWidget {
                                                     width: 240,
                                                     height: 40,
                                                     child: Flexible(
-                                                      child: TextField(
-                                                        decoration:
-                                                            InputDecoration(
-                                                                //
-                                                                suffixIcon:
-                                                                    Padding(
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                              .all(
-                                                                          14.0),
-                                                                  child:
-                                                                      SvgPicture
-                                                                          .asset(
-                                                                    "assets/icons/chevron.svg",
-                                                                    color: Colors
-                                                                        .blueGrey,
-                                                                    width: 10,
-                                                                  ),
-                                                                ),
-                                                                hintText:
-                                                                    "Credit",
-                                                                hintStyle:
-                                                                    TextStyle(
-                                                                        fontSize:
-                                                                            12),
-                                                                focusedBorder: OutlineInputBorder(
-                                                                    borderSide: const BorderSide(
-                                                                        color:
-                                                                            primaryColor,
-                                                                        width:
-                                                                            0.4),
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            5)),
-                                                                enabledBorder: OutlineInputBorder(
-                                                                    borderSide: const BorderSide(
-                                                                        color: Colors
-                                                                            .grey,
-                                                                        width:
-                                                                            0.4),
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            5))),
-                                                      ),
+                                                      child: DropdownButton<String>(
+                                                          value: "Async Corp",
+                                                          icon: Icon(Icons.arrow_drop_down),
+                                                          iconSize: 42,
+                                                          underline: SizedBox(),
+                                                          onChanged: (String newValue) {
+                                                            setState(() {
+                                                              //dropdownValue = newValue;
+                                                            });
+                                                          },
+                                                          items: <String>[
+                                                            'Async Corp',
+                                                            'Null',
+                                                            'Null',
+                                                            'Null'
+                                                          ].map<DropdownMenuItem<String>>((String value) {
+                                                            return DropdownMenuItem<String>(
+                                                              value: value,
+                                                              child: Text(value),
+                                                            );
+                                                          }).toList()),
                                                     ),
                                                   ),
                                                 ),
