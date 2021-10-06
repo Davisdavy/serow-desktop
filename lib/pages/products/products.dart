@@ -114,7 +114,7 @@ class _ProductsPageState extends State<ProductsPage> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(top: 0.0, bottom: 8.0),
+                      padding: const EdgeInsets.only(top: 5.0, bottom: 8.0),
                       child: Container(
                         width: 180,
                         height: 40,

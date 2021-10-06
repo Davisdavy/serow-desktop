@@ -37,6 +37,7 @@ dependencies:
   http:
   intl:
   steps_indicator:
+  syncfusion_flutter_datagrid:
   desktop_window:
   window_size:
     git:

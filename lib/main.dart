@@ -15,9 +15,6 @@ void main()  {
   Get.put(NavigationController());
 
   if (Platform.isMacOS || Platform.isLinux || Platform.isWindows) {
-     // await DesktopWindow.setMinWindowSize(const Size(2080, 800));
-    // setWindowMinSize(Size(800, 950));
-    // setWindowMaxSize(Size(900, 1250));
     setWindowTitle("Serow");
     setWindowMinSize(const Size(1280, 760));
     setWindowMaxSize(Size.infinite);
@@ -32,7 +29,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Admin Panel',
       theme: ThemeData(
         primaryColor: const Color(0xff4b5764),
         primaryColorDark: const Color(0xFF5d5b8c),
