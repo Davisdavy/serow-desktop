@@ -9,6 +9,7 @@ const FormsPageRoute = 'Forms';
 const GroupsPageRoute = 'Groups';
 const ItemsPageRoute = 'Items';
 const LocationsPageRoute = 'Locations';
+const PricingPageRoute = 'Pricing';
 const ShelvesPageRoute = 'Shelves';
 const StrengthsPageRoute = 'Strengths';
 const SubgroupsPageRoute = 'Subgroups';
@@ -49,6 +50,7 @@ List sideItems5 = [
   GroupsPageRoute,
   ItemsPageRoute,
   LocationsPageRoute,
+  PricingPageRoute,
   ShelvesPageRoute,
   StrengthsPageRoute,
   SubgroupsPageRoute

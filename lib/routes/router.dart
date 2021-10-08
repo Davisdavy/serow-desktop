@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:serow/pages/accounts/accounts.dart';
-import 'package:serow/pages/brands/brands.dart';
-import 'package:serow/pages/categories/categories.dart';
 import 'package:serow/pages/customers/customers.dart';
 import 'package:serow/pages/faqs/faqs.dart';
-import 'package:serow/pages/forms/forms.dart';
-import 'package:serow/pages/groups/groups.dart';
+
 import 'package:serow/pages/helpsupport/help_support.dart';
-import 'package:serow/pages/items/items.dart';
-import 'package:serow/pages/locations/locations.dart';
+import 'package:serow/pages/inventory/brands/brands.dart';
+import 'package:serow/pages/inventory/categories/categories.dart';
+import 'package:serow/pages/inventory/forms/forms.dart';
+import 'package:serow/pages/inventory/groups/groups.dart';
+import 'package:serow/pages/inventory/items/items.dart';
+import 'package:serow/pages/inventory/locations/locations.dart';
+import 'package:serow/pages/inventory/pricing/pricing.dart';
+import 'package:serow/pages/inventory/shelves/shelves.dart';
+import 'package:serow/pages/inventory/strengths/strengths.dart';
+import 'package:serow/pages/inventory/subgroups/subgroups.dart';
 import 'package:serow/pages/notifications/notifications.dart';
 import 'package:serow/pages/orders/orders.dart';
 import 'package:serow/pages/overview/overview.dart';
@@ -16,9 +21,7 @@ import 'package:serow/pages/predictions/predictions.dart';
 import 'package:serow/pages/products/products.dart';
 import 'package:serow/pages/reports/reports.dart';
 import 'package:serow/pages/settings/settings.dart';
-import 'package:serow/pages/shelves/shelves.dart';
-import 'package:serow/pages/strengths/strengths.dart';
-import 'package:serow/pages/subgroups/subgroups.dart';
+
 import 'package:serow/pages/suppliers/suppliers.dart';
 import 'package:serow/pages/teams/teams.dart';
 import 'package:serow/routes/routes.dart';
@@ -42,6 +45,8 @@ Route<dynamic> generateRoute(RouteSettings settings){
       return _getPageRoute(ItemsPage());
     case LocationsPageRoute:
       return _getPageRoute(LocationsPage());
+    case PricingPageRoute:
+      return _getPageRoute(PricingPage());
     case ShelvesPageRoute:
       return _getPageRoute(ShelvesPage());
     case StrengthsPageRoute:
