@@ -25,7 +25,7 @@ class Brands {
     count: json["count"],
     next: json["next"],
     previous: json["previous"],
-    results: List<Result>.from(json["results"].map((x) => Result.fromJson(x))),
+    results: json['results'] != null ? new List<Result>.from(json["results"].map((x) => Result.fromJson(x))) :List<Result>(),
   );
 
   Map<String, dynamic> toJson() => {
@@ -64,8 +64,8 @@ class Result {
   factory Result.fromJson(Map<String, dynamic> json) => Result(
     id: json["id"],
     country: json["country"],
-    createdAt: DateTime.parse(json["created_at"]),
-    modifiedAt: DateTime.parse(json["modified_at"]),
+    createdAt: json['created_at'] == null ? null : DateTime.parse(json['created_at'] as String),
+    modifiedAt: json['modified_at'] == null ? null : DateTime.parse(json['modified_at'] as String),
     isActive: json["is_active"],
     isDeleted: json["is_deleted"],
     deletedAt: json["deleted_at"],
