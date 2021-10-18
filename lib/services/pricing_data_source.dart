@@ -6,12 +6,12 @@ typedef OnRowSelect = void Function(int index);
 
 class PricingDataSource extends  DataTableSource{
   PricingDataSource({
-    @required List<Result> resultData,
+    @required List<Results> resultData,
     @required this.onRowSelect,
   })  : _resultData = resultData,
         assert(resultData != null);
 
-  final List<Result> _resultData;
+  final List<Results> _resultData;
   final OnRowSelect onRowSelect;
 
   @override

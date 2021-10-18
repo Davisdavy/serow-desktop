@@ -1,19 +1,20 @@
 // To parse this JSON data, do
 //
-//     final brands = brandsFromJson(jsonString);
+//     final group = groupFromJson(jsonString);
 
 import 'dart:convert';
 
-Brands brandsFromJson(String str) => Brands.fromJson(json.decode(str));
-class Brands {
+Groups groupFromJson(String str) => Groups.fromJson(json.decode(str));
+
+class Groups {
   int count;
   Null next;
   Null previous;
   List<Results> results;
 
-  Brands({this.count, this.next, this.previous, this.results});
+  Groups({this.count, this.next, this.previous, this.results});
 
-  Brands.fromJson(Map<String, dynamic> json) {
+  Groups.fromJson(Map<String, dynamic> json) {
     count = json['count'];
     next = json['next'];
     previous = json['previous'];
@@ -39,52 +40,52 @@ class Brands {
 
 class Results {
   String id;
-  Null country;
   String createdAt;
   String modifiedAt;
   bool isActive;
   bool isDeleted;
   Null deletedAt;
   String name;
-  String shortName;
+  String slug;
+  int priority;
   String company;
 
   Results(
       {this.id,
-        this.country,
         this.createdAt,
         this.modifiedAt,
         this.isActive,
         this.isDeleted,
         this.deletedAt,
         this.name,
-        this.shortName,
+        this.slug,
+        this.priority,
         this.company});
 
   Results.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    country = json['country'];
     createdAt = json['created_at'];
     modifiedAt = json['modified_at'];
     isActive = json['is_active'];
     isDeleted = json['is_deleted'];
     deletedAt = json['deleted_at'];
     name = json['name'];
-    shortName = json['short_name'];
+    slug = json['slug'];
+    priority = json['priority'];
     company = json['company'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
-    data['country'] = this.country;
     data['created_at'] = this.createdAt;
     data['modified_at'] = this.modifiedAt;
     data['is_active'] = this.isActive;
     data['is_deleted'] = this.isDeleted;
     data['deleted_at'] = this.deletedAt;
     data['name'] = this.name;
-    data['short_name'] = this.shortName;
+    data['slug'] = this.slug;
+    data['priority'] = this.priority;
     data['company'] = this.company;
     return data;
   }

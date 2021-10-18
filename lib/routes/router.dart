@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:serow/pages/accounts/accounts.dart';
-import 'package:serow/pages/customers/customers.dart';
 import 'package:serow/pages/faqs/faqs.dart';
 
 import 'package:serow/pages/helpsupport/help_support.dart';
@@ -12,6 +11,7 @@ import 'package:serow/pages/inventory/items/items.dart';
 import 'package:serow/pages/inventory/locations/locations.dart';
 import 'package:serow/pages/inventory/pricing/pricing.dart';
 import 'package:serow/pages/inventory/shelves/shelves.dart';
+import 'package:serow/pages/inventory/stock_requisition/stock_requisition.dart';
 import 'package:serow/pages/inventory/strengths/strengths.dart';
 import 'package:serow/pages/inventory/subgroups/subgroups.dart';
 import 'package:serow/pages/notifications/notifications.dart';
@@ -20,9 +20,10 @@ import 'package:serow/pages/overview/overview.dart';
 import 'package:serow/pages/predictions/predictions.dart';
 import 'package:serow/pages/products/products.dart';
 import 'package:serow/pages/reports/reports.dart';
+import 'package:serow/pages/sales/customers/customers.dart';
+import 'package:serow/pages/sales/suppliers/suppliers.dart';
 import 'package:serow/pages/settings/settings.dart';
 
-import 'package:serow/pages/suppliers/suppliers.dart';
 import 'package:serow/pages/teams/teams.dart';
 import 'package:serow/routes/routes.dart';
 
@@ -49,10 +50,12 @@ Route<dynamic> generateRoute(RouteSettings settings){
       return _getPageRoute(PricingPage());
     case ShelvesPageRoute:
       return _getPageRoute(ShelvesPage());
+    case StockRequisitionPageRoute:
+      return _getPageRoute(StockRequisitionPage());
     case StrengthsPageRoute:
       return _getPageRoute(StrengthsPage());
     case SubgroupsPageRoute:
-      return _getPageRoute(SubGroupsPage());
+      return _getPageRoute(SubgroupsPage());
     case ProductsPageRoute:
       return _getPageRoute(ProductsPage());
     case CustomersPageRoute:

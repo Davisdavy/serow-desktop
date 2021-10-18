@@ -13,15 +13,15 @@ import 'package:serow/widgets/custom_text.dart';
 import 'package:http/http.dart' as http;
 import 'package:steps_indicator/steps_indicator.dart';
 
-class ItemsPage extends StatefulWidget {
-  const ItemsPage({Key key}) : super(key: key);
+class StockRequisitionPage extends StatefulWidget {
+  const StockRequisitionPage({Key key}) : super(key: key);
 
   @override
-  State<ItemsPage> createState() => _ItemsPageState();
+  State<StockRequisitionPage> createState() => _StockRequisitionPageState();
 }
 
 
-class _ItemsPageState extends State<ItemsPage> {
+class _StockRequisitionPageState extends State<StockRequisitionPage> {
   List<Results> listResult = [];
   List brandCount = [];
   var loading = false;
@@ -416,7 +416,7 @@ class _ItemsPageState extends State<ItemsPage> {
                                                                 decoration:
                                                                 InputDecoration(
                                                                   //  labelText: "Email Address",
-                                                                    //errorText: _validate ? 'Item name Can\'t Be Empty' : null,
+                                                                  //errorText: _validate ? 'Item name Can\'t Be Empty' : null,
                                                                     hintText:
                                                                     "Item Number",
                                                                     hintStyle: TextStyle(
@@ -557,7 +557,7 @@ class _ItemsPageState extends State<ItemsPage> {
                                                                 decoration:
                                                                 InputDecoration(
                                                                   //  labelText: "Email Address",
-                                                                   // errorText: _validate ? 'Country Can\'t Be Empty' : null,
+                                                                  // errorText: _validate ? 'Country Can\'t Be Empty' : null,
                                                                     hintText:
                                                                     "Code",
                                                                     hintStyle: TextStyle(
@@ -693,41 +693,41 @@ class _ItemsPageState extends State<ItemsPage> {
                                                             width: 240,
                                                             height: 40,
                                                             child: Flexible(
-                                                              child: Row(
-                                                                children: [
-                                                                  Expanded(
-                                                                    child: TextField(
-                                                                      controller: _countryController,
-                                                                      decoration:
-                                                                      InputDecoration(
-                                                                        //  labelText: "Email Address",
-                                                                        // errorText: _validate ? 'Country Can\'t Be Empty' : null,
-                                                                          hintText:
-                                                                          "Panodol.png",
-                                                                          hintStyle: TextStyle(
-                                                                              fontSize:
-                                                                              12),
-                                                                          focusedBorder: OutlineInputBorder(
-                                                                              borderSide: const BorderSide(
-                                                                                  color:
-                                                                                  primaryColor,
-                                                                                  width:
-                                                                                  0.4),
-                                                                              borderRadius: BorderRadius.circular(
-                                                                                  5)),
-                                                                          enabledBorder: OutlineInputBorder(
-                                                                              borderSide: const BorderSide(
-                                                                                  color: Colors
-                                                                                      .grey,
-                                                                                  width:
-                                                                                  0.4),
-                                                                              borderRadius:
-                                                                              BorderRadius.circular(5))),
+                                                                child: Row(
+                                                                  children: [
+                                                                    Expanded(
+                                                                      child: TextField(
+                                                                        controller: _countryController,
+                                                                        decoration:
+                                                                        InputDecoration(
+                                                                          //  labelText: "Email Address",
+                                                                          // errorText: _validate ? 'Country Can\'t Be Empty' : null,
+                                                                            hintText:
+                                                                            "Panodol.png",
+                                                                            hintStyle: TextStyle(
+                                                                                fontSize:
+                                                                                12),
+                                                                            focusedBorder: OutlineInputBorder(
+                                                                                borderSide: const BorderSide(
+                                                                                    color:
+                                                                                    primaryColor,
+                                                                                    width:
+                                                                                    0.4),
+                                                                                borderRadius: BorderRadius.circular(
+                                                                                    5)),
+                                                                            enabledBorder: OutlineInputBorder(
+                                                                                borderSide: const BorderSide(
+                                                                                    color: Colors
+                                                                                        .grey,
+                                                                                    width:
+                                                                                    0.4),
+                                                                                borderRadius:
+                                                                                BorderRadius.circular(5))),
+                                                                      ),
                                                                     ),
-                                                                  ),
-                                                                  TextButton(onPressed: (){}, child: Text("Add image"))
-                                                                ],
-                                                              )
+                                                                    TextButton(onPressed: (){}, child: Text("Add image"))
+                                                                  ],
+                                                                )
                                                             ),
                                                           ),
                                                         ),

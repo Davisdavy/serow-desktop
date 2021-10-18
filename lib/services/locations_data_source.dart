@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:serow/constants.dart';
-import 'package:serow/models/inventory/brands.dart';
+import 'package:serow/controllers/locations_controller.dart';
+import 'package:serow/models/inventory/locations.dart';
+import 'package:serow/respository/inventory_repository/locations_inventory_repository.dart';
+
 typedef OnRowSelect = void Function(int index);
 
 class LocationsDataSource extends  DataTableSource{
+  var locationsController = LocationsController(LocationsInventoryRepository());
   LocationsDataSource({
-    @required List<Result> resultData,
+    @required List<Results> resultData,
     @required this.onRowSelect,
   })  : _resultData = resultData,
         assert(resultData != null);
 
-  final List<Result> _resultData;
+  final List<Results> _resultData;
   final OnRowSelect onRowSelect;
 
   @override
@@ -27,9 +31,9 @@ class LocationsDataSource extends  DataTableSource{
 
       index: index, // DONT MISS THIS
       cells: <DataCell>[
-        DataCell(Text('254-672',style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.w600, color: secondaryColor))),
-        DataCell(Text('${_result.name}',style: TextStyle(fontSize: 13.0, color: secondaryColor))),
-        DataCell(Text('Nairobi',style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.w500, color: primaryColor),)),
+        DataCell(Text('${_result.name}',style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.w600, color: secondaryColor))),
+        DataCell(Text('${_result.code}',style: TextStyle(fontSize: 13.0, color: secondaryColor))),
+        DataCell(Text('${_result.branch.name}',style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.w500, color: primaryColor),)),
         DataCell(Text('${_result.isActive.toString() == "true" ? "Active" : "Inactive"}',style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.w500, color: primaryColor),)),
 
         DataCell(
@@ -71,6 +75,10 @@ class LocationsDataSource extends  DataTableSource{
                   value: 3,
                 ),
                 PopupMenuItem(
+                  onTap: ()  {
+                    //Here is the delete functionality
+                    locationsController.deleteLocations(_result.id.toString());
+                  },
                   child: Row(
                     children: [
                       SvgPicture.asset("assets/icons/garbage.svg", height: 18.0,color: Colors.blueGrey, ),

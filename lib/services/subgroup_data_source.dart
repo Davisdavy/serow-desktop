@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:serow/constants.dart';
-import 'package:serow/controllers/categories_controller.dart';
-import 'package:serow/models/inventory/categories.dart';
-import 'package:serow/respository/inventory_repository/categories_inventory_repository.dart';
+import 'package:serow/controllers/subgroup_controller.dart';
+import 'package:serow/models/inventory/subgroups.dart';
+import 'package:serow/respository/inventory_repository/subgroups_inventory_repository.dart';
 
 typedef OnRowSelect = void Function(int index);
 
-class CategoriesDataSource extends  DataTableSource{
+class SubgroupDataSource extends  DataTableSource{
   //Dependency injection
-  var categoriesController = CategoriesController(CategoriesInventoryRepository());
-  CategoriesDataSource({
-    @required List<Result> resultData,
+  var subgroupsController = SubgroupController(SubgroupInventoryRepository());
+  SubgroupDataSource({
+    @required List<Results> resultData,
     @required this.onRowSelect,
   })  : _resultData = resultData,
         assert(resultData != null);
 
-  final List<Result> _resultData;
+  final List<Results> _resultData;
   final OnRowSelect onRowSelect;
 
 
@@ -36,12 +36,11 @@ class CategoriesDataSource extends  DataTableSource{
       cells: <DataCell>[
         DataCell(Text('${_result.name}',style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.w600, color: secondaryColor))),
         DataCell(Text('${_result.group.name}',style: TextStyle(fontSize: 13.0, color: secondaryColor))),
-        DataCell(Text('${_result.subgroup.name}',style: TextStyle(fontSize: 13.0, color: secondaryColor))),
         DataCell(Text('${_result.isActive.toString() == "true" ? "Active" : "Inactive"}',style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.w500, color: primaryColor),)),
 
         DataCell(
-            FutureBuilder<List<Result>>(
-              future: categoriesController.fetchCategoryList(),
+            FutureBuilder<List<Results>>(
+              future: subgroupsController.fetchSubgroupsList(),
               builder: (context, snapshot){
                 return PopupMenuButton(
                   elevation: 20.0,
@@ -84,7 +83,7 @@ class CategoriesDataSource extends  DataTableSource{
                     PopupMenuItem(
                       onTap: ()  {
                         //Here is the delete functionality
-                        categoriesController.deleteCategory(_result.id.toString());
+                        subgroupsController.deleteSubgroup(_result.id.toString());
                       },
                       child:Row(
                         children: [

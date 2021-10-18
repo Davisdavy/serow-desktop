@@ -1,21 +1,22 @@
 import 'dart:convert';
-Categories categoriesFromJson(String str) => Categories.fromJson(json.decode(str));
-class Categories {
+
+Locations locationsFromJson(String str) => Locations.fromJson(json.decode(str));
+class Locations {
   int count;
   Null next;
   Null previous;
-  List<Result> results;
+  List<Results> results;
 
-  Categories({this.count, this.next, this.previous, this.results});
+  Locations({this.count, this.next, this.previous, this.results});
 
-  Categories.fromJson(Map<String, dynamic> json) {
+  Locations.fromJson(Map<String, dynamic> json) {
     count = json['count'];
     next = json['next'];
     previous = json['previous'];
     if (json['results'] != null) {
-      results = new List<Result>();
+      results = new List<Results>();
       json['results'].forEach((v) {
-        results.add(new Result.fromJson(v));
+        results.add(new Results.fromJson(v));
       });
     }
   }
@@ -32,70 +33,139 @@ class Categories {
   }
 }
 
-class Result {
+class Results {
   String id;
-  Group group;
-  Subgroup subgroup;
+  Branch branch;
   String createdAt;
   String modifiedAt;
   bool isActive;
   bool isDeleted;
   Null deletedAt;
+  String code;
   String name;
-  String slug;
   String company;
 
-  Result(
+  Results(
       {this.id,
-        this.group,
-        this.subgroup,
+        this.branch,
         this.createdAt,
         this.modifiedAt,
         this.isActive,
         this.isDeleted,
         this.deletedAt,
+        this.code,
         this.name,
-        this.slug,
         this.company});
 
-  Result.fromJson(Map<String, dynamic> json) {
+  Results.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    group = json['group'] != null ? new Group.fromJson(json['group']) : null;
-    subgroup = json['subgroup'] != null
-        ? new Subgroup.fromJson(json['subgroup'])
-        : null;
+    branch =
+    json['branch'] != null ? new Branch.fromJson(json['branch']) : null;
     createdAt = json['created_at'];
     modifiedAt = json['modified_at'];
     isActive = json['is_active'];
     isDeleted = json['is_deleted'];
     deletedAt = json['deleted_at'];
+    code = json['code'];
     name = json['name'];
-    slug = json['slug'];
     company = json['company'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
-    if (this.group != null) {
-      data['group'] = this.group.toJson();
-    }
-    if (this.subgroup != null) {
-      data['subgroup'] = this.subgroup.toJson();
+    if (this.branch != null) {
+      data['branch'] = this.branch.toJson();
     }
     data['created_at'] = this.createdAt;
     data['modified_at'] = this.modifiedAt;
     data['is_active'] = this.isActive;
     data['is_deleted'] = this.isDeleted;
     data['deleted_at'] = this.deletedAt;
+    data['code'] = this.code;
     data['name'] = this.name;
-    data['slug'] = this.slug;
     data['company'] = this.company;
     return data;
   }
 }
 
-class Group {
+class Branch {
+  String id;
+  Company company;
+  String createdAt;
+  String modifiedAt;
+  bool isActive;
+  bool isDeleted;
+  Null deletedAt;
+  String name;
+  String description;
+  String email;
+  String location;
+  String phone;
+  bool isHead;
+  Null region;
+  String costCentre;
+
+  Branch(
+      {this.id,
+        this.company,
+        this.createdAt,
+        this.modifiedAt,
+        this.isActive,
+        this.isDeleted,
+        this.deletedAt,
+        this.name,
+        this.description,
+        this.email,
+        this.location,
+        this.phone,
+        this.isHead,
+        this.region,
+        this.costCentre});
+
+  Branch.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    company =
+    json['company'] != null ? new Company.fromJson(json['company']) : null;
+    createdAt = json['created_at'];
+    modifiedAt = json['modified_at'];
+    isActive = json['is_active'];
+    isDeleted = json['is_deleted'];
+    deletedAt = json['deleted_at'];
+    name = json['name'];
+    description = json['description'];
+    email = json['email'];
+    location = json['location'];
+    phone = json['phone'];
+    isHead = json['is_head'];
+    region = json['region'];
+    costCentre = json['cost_centre'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    if (this.company != null) {
+      data['company'] = this.company.toJson();
+    }
+    data['created_at'] = this.createdAt;
+    data['modified_at'] = this.modifiedAt;
+    data['is_active'] = this.isActive;
+    data['is_deleted'] = this.isDeleted;
+    data['deleted_at'] = this.deletedAt;
+    data['name'] = this.name;
+    data['description'] = this.description;
+    data['email'] = this.email;
+    data['location'] = this.location;
+    data['phone'] = this.phone;
+    data['is_head'] = this.isHead;
+    data['region'] = this.region;
+    data['cost_centre'] = this.costCentre;
+    return data;
+  }
+}
+
+class Company {
   String id;
   String createdAt;
   String modifiedAt;
@@ -103,11 +173,14 @@ class Group {
   bool isDeleted;
   Null deletedAt;
   String name;
-  String slug;
-  int priority;
-  String company;
+  Null logo;
+  String description;
+  String email;
+  String location;
+  String phone;
+  String country;
 
-  Group(
+  Company(
       {this.id,
         this.createdAt,
         this.modifiedAt,
@@ -115,11 +188,14 @@ class Group {
         this.isDeleted,
         this.deletedAt,
         this.name,
-        this.slug,
-        this.priority,
-        this.company});
+        this.logo,
+        this.description,
+        this.email,
+        this.location,
+        this.phone,
+        this.country});
 
-  Group.fromJson(Map<String, dynamic> json) {
+  Company.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     createdAt = json['created_at'];
     modifiedAt = json['modified_at'];
@@ -127,9 +203,12 @@ class Group {
     isDeleted = json['is_deleted'];
     deletedAt = json['deleted_at'];
     name = json['name'];
-    slug = json['slug'];
-    priority = json['priority'];
-    company = json['company'];
+    logo = json['logo'];
+    description = json['description'];
+    email = json['email'];
+    location = json['location'];
+    phone = json['phone'];
+    country = json['country'];
   }
 
   Map<String, dynamic> toJson() {
@@ -141,62 +220,12 @@ class Group {
     data['is_deleted'] = this.isDeleted;
     data['deleted_at'] = this.deletedAt;
     data['name'] = this.name;
-    data['slug'] = this.slug;
-    data['priority'] = this.priority;
-    data['company'] = this.company;
-    return data;
-  }
-}
-
-class Subgroup {
-  String id;
-  String createdAt;
-  String modifiedAt;
-  bool isActive;
-  bool isDeleted;
-  Null deletedAt;
-  String name;
-  String slug;
-  String group;
-  String company;
-
-  Subgroup(
-      {this.id,
-        this.createdAt,
-        this.modifiedAt,
-        this.isActive,
-        this.isDeleted,
-        this.deletedAt,
-        this.name,
-        this.slug,
-        this.group,
-        this.company});
-
-  Subgroup.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    createdAt = json['created_at'];
-    modifiedAt = json['modified_at'];
-    isActive = json['is_active'];
-    isDeleted = json['is_deleted'];
-    deletedAt = json['deleted_at'];
-    name = json['name'];
-    slug = json['slug'];
-    group = json['group'];
-    company = json['company'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['created_at'] = this.createdAt;
-    data['modified_at'] = this.modifiedAt;
-    data['is_active'] = this.isActive;
-    data['is_deleted'] = this.isDeleted;
-    data['deleted_at'] = this.deletedAt;
-    data['name'] = this.name;
-    data['slug'] = this.slug;
-    data['group'] = this.group;
-    data['company'] = this.company;
+    data['logo'] = this.logo;
+    data['description'] = this.description;
+    data['email'] = this.email;
+    data['location'] = this.location;
+    data['phone'] = this.phone;
+    data['country'] = this.country;
     return data;
   }
 }

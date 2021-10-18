@@ -1,19 +1,16 @@
-// To parse this JSON data, do
-//
-//     final brands = brandsFromJson(jsonString);
 
 import 'dart:convert';
 
-Brands brandsFromJson(String str) => Brands.fromJson(json.decode(str));
-class Brands {
+Strengths strengthsFromJson(String str) => Strengths.fromJson(json.decode(str));
+class Strengths {
   int count;
   Null next;
   Null previous;
   List<Results> results;
 
-  Brands({this.count, this.next, this.previous, this.results});
+  Strengths({this.count, this.next, this.previous, this.results});
 
-  Brands.fromJson(Map<String, dynamic> json) {
+  Strengths.fromJson(Map<String, dynamic> json) {
     count = json['count'];
     next = json['next'];
     previous = json['previous'];
@@ -39,7 +36,6 @@ class Brands {
 
 class Results {
   String id;
-  Null country;
   String createdAt;
   String modifiedAt;
   bool isActive;
@@ -51,7 +47,6 @@ class Results {
 
   Results(
       {this.id,
-        this.country,
         this.createdAt,
         this.modifiedAt,
         this.isActive,
@@ -63,7 +58,6 @@ class Results {
 
   Results.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    country = json['country'];
     createdAt = json['created_at'];
     modifiedAt = json['modified_at'];
     isActive = json['is_active'];
@@ -77,7 +71,6 @@ class Results {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
-    data['country'] = this.country;
     data['created_at'] = this.createdAt;
     data['modified_at'] = this.modifiedAt;
     data['is_active'] = this.isActive;

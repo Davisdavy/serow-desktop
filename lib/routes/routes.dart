@@ -1,3 +1,4 @@
+
 const OverviewPageRoute = 'Overview';
 const NotificationsPageRoute = 'Notifications';
 const ProductsPageRoute = 'Products';
@@ -8,6 +9,7 @@ const CategoriesPageRoute = 'Categories';
 const FormsPageRoute = 'Forms';
 const GroupsPageRoute = 'Groups';
 const ItemsPageRoute = 'Items';
+const StockRequisitionPageRoute = 'Stock Requisition';
 const LocationsPageRoute = 'Locations';
 const PricingPageRoute = 'Pricing';
 const ShelvesPageRoute = 'Shelves';
@@ -52,6 +54,7 @@ List sideItems5 = [
   LocationsPageRoute,
   PricingPageRoute,
   ShelvesPageRoute,
+  StockRequisitionPageRoute,
   StrengthsPageRoute,
   SubgroupsPageRoute
 ];
