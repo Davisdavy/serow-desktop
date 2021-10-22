@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:serow/models/inventory/subgroups.dart';
 import 'package:serow/respository/subgroup_repository.dart';
 
@@ -6,8 +7,8 @@ class SubgroupController{
   SubgroupController(this._repository);
 
   //get
-  Future<List<Results> >fetchSubgroupsList(){
-    return _repository.getSubGroupList();
+  Future<List<Results> >fetchSubgroupsList(BuildContext context){
+    return _repository.getSubGroupList(context);
   }
 
   //patch
@@ -21,12 +22,12 @@ class SubgroupController{
   }
 
   //delete
-  Future<void>deleteSubgroup(String id) async{
-    return _repository.deletedSubGroup(id);
+  Future<void>deleteSubgroup(String id, BuildContext context) async{
+    return _repository.deletedSubGroup(id, context);
   }
 
   //delete
-  Future<Subgroups>postSubgroup(String name, String groupId) async{
-    return _repository.postSubGroup(name,groupId);
+  Future<Subgroups>postSubgroup(String name, String groupId, BuildContext context) async{
+    return _repository.postSubGroup(name,groupId, context);
   }
 }

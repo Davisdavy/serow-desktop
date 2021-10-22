@@ -1,25 +1,30 @@
+import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
+import 'package:serow/models/auth/auth.dart';
 import 'package:serow/models/inventory/groups.dart';
+import 'package:serow/respository/auth_provider.dart';
 import 'package:serow/respository/group_repository.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:serow/services/services.dart';
+
 class GroupsInventoryRepository implements GroupsRepository{
-  String baseUrl = 'https://serow.herrings.co.ke/api/v1';
-  String bearer = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjM0NjU5MDY1LCJqdGkiOiIxNTRjZDE1NzU3Mzc0M2RkYTMzZjI2MDY0OTdiOWFlZSIsInVzZXJfaWQiOiJlOWJlZmRlYS1jOWEyLTRiYjYtYjFmMy02MDE1NTJlNTU1NTgifQ.itFBwtHrgJNbpjNaw-4_8jeVxKpB9uJClaz-1zjjg4U';
 
   //Groups
 
   @override
-  Future<List<Results>> getGroupList() async {
+  Future<List<Results>> getGroupList(BuildContext context) async {
     //https://serow.herrings.co.ke/api/v1/inventory/groups/
     List<Results> groupList = [];
-    var url = Uri.parse('$baseUrl/inventory/groups/');
+    context.watch<AuthProvider>();
+    Auth user = Provider.of<AuthProvider>(context).auth;
 
-    var response = await http.get(url, headers: {
+    var response = await http.get(Uri.parse('${AppUrl.groups}'), headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
       "Authorization":
-      "$bearer"
+      "Bearer ${user.accessToken.toString()}"
     }, );
     print('Get groups status code: ${response.statusCode}');
     var body = json.decode(response.body);//convert
@@ -35,14 +40,13 @@ class GroupsInventoryRepository implements GroupsRepository{
 
 
   @override
-  Future<Results> deletedGroup(String id) async {
-    var url = Uri.parse('$baseUrl/inventory/groups/${id}/');
-
+  Future<Results> deletedGroup(String id, BuildContext context) async {
+    Auth user = Provider.of<AuthProvider>(context, listen: false).auth;
     final http.Response response =
-    await http.delete(url, headers: {
+    await http.delete(Uri.parse('${AppUrl.groups}$id/'), headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
-      "Authorization": "$bearer",
+      "Authorization": "Bearer ${user.accessToken.toString()}",
     });
 
     return  Results.fromJson(json.decode(response.body));
@@ -50,13 +54,13 @@ class GroupsInventoryRepository implements GroupsRepository{
 
   @override
   Future<String> patchGroup(Results groups) async {
-    var url = Uri.parse('$baseUrl/inventory/groups/${groups.id}');
+
     //call back
     String responseData = '';
-    await http.patch(url, headers: {
+    await http.patch(Uri.parse('${AppUrl.groups}${groups.id}'), headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
-      "Authorization": "$bearer"
+      "Authorization": "Bearer "
     },
         body:{'name': groups.name.toString(), 'slug': groups.slug.toString(), 'priority': groups.priority.toString()}
     ).then((response) {
@@ -69,12 +73,12 @@ class GroupsInventoryRepository implements GroupsRepository{
   }
 
   @override
-  Future<Groups> postGroup(String name, String priority,) async{
-    var url = Uri.parse('$baseUrl/inventory/groups/');
-    var response = await http.post(url,headers: {
+  Future<Groups> postGroup(String name, String priority, BuildContext context) async{
+    Auth user = Provider.of<AuthProvider>(context,listen: false).auth;
+    var response = await http.post(Uri.parse('${AppUrl.groups}'),headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
-      "Authorization":  "$bearer"
+      "Authorization":  "Bearer ${user.accessToken.toString()}"
     }, body: jsonEncode(<dynamic, String>{
       'name': name,
       'priority': priority,
@@ -88,13 +92,12 @@ class GroupsInventoryRepository implements GroupsRepository{
 
   @override
   Future<String> putGroup(Results groups)async {
-    var url = Uri.parse('$baseUrl/inventory/groups/${groups.id}');
     //call back
     String responseData = '';
-    await http.put(url, headers: {
+    await http.put(Uri.parse('${AppUrl.groups}${groups.id}'), headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
-      "Authorization": "$bearer"
+      "Authorization": "Bearer "
     }, body:{'name': groups.name.toString(), 'slug': groups.slug.toString(), 'country': groups.priority.toString()}
     ).then((response) {
       //screen -> Data

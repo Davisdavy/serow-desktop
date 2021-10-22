@@ -1,5 +1,6 @@
 
 
+import 'package:flutter/cupertino.dart';
 import 'package:serow/models/inventory/strengths.dart';
 import 'package:serow/respository/strengths_repository.dart';
 
@@ -8,8 +9,8 @@ class StrengthsController{
   StrengthsController(this._repository);
 
   //get
-  Future<List<Results> >fetchStrengthsList(){
-    return _repository.getStrengthsList();
+  Future<List<Results> >fetchStrengthsList(BuildContext context){
+    return _repository.getStrengthsList(context);
   }
 
   //patch
@@ -23,12 +24,12 @@ class StrengthsController{
   }
 
   //delete
-  Future<void>deleteStrength(String id) async{
-    return _repository.deletedStrength(id);
+  Future<void>deleteStrength(String id, BuildContext context) async{
+    return _repository.deletedStrength(id, context);
   }
 
   //delete
-  Future<Strengths>postStrength(String name, String shortName) async{
-    return _repository.postStrength(name,shortName);
+  Future<Strengths>postStrength(String name, String shortName, BuildContext context) async{
+    return _repository.postStrength(name,shortName, context);
   }
 }

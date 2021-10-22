@@ -1,38 +1,41 @@
+import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
+import 'package:serow/models/auth/auth.dart';
 import 'package:serow/models/inventory/forms.dart';
+import 'package:serow/respository/auth_provider.dart';
 import 'package:serow/respository/forms_repository.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:serow/services/services.dart';
+
 class FormsInventoryRepository implements FormsRepository {
-  String baseUrl = 'https://serow.herrings.co.ke/api/v1';
-  String bearer =
-      'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjM0NjU5MDY1LCJqdGkiOiIxNTRjZDE1NzU3Mzc0M2RkYTMzZjI2MDY0OTdiOWFlZSIsInVzZXJfaWQiOiJlOWJlZmRlYS1jOWEyLTRiYjYtYjFmMy02MDE1NTJlNTU1NTgifQ.itFBwtHrgJNbpjNaw-4_8jeVxKpB9uJClaz-1zjjg4U';
 
   @override
-  Future<Results> deletedForms(String id) async {
-    var url = Uri.parse('$baseUrl/inventory/forms/${id}/');
+  Future<Results> deletedForms(String id, BuildContext context) async {
+    Auth user = Provider.of<AuthProvider>(context, listen: false).auth;
 
-    final http.Response response = await http.delete(url, headers: {
+    final http.Response response = await http.delete(Uri.parse('${AppUrl.forms}$id/'), headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
-      "Authorization": "$bearer",
+      "Authorization": "Bearer ${user.accessToken.toString()}",
     });
 
     return Results.fromJson(json.decode(response.body));
   }
 
   @override
-  Future<List<Results>> getFormsList() async {
+  Future<List<Results>> getFormsList(BuildContext context) async {
     //https://serow.herrings.co.ke/api/v1/inventory/forms/
     List<Results> groupList = [];
-    var url = Uri.parse('$baseUrl/inventory/forms/');
-
+    context.watch<AuthProvider>();
+    Auth user = Provider.of<AuthProvider>(context).auth;
     var response = await http.get(
-      url,
+      Uri.parse('${AppUrl.forms}'),
       headers: {
         'Content-type': 'application/json',
         'Accept': 'application/json',
-        "Authorization": "$bearer"
+        "Authorization": "Bearer ${user.accessToken.toString()}"
       },
     );
     print('Get groups status code: ${response.statusCode}');
@@ -48,13 +51,12 @@ class FormsInventoryRepository implements FormsRepository {
 
   @override
   Future<String> patchForms(Results result) async {
-    var url = Uri.parse('$baseUrl/inventory/forms/${result.id}');
     //call back
     String responseData = '';
-    await http.patch(url, headers: {
+    await http.patch(Uri.parse('${AppUrl.brands}${result.id}'), headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
-      "Authorization": "$bearer"
+      "Authorization": "Bearer "
     }, body: {
       'name': result.name.toString(),
       'priority': result.shortName.toString()
@@ -68,14 +70,14 @@ class FormsInventoryRepository implements FormsRepository {
   }
 
   @override
-  Future<Forms> postForms(String name) async {
-    var url = Uri.parse('$baseUrl/inventory/forms/');
+  Future<Forms> postForms(String name, BuildContext context) async {
+    Auth user = Provider.of<AuthProvider>(context,listen: false).auth;
     var response = await http.post(
-      url,
+      Uri.parse('${AppUrl.brands}'),
       headers: {
         'Content-type': 'application/json',
         'Accept': 'application/json',
-        "Authorization": "$bearer"
+        "Authorization": "Bearer ${user.accessToken.toString()}"
       },
       body: jsonEncode(<dynamic, String>{
         'name': name,
@@ -89,13 +91,13 @@ class FormsInventoryRepository implements FormsRepository {
 
   @override
   Future<String> putForms(Results result) async {
-    var url = Uri.parse('$baseUrl/inventory/forms/${result.id}');
+
     //call back
     String responseData = '';
-    await http.put(url, headers: {
+    await http.put(Uri.parse('${AppUrl.brands}${result.id}'), headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
-      "Authorization": "$bearer"
+      "Authorization": "Bearer "
     }, body: {
       'name': result.name.toString(),
       'country': result.shortName.toString()

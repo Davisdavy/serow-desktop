@@ -1,37 +1,41 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:serow/models/auth/auth.dart';
 import 'package:serow/models/inventory/categories.dart';
+import 'package:serow/respository/auth_provider.dart';
 import 'package:serow/respository/categories_repository.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:serow/services/services.dart';
+
 class CategoriesInventoryRepository implements CategoriesRepository{
-  String baseUrl = 'https://serow.herrings.co.ke/api/v1';
-  String bearer = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjM0NjU5MDY1LCJqdGkiOiIxNTRjZDE1NzU3Mzc0M2RkYTMzZjI2MDY0OTdiOWFlZSIsInVzZXJfaWQiOiJlOWJlZmRlYS1jOWEyLTRiYjYtYjFmMy02MDE1NTJlNTU1NTgifQ.itFBwtHrgJNbpjNaw-4_8jeVxKpB9uJClaz-1zjjg4U';
 
   @override
-  Future<Result> deletedCategory(String id) async{
-    var url = Uri.parse('$baseUrl/inventory/categories/${id}/');
+  Future<Result> deletedCategory(String id, BuildContext context) async{
+    Auth user = Provider.of<AuthProvider>(context, listen: false).auth;
 
     final http.Response response =
-    await http.delete(url, headers: {
+    await http.delete(Uri.parse('${AppUrl.categories}$id/'), headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
-      "Authorization": "$bearer",
+      "Authorization": "Bearer ${user.accessToken.toString()}",
     });
 
     return  Result.fromJson(json.decode(response.body));
   }
 
   @override
-  Future<List<Result>> getCategoryList() async {
+  Future<List<Result>> getCategoryList(BuildContext context) async {
     //https://serow.herrings.co.ke/api/v1/inventory/categories/
     List<Result> categoryList = [];
-    var url = Uri.parse('$baseUrl/inventory/categories/');
-
-    var response = await http.get(url, headers: {
+    context.watch<AuthProvider>();
+    Auth user = Provider.of<AuthProvider>(context).auth;
+    var response = await http.get(Uri.parse('${AppUrl.categories}'), headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
       "Authorization":
-      "$bearer"
+      "Bearer ${user.accessToken.toString()}"
     }, );
     print('Get get categories status code: ${response.statusCode}');
     var body = json.decode(response.body);//convert
@@ -46,13 +50,12 @@ class CategoriesInventoryRepository implements CategoriesRepository{
 
   @override
   Future<String> patchCategory(Result categories) async{
-    var url = Uri.parse('$baseUrl/inventory/categories/${categories.id}');
     //call back
     String responseData = '';
-    await http.patch(url, headers: {
+    await http.patch(Uri.parse('${AppUrl.categories}${categories.id}'), headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
-      "Authorization": "$bearer"
+      "Authorization": "Bearer "
     },
         body:{'name': categories.name.toString(), 'slug': categories.slug.toString(), 'priority': categories.group.id.toString()}
     ).then((response) {
@@ -65,12 +68,12 @@ class CategoriesInventoryRepository implements CategoriesRepository{
   }
 
   @override
-  Future<Categories> postCategory(String name, String group, String subgroup) async{
-    var url = Uri.parse('$baseUrl/inventory/categories/');
-    var response = await http.post(url,headers: {
+  Future<Categories> postCategory(String name, String group, String subgroup, BuildContext context) async{
+    Auth user = Provider.of<AuthProvider>(context,listen: false).auth;
+    var response = await http.post(Uri.parse('${AppUrl.categories}'),headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
-      "Authorization":  "$bearer"
+      "Authorization":  "Bearer ${user.accessToken.toString()}"
     }, body: jsonEncode(<dynamic, String>{
       'name': name,
       'group': group,
@@ -84,13 +87,12 @@ class CategoriesInventoryRepository implements CategoriesRepository{
 
   @override
   Future<String> putCategory(Result categories) async{
-    var url = Uri.parse('$baseUrl/inventory/categories/${categories.id}');
     //call back
     String responseData = '';
-    await http.put(url, headers: {
+    await http.put(Uri.parse('${AppUrl.brands}${categories.id}'), headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
-      "Authorization": "$bearer"
+      "Authorization": "Bearer "
     }, body:{'name': categories.name.toString(), 'slug': categories.slug.toString(), 'country': categories.group.id.toString()}
     ).then((response) {
       //screen -> Data

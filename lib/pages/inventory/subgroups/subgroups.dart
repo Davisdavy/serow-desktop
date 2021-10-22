@@ -80,8 +80,8 @@ String groupId;
             SingleChildScrollView(
               child: FutureBuilder(
                   future: Future.wait([
-                    subgroupsController.fetchSubgroupsList(),
-                    groupsController.fetchGroupsList(),
+                    subgroupsController.fetchSubgroupsList(context),
+                    groupsController.fetchGroupsList(context),
                   ]),
                   builder: (context, snapshot){
                     if(snapshot.connectionState == ConnectionState.waiting){
@@ -702,7 +702,7 @@ String groupId;
                                                                             : _validate =
                                                                         false;
 
-                                                                        subgroupsController.postSubgroup(_nameController.text, groupId);
+                                                                        subgroupsController.postSubgroup(_nameController.text, groupId, context);
                                                                         Navigator.of(context, rootNavigator: true).pop();
 
                                                                       });

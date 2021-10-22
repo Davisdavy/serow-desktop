@@ -77,7 +77,7 @@ class LocationsDataSource extends  DataTableSource{
                 PopupMenuItem(
                   onTap: ()  {
                     //Here is the delete functionality
-                    locationsController.deleteLocations(_result.id.toString());
+                    locationsController.deleteLocations(_result.id.toString(), context);
                   },
                   child: Row(
                     children: [

@@ -76,8 +76,8 @@ class _ShelvesPageState extends State<ShelvesPage> {
             SingleChildScrollView(
               child: FutureBuilder(
                   future: Future.wait<Object>([
-                    shelvesController.fetchShelvesList(),
-                    locationsController.fetchLocationsList(),
+                    shelvesController.fetchShelvesList(context),
+                    locationsController.fetchLocationsList(context),
                   ]),
                   builder: (context,  snapshot){
                     if(snapshot.connectionState == ConnectionState.waiting){
@@ -691,7 +691,7 @@ class _ShelvesPageState extends State<ShelvesPage> {
                                                                         // _shortNameController.text.isEmpty ? _validate = true : _validate = false;
                                                                         print("Posting..${_nameController.text}, $locationId}");
 
-                                                                        shelvesController.postShelf(_nameController.text, locationId);
+                                                                        shelvesController.postShelf(_nameController.text, locationId, context);
                                                                         Navigator.of(context, rootNavigator: true).pop();
 
                                                                       });

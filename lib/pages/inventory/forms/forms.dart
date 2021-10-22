@@ -75,7 +75,7 @@ class _FormsPageState extends State<FormsPage> {
 
             SingleChildScrollView(
               child: FutureBuilder<List<Results>>(
-                  future: formsController.fetchFormsList(),
+                  future: formsController.fetchFormsList(context),
                   builder: (context, snapshot){
                     if(snapshot.connectionState == ConnectionState.waiting){
                       return Center(
@@ -612,7 +612,7 @@ class _FormsPageState extends State<FormsPage> {
                                                                             : _validate =
                                                                         false;
 
-                                                                        formsController.postForms(_nameController.text);
+                                                                        formsController.postForms(_nameController.text,context);
                                                                         Navigator.of(context, rootNavigator: true).pop();
 
                                                                       });

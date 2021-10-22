@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:serow/models/inventory/groups.dart';
 import 'package:serow/respository/group_repository.dart';
 
@@ -6,8 +7,8 @@ class GroupsController{
   GroupsController(this._repository);
 
   //get
-  Future<List<Results> >fetchGroupsList(){
-    return _repository.getGroupList();
+  Future<List<Results> >fetchGroupsList(BuildContext context){
+    return _repository.getGroupList(context);
   }
 
   //patch
@@ -21,12 +22,12 @@ class GroupsController{
   }
 
   //delete
-  Future<void>deleteGroup(String id) async{
-    return _repository.deletedGroup(id);
+  Future<void>deleteGroup(String id, BuildContext context) async{
+    return _repository.deletedGroup(id, context);
   }
 
   //delete
-  Future<Groups>postGroup(String name, String priority) async{
-    return _repository.postGroup(name,priority);
+  Future<Groups>postGroup(String name, String priority, BuildContext context) async{
+    return _repository.postGroup(name,priority, context);
   }
 }

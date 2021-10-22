@@ -82,9 +82,9 @@ class _CategoriesPageState extends State<CategoriesPage> {
             SingleChildScrollView(
               child: FutureBuilder(
                   future: Future.wait<Object>([
-                    categoriesController.fetchCategoryList(),
-                    groupsController.fetchGroupsList(),
-                    subgroupsController.fetchSubgroupsList(),
+                    categoriesController.fetchCategoryList(context),
+                    groupsController.fetchGroupsList(context),
+                    subgroupsController.fetchSubgroupsList(context),
                   ]),
                   builder: (context,  snapshot){
                     if(snapshot.connectionState == ConnectionState.waiting){
@@ -787,7 +787,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                                                         // _shortNameController.text.isEmpty ? _validate = true : _validate = false;
                                                                         print("Posting..${_nameController.text}, $groupId,$subgroupId}");
 
-                                                                        categoriesController.postCategory(_nameController.text, groupId,subgroupId);
+                                                                        categoriesController.postCategory(_nameController.text, groupId,subgroupId, context);
                                                                         Navigator.of(context, rootNavigator: true).pop();
 
                                                                       });

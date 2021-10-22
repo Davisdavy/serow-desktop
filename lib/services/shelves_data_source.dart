@@ -75,7 +75,7 @@ class ShelvesDataSource extends  DataTableSource{
                 PopupMenuItem(
                   onTap: ()  {
                     //Here is the delete functionality
-                    shelveController.deleteShelf(_result.id.toString());
+                    shelveController.deleteShelf(_result.id.toString(), context);
                   },
                   child: Row(
                     children: [

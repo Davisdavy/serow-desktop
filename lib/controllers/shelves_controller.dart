@@ -1,6 +1,7 @@
 
 
 
+import 'package:flutter/cupertino.dart';
 import 'package:serow/models/inventory/shelves.dart';
 import 'package:serow/respository/shelves_repository.dart';
 
@@ -9,8 +10,8 @@ class ShelvesController{
   ShelvesController(this._repository);
 
   //get
-  Future<List<Results> >fetchShelvesList(){
-    return _repository.getShelveList();
+  Future<List<Results> >fetchShelvesList(BuildContext context){
+    return _repository.getShelveList(context);
   }
 
   //patch
@@ -24,12 +25,12 @@ class ShelvesController{
   }
 
   //delete
-  Future<void>deleteShelf(String id) async{
-    return _repository.deletedShelf(id);
+  Future<void>deleteShelf(String id, BuildContext context) async{
+    return _repository.deletedShelf(id, context);
   }
 
   //delete
-  Future<Shelves>postShelf(String name,String locationId) async{
-    return _repository.postShelf(name, locationId);
+  Future<Shelves>postShelf(String name,String locationId, BuildContext context) async{
+    return _repository.postShelf(name, locationId, context);
   }
 }

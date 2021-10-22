@@ -79,7 +79,7 @@ class _GroupsPageState extends State<GroupsPage> {
 
             SingleChildScrollView(
               child: FutureBuilder<List<Results>>(
-                  future: groupsController.fetchGroupsList(),
+                  future: groupsController.fetchGroupsList(context),
                   builder: (context, snapshot){
                     if(snapshot.connectionState == ConnectionState.waiting){
                       return Center(
@@ -704,7 +704,7 @@ class _GroupsPageState extends State<GroupsPage> {
                                                                             : _validate =
                                                                         false;
 
-                                                                        groupsController.postGroup(_nameController.text, _shortNameController.text);
+                                                                        groupsController.postGroup(_nameController.text, _shortNameController.text, context);
                                                                         Navigator.of(context, rootNavigator: true).pop();
 
                                                                       });

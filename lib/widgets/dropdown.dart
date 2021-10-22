@@ -15,7 +15,7 @@ class _DropDownSelectState extends State<DropDownSelect> {
   Widget build(BuildContext context) {
     var groupsController = GroupsController(GroupsInventoryRepository());
     return FutureBuilder(
-      future: groupsController.fetchGroupsList(),
+      future: groupsController.fetchGroupsList(context),
       builder: (BuildContext context, AsyncSnapshot snap){
         return DropdownButton(
           value: groupId,

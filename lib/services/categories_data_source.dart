@@ -40,64 +40,68 @@ class CategoriesDataSource extends  DataTableSource{
         DataCell(Text('${_result.isActive.toString() == "true" ? "Active" : "Inactive"}',style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.w500, color: primaryColor),)),
 
         DataCell(
-            FutureBuilder<List<Result>>(
-              future: categoriesController.fetchCategoryList(),
-              builder: (context, snapshot){
-                return PopupMenuButton(
-                  elevation: 20.0,
-                  icon: Icon(
-                    Icons.more_horiz,
-                    color: secondaryColor.withOpacity(0.5),
-                  ),
-                  itemBuilder: (context) =>[
-                    PopupMenuItem(
-                      child: Row(
-                        children: [
-                          SvgPicture.asset("assets/icons/view.svg", height: 18.0,color: Colors.blueGrey, ),
-                          SizedBox(width:10.0),
-                          Text("View Details", style: TextStyle(color: Colors.blueGrey, fontSize: 13.0),)
-                        ],
+            Builder(
+              builder: (newContext) {
+                return FutureBuilder<List<Result>>(
+                  future: categoriesController.fetchCategoryList(newContext),
+                  builder: (context, snapshot){
+                    return PopupMenuButton(
+                      elevation: 20.0,
+                      icon: Icon(
+                        Icons.more_horiz,
+                        color: secondaryColor.withOpacity(0.5),
                       ),
-                      value: 1,
-                    ),
-                    PopupMenuItem(
-                      child: Row(
-                        children: [
-                          SvgPicture.asset("assets/icons/repeat.svg", height: 18.0,color: Colors.blueGrey, ),
-                          SizedBox(width:10.0),
-                          Text("Orders", style: TextStyle(color: Colors.blueGrey, fontSize: 13.0),)
-                        ],
-                      ),
-                      value: 2,
-                    ),
-                    PopupMenuItem(
-                      child: Row(
-                        children: [
-                          SvgPicture.asset("assets/icons/activities.svg", height: 18.0,color: Colors.blueGrey, ),
-                          SizedBox(width:10.0),
-                          Text("Activities", style: TextStyle(color: Colors.blueGrey, fontSize: 13.0),)
-                        ],
-                      ),
-                      value: 3,
-                    ),
+                      itemBuilder: (context) =>[
+                        PopupMenuItem(
+                          child: Row(
+                            children: [
+                              SvgPicture.asset("assets/icons/view.svg", height: 18.0,color: Colors.blueGrey, ),
+                              SizedBox(width:10.0),
+                              Text("View Details", style: TextStyle(color: Colors.blueGrey, fontSize: 13.0),)
+                            ],
+                          ),
+                          value: 1,
+                        ),
+                        PopupMenuItem(
+                          child: Row(
+                            children: [
+                              SvgPicture.asset("assets/icons/repeat.svg", height: 18.0,color: Colors.blueGrey, ),
+                              SizedBox(width:10.0),
+                              Text("Orders", style: TextStyle(color: Colors.blueGrey, fontSize: 13.0),)
+                            ],
+                          ),
+                          value: 2,
+                        ),
+                        PopupMenuItem(
+                          child: Row(
+                            children: [
+                              SvgPicture.asset("assets/icons/activities.svg", height: 18.0,color: Colors.blueGrey, ),
+                              SizedBox(width:10.0),
+                              Text("Activities", style: TextStyle(color: Colors.blueGrey, fontSize: 13.0),)
+                            ],
+                          ),
+                          value: 3,
+                        ),
 
-                    PopupMenuItem(
-                      onTap: ()  {
-                        //Here is the delete functionality
-                        categoriesController.deleteCategory(_result.id.toString());
-                      },
-                      child:Row(
-                        children: [
-                          SvgPicture.asset("assets/icons/garbage.svg", height: 18.0,color: Colors.blueGrey, ),
-                          SizedBox(width:10.0),
-                          Text("Delete", style: TextStyle(color: Colors.blueGrey, fontSize: 13.0),)
-                        ],
-                      ),
-                      value: 4,
-                    ),
-                  ],
+                        PopupMenuItem(
+                          onTap: ()  {
+                            //Here is the delete functionality
+                            categoriesController.deleteCategory(_result.id.toString(), context);
+                          },
+                          child:Row(
+                            children: [
+                              SvgPicture.asset("assets/icons/garbage.svg", height: 18.0,color: Colors.blueGrey, ),
+                              SizedBox(width:10.0),
+                              Text("Delete", style: TextStyle(color: Colors.blueGrey, fontSize: 13.0),)
+                            ],
+                          ),
+                          value: 4,
+                        ),
+                      ],
+                    );
+                  },
                 );
-              },
+              }
             )
         ),
       ],

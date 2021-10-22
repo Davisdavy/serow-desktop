@@ -1,39 +1,42 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
+import 'package:serow/models/auth/auth.dart';
 import 'package:serow/models/inventory/subgroups.dart';
+import 'package:serow/respository/auth_provider.dart';
 import 'package:serow/respository/subgroup_repository.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:serow/services/services.dart';
+
 class SubgroupInventoryRepository implements SubgroupRepository{
-  String baseUrl = 'https://serow.herrings.co.ke/api/v1';
-  String bearer = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjM0NjU5MDY1LCJqdGkiOiIxNTRjZDE1NzU3Mzc0M2RkYTMzZjI2MDY0OTdiOWFlZSIsInVzZXJfaWQiOiJlOWJlZmRlYS1jOWEyLTRiYjYtYjFmMy02MDE1NTJlNTU1NTgifQ.itFBwtHrgJNbpjNaw-4_8jeVxKpB9uJClaz-1zjjg4U';
 
   //Subgroups
   @override
-  Future<Results> deletedSubGroup(String id) async {
-    var url = Uri.parse('$baseUrl/inventory/subgroups/${id}/');
-
+  Future<Results> deletedSubGroup(String id, BuildContext context) async {
+    Auth user = Provider.of<AuthProvider>(context, listen: false).auth;
     final http.Response response =
-    await http.delete(url, headers: {
+    await http.delete(Uri.parse('${AppUrl.subgroups}$id/'), headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
-      "Authorization": "$bearer",
+      "Authorization": "Bearer ${user.accessToken.toString()}",
     });
 
     return  Results.fromJson(json.decode(response.body));
   }
 
   @override
-  Future<List<Results>> getSubGroupList() async {
+  Future<List<Results>> getSubGroupList(BuildContext context) async {
     //https://serow.herrings.co.ke/api/v1/inventory/brands/
     List<Results> subgroupList = [];
-    var url = Uri.parse('$baseUrl/inventory/subgroups/');
+    context.watch<AuthProvider>();
+    Auth user = Provider.of<AuthProvider>(context).auth;
 
-    var response = await http.get(url, headers: {
+    var response = await http.get(Uri.parse('${AppUrl.subgroups}'), headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
       "Authorization":
-      "$bearer"
+      "Bearer ${user.accessToken.toString()}"
     }, );
     print('Get subgroups status code: ${response.statusCode}');
     var body = json.decode(response.body);//convert
@@ -48,13 +51,13 @@ class SubgroupInventoryRepository implements SubgroupRepository{
 
   @override
   Future<String> patchSubGroup(Results subgroups) async {
-    var url = Uri.parse('$baseUrl/inventory/subgroups/${subgroups.id}');
+
     //call back
     String responseData = '';
-    await http.patch(url, headers: {
+    await http.patch(Uri.parse('${AppUrl.subgroups}${subgroups.id}'), headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
-      "Authorization": "$bearer"
+      "Authorization": "Bearer "
     },
         body:{'name': subgroups.name.toString(), 'slug': subgroups.slug.toString(), 'priority': subgroups.group.id.toString()}
     ).then((response) {
@@ -67,12 +70,12 @@ class SubgroupInventoryRepository implements SubgroupRepository{
   }
 
   @override
-  Future<Subgroups> postSubGroup(String name, String groupId,) async {
-    var url = Uri.parse('$baseUrl/inventory/subgroups/');
-    var response = await http.post(url,headers: {
+  Future<Subgroups> postSubGroup(String name, String groupId, BuildContext context) async {
+    Auth user = Provider.of<AuthProvider>(context,listen: false).auth;
+    var response = await http.post(Uri.parse('${AppUrl.subgroups}'),headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
-      "Authorization":  "$bearer"
+      "Authorization":  "Bearer ${user.accessToken.toString()}"
     }, body: jsonEncode(<dynamic, String>{
       'name': name,
       'short_name': groupId,
@@ -81,18 +84,17 @@ class SubgroupInventoryRepository implements SubgroupRepository{
     print('Post status code: ${response.statusCode}');
     print('Post body: ${response.body}');
     // print('Post toJSON: ${br}');
-    //return grou(response.body);
+    return subgroupFromJson(response.body);
   }
 
   @override
   Future<String> putSubGroup(Results subgroups) async {
-    var url = Uri.parse('$baseUrl/inventory/subgroups/${subgroups.id}');
     //call back
     String responseData = '';
-    await http.put(url, headers: {
+    await http.put(Uri.parse('${AppUrl.subgroups}${subgroups.id}'), headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
-      "Authorization": "$bearer"
+      "Authorization": "Bearer "
     }, body:{'name': subgroups.name.toString(), 'slug': subgroups.slug.toString(), 'country': subgroups.group.id.toString()}
     ).then((response) {
       //screen -> Data

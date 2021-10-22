@@ -1,38 +1,41 @@
+import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
+import 'package:serow/models/auth/auth.dart';
 import 'package:serow/models/inventory/locations.dart';
+import 'package:serow/respository/auth_provider.dart';
 import 'package:serow/respository/locations_repository.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:serow/services/services.dart';
+
 class LocationsInventoryRepository implements LocationsRepository{
-  String baseUrl = 'https://serow.herrings.co.ke/api/v1';
-  String bearer = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjM0NjU5MDY1LCJqdGkiOiIxNTRjZDE1NzU3Mzc0M2RkYTMzZjI2MDY0OTdiOWFlZSIsInVzZXJfaWQiOiJlOWJlZmRlYS1jOWEyLTRiYjYtYjFmMy02MDE1NTJlNTU1NTgifQ.itFBwtHrgJNbpjNaw-4_8jeVxKpB9uJClaz-1zjjg4U';
 
   //Subgroups
   @override
-  Future<Results> deletedLocation(String id) async {
-    var url = Uri.parse('$baseUrl/inventory/locations/${id}/');
-
+  Future<Results> deletedLocation(String id, BuildContext context) async {
+    Auth user = Provider.of<AuthProvider>(context, listen: false).auth;
     final http.Response response =
-    await http.delete(url, headers: {
+    await http.delete(Uri.parse('${AppUrl.locations}$id/'), headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
-      "Authorization": "$bearer",
+      "Authorization": "Bearer ${user.accessToken.toString()}",
     });
 
     return  Results.fromJson(json.decode(response.body));
   }
 
   @override
-  Future<List<Results>> getLocationList() async {
+  Future<List<Results>> getLocationList(BuildContext context) async {
     //https://serow.herrings.co.ke/api/v1/inventory/brands/
     List<Results> subgroupList = [];
-    var url = Uri.parse('$baseUrl/inventory/locations/');
-
-    var response = await http.get(url, headers: {
+    context.watch<AuthProvider>();
+    Auth user = Provider.of<AuthProvider>(context).auth;
+    var response = await http.get(Uri.parse('${AppUrl.locations}'), headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
       "Authorization":
-      "$bearer"
+      "Bearer ${user.accessToken.toString()}"
     }, );
     print('Get subgroups status code: ${response.statusCode}');
     var body = json.decode(response.body);//convert
@@ -47,13 +50,13 @@ class LocationsInventoryRepository implements LocationsRepository{
 
   @override
   Future<String> patchLocation(Results results) async {
-    var url = Uri.parse('$baseUrl/inventory/locations/${results.id}');
+
     //call back
     String responseData = '';
-    await http.patch(url, headers: {
+    await http.patch(Uri.parse('${AppUrl.locations}${results.id}'), headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
-      "Authorization": "$bearer"
+      "Authorization": "Bearer "
     },
         body:{'name': results.name.toString(), 'slug': results.code.toString(), 'priority': results.branch.id.toString()}
     ).then((response) {
@@ -66,12 +69,12 @@ class LocationsInventoryRepository implements LocationsRepository{
   }
 
   @override
-  Future<Locations> postLocation(String name, String code, String branchId) async {
-    var url = Uri.parse('$baseUrl/inventory/locations/');
-    var response = await http.post(url,headers: {
+  Future<Locations> postLocation(String name, String code, String branchId, BuildContext context) async {
+    Auth user = Provider.of<AuthProvider>(context,listen: false).auth;
+    var response = await http.post(Uri.parse('${AppUrl.locations}'),headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
-      "Authorization":  "$bearer"
+      "Authorization":  "Bearer ${user.accessToken.toString()}"
     }, body: jsonEncode(<dynamic, String>{
       'name': name,
       'code': code,
@@ -85,13 +88,12 @@ class LocationsInventoryRepository implements LocationsRepository{
 
   @override
   Future<String> putLocation(Results results) async {
-    var url = Uri.parse('$baseUrl/inventory/locations/${results.id}');
     //call back
     String responseData = '';
-    await http.put(url, headers: {
+    await http.put(Uri.parse('${AppUrl.locations}${results.id}'), headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
-      "Authorization": "$bearer"
+      "Authorization": "Bearer "
     }, body:{'name': results.name.toString(), 'slug': results.code.toString(), 'country': results.branch.id.toString()}
     ).then((response) {
       //screen -> Data

@@ -82,7 +82,7 @@ class _StrengthsPageState extends State<StrengthsPage> {
               },
               child: SingleChildScrollView(
                 child: FutureBuilder<List<Results>>(
-                    future: strengthsController.fetchStrengthsList(),
+                    future: strengthsController.fetchStrengthsList(context),
                     builder: (context, snapshot){
                       if(snapshot.connectionState == ConnectionState.waiting){
                         return Center(
@@ -1069,7 +1069,7 @@ class _StrengthsPageState extends State<StrengthsPage> {
                                                                           _validate = true
                                                                               : _validate =
                                                                           false;
-                                                                          strengthsController.postStrength(_nameController.text, _shortNameController.text);
+                                                                          strengthsController.postStrength(_nameController.text, _shortNameController.text, context);
                                                                           _nameController
                                                                               .clear();
                                                                           _shortNameController

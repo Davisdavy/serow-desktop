@@ -1,4 +1,5 @@
 
+import 'package:flutter/cupertino.dart';
 import 'package:serow/models/inventory/locations.dart';
 import 'package:serow/respository/locations_repository.dart';
 
@@ -7,8 +8,8 @@ class LocationsController{
   LocationsController(this._repository);
 
   //get
-  Future<List<Results> >fetchLocationsList(){
-    return _repository.getLocationList();
+  Future<List<Results> >fetchLocationsList(BuildContext context){
+    return _repository.getLocationList(context);
   }
 
   //patch
@@ -22,12 +23,12 @@ class LocationsController{
   }
 
   //delete
-  Future<void>deleteLocations(String id) async{
-    return _repository.deletedLocation(id);
+  Future<void>deleteLocations(String id, BuildContext context) async{
+    return _repository.deletedLocation(id, context);
   }
 
   //delete
-  Future<Locations>postLocations(String name, String code, String branchId) async{
-    return _repository.postLocation(name, code,branchId);
+  Future<Locations>postLocations(String name, String code, String branchId, BuildContext context) async{
+    return _repository.postLocation(name, code,branchId, context);
   }
 }

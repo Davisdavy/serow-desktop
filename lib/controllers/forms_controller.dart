@@ -1,5 +1,6 @@
 
 
+import 'package:flutter/material.dart';
 import 'package:serow/models/inventory/forms.dart';
 import 'package:serow/respository/forms_repository.dart';
 
@@ -8,8 +9,8 @@ class FormsController{
   FormsController(this._repository);
 
   //get
-  Future<List<Results> >fetchFormsList(){
-    return _repository.getFormsList();
+  Future<List<Results> >fetchFormsList(BuildContext context){
+    return _repository.getFormsList(context);
   }
 
   //patch
@@ -23,12 +24,12 @@ class FormsController{
   }
 
   //delete
-  Future<void>deleteForms(String id) async{
-    return _repository.deletedForms(id);
+  Future<void>deleteForms(String id, BuildContext context) async{
+    return _repository.deletedForms(id, context);
   }
 
   //delete
-  Future<Forms>postForms(String name) async{
-    return _repository.postForms(name);
+  Future<Forms>postForms(String name, BuildContext context) async{
+    return _repository.postForms(name, context);
   }
 }

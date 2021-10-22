@@ -1,18 +1,19 @@
 
 
 
+import 'package:flutter/cupertino.dart';
 import 'package:serow/models/inventory/shelves.dart';
 
 abstract class ShelvesRepository {
 //subgroups
-  Future<List<Results>> getShelveList();
+  Future<List<Results>> getShelveList(BuildContext context);
 
   Future<String> patchShelf(Results groups);
 
   Future<String> putShelf(Results groups);
 
-  Future<Results> deletedShelf(String id);
+  Future<Results> deletedShelf(String id, BuildContext context);
 
-  Future<Shelves> postShelf(String name, String locationId);
+  Future<Shelves> postShelf(String name, String locationId, BuildContext context);
 
 }

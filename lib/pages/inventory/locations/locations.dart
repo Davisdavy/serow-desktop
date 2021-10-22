@@ -77,7 +77,7 @@ class _LocationsPageState extends State<LocationsPage> {
             SingleChildScrollView(
               child: FutureBuilder(
                   future: Future.wait<Object>([
-                    locationsController.fetchLocationsList(),
+                    locationsController.fetchLocationsList(context),
 
                   ]),
                   builder: (context,  snapshot){
@@ -781,7 +781,7 @@ class _LocationsPageState extends State<LocationsPage> {
                                                                         // _shortNameController.text.isEmpty ? _validate = true : _validate = false;
                                                                         print("Posting..${_nameController.text}, ${_codeController.text},$branchId}");
 
-                                                                        locationsController.postLocations(_nameController.text, _codeController.text,branchId);
+                                                                        locationsController.postLocations(_nameController.text, _codeController.text,branchId, context);
                                                                         _nameController
                                                                             .clear();
                                                                         _codeController
