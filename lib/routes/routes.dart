@@ -15,6 +15,12 @@ const PricingPageRoute = 'Pricing';
 const ShelvesPageRoute = 'Shelves';
 const StrengthsPageRoute = 'Strengths';
 const SubgroupsPageRoute = 'Subgroups';
+const BranchesPageRoute ='Branches';
+const ClientsPageRoute ='Clients';
+const CompanyPageRoute ='Company';
+const CountriesPageRoute = 'Countries';
+const RegionsPageRoute = 'Regions';
+const ServersPageRoute = 'Servers';
 const AccountsPageRoute = 'Accounts';
 const ReportsPageRoute = 'Reports';
 const OrdersPageRoute = 'Orders';
@@ -57,4 +63,13 @@ List sideItems5 = [
   StockRequisitionPageRoute,
   StrengthsPageRoute,
   SubgroupsPageRoute
+];
+
+List sideItems6 = [
+  BranchesPageRoute,
+  ClientsPageRoute,
+  CompanyPageRoute,
+  CountriesPageRoute,
+  RegionsPageRoute,
+  ServersPageRoute
 ];

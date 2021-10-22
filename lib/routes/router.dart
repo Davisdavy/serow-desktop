@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:serow/pages/accounts/accounts.dart';
+import 'package:serow/pages/entities/branches/branches.dart';
+import 'package:serow/pages/entities/clients/clients.dart';
+import 'package:serow/pages/entities/company/company.dart';
+import 'package:serow/pages/entities/regions/regions.dart';
+import 'package:serow/pages/entities/servers/servers.dart';
 import 'package:serow/pages/faqs/faqs.dart';
 
 import 'package:serow/pages/helpsupport/help_support.dart';
@@ -56,6 +61,16 @@ Route<dynamic> generateRoute(RouteSettings settings){
       return _getPageRoute(StrengthsPage());
     case SubgroupsPageRoute:
       return _getPageRoute(SubgroupsPage());
+    case BranchesPageRoute:
+      return _getPageRoute(BranchesPage());
+    case ClientsPageRoute:
+      return _getPageRoute(ClientsPage());
+    case CompanyPageRoute:
+      return _getPageRoute(CompanyPage());
+    case RegionsPageRoute:
+      return _getPageRoute(RegionsPage());
+    case ServersPageRoute:
+      return _getPageRoute(ServersPage());
     case ProductsPageRoute:
       return _getPageRoute(ProductsPage());
     case CustomersPageRoute:

@@ -87,6 +87,36 @@ class SideMenu extends StatelessWidget {
           ],
         ),
         ExpansionTile(
+          title: Text("ENTITIES", style: TextStyle(color: Colors.grey, fontSize: 16),),
+          children: [
+            Column(
+                mainAxisSize: MainAxisSize.min,
+                children:
+                sideItems6
+                    .map((itemName) => Column(
+                  children: [
+
+                    SideMenuItem(
+                        itemName: itemName == AuthenticationPageRoute ? "Log Out" :itemName,
+                        onTap: () {
+                          if(itemName == AuthenticationPageRoute){
+                            Get.offAll(() => AuthenticationPage());
+                            // menuController.changeActiveItemTo(overviewPageDisplayName);
+
+                          }
+                          if (!menuController.isActive(itemName)) {
+                            menuController.changeActiveItemTo(itemName);
+                            // if(ResponsiveWidget.isSmallScreen(context))
+                            //   Get.back();
+                            navigationController.navigateTo(itemName);
+                          }
+                        }),
+                  ],
+                ) ).toList()
+            ),
+          ],
+        ),
+        ExpansionTile(
           title: Text("SALES", style: TextStyle(color: Colors.grey, fontSize: 16),),
           children: [
             Column(

@@ -24,17 +24,6 @@ class HorizontalMenuItem extends StatelessWidget {
           color: menuController.isHovering(itemName) ? Colors.grey.withOpacity(.1) : Colors.transparent,
           child: Row(
             children: [
-              // Visibility(
-              //   visible: menuController.isHovering(itemName) || menuController.isActive(itemName),
-              //   maintainSize: true,
-              //   maintainAnimation: true,
-              //   maintainState: true,
-              //   child: Container(
-              //     width: 6,
-              //     height: 40,
-              //     color: primaryColor,
-              //   ),
-              // ),
               SizedBox(width:_width / 88),
 
               Padding(

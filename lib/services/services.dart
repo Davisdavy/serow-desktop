@@ -13,6 +13,12 @@ class AppUrl {
   static const String  stock_requisition= baseURL + "/inventory/stock-requisition/";
   static const String  strengths= baseURL + "/inventory/strengths/";
   static const String  subgroups= baseURL + "/inventory/subgroups/";
+  static const String  branches= baseURL + "/entities/branches/";
+  static const String  servers= baseURL + "/inventory/servers/";
+  static const String  clients= baseURL + "/inventory/clients/";
+  static const String  company= baseURL + "/inventory/company/";
+  static const String  countries= baseURL + "/inventory/countries/";
+  static const String  regions= baseURL + "/inventory/regions/";
 
 
 
