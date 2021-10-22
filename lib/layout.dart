@@ -1,11 +1,17 @@
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:serow/models/auth/auth.dart';
 import 'package:serow/responsive.dart';
+import 'package:serow/respository/user_provider.dart';
 import 'package:serow/screens/large_screen.dart';
 import 'package:serow/widgets/side_menu.dart';
 import 'package:serow/widgets/top_nav.dart';
 
 class Layout extends StatelessWidget {
+  final Auth  user;
+
+  Layout({Key key, @required this.user}) : super(key: key);
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
   @override
   Widget build(BuildContext context) {

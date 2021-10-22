@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:serow/constants.dart';
+import 'package:serow/models/auth/auth.dart';
+import 'package:serow/respository/auth_provider.dart';
+import 'package:serow/respository/user_provider.dart';
 
-AppBar topNavigationBar(BuildContext context, GlobalKey<ScaffoldState> key) =>
+AppBar topNavigationBar(
+    BuildContext context, GlobalKey<ScaffoldState> key) =>
+
     AppBar(
       automaticallyImplyLeading: false,
       elevation: 1,
@@ -98,16 +104,26 @@ AppBar topNavigationBar(BuildContext context, GlobalKey<ScaffoldState> key) =>
                         ),
                         SizedBox(width: 8.0,),
                         Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              //User name
-                              Text("Emmanuel Kiyai",overflow: TextOverflow.ellipsis, style: TextStyle( color: secondaryColor,fontWeight: FontWeight.w500),),
-                              SizedBox(height:2.0),
-                              //user role
-                              Text("Administrator",overflow: TextOverflow.ellipsis, style: TextStyle(color: secondaryColor,fontWeight: FontWeight.w200, fontSize: 10),),
-                            ],
+                          child: Builder(
+                            builder: (context) {
+                              Auth user = Provider.of<AuthProvider>(context).auth;
+                              return Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children:
+
+                                [
+                                  //User name
+                                      Text("${user.user.fullName}",
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle( color: secondaryColor,fontWeight: FontWeight.w500),),
+
+                                  SizedBox(height:2.0),
+                                  //user role
+                                  Text("${user.user.role}",overflow: TextOverflow.ellipsis, style: TextStyle(color: secondaryColor,fontWeight: FontWeight.w200, fontSize: 10),),
+                                ],
+                              );
+                            }
                           ),
                         )
                       ],

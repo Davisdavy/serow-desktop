@@ -83,6 +83,7 @@ class _FormsPageState extends State<FormsPage> {
                       );
                     }
                     if(snapshot.hasError){
+                      print("Error: ${snapshot.error}");
                       return Column(
                         children: [
                           Padding(

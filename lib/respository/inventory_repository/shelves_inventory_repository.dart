@@ -6,7 +6,7 @@ import 'package:serow/respository/shelves_repository.dart';
 
 class ShelvesInventoryRepository implements ShelvesRepository{
   String baseUrl = 'https://serow.herrings.co.ke/api/v1';
-  String bearer = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjM0NTk3NDE5LCJqdGkiOiI5OWI5N2FjMjQ5ZDI0ZDY4YmY5MzUyOWMwZTkyNmFjZCIsInVzZXJfaWQiOiJlOWJlZmRlYS1jOWEyLTRiYjYtYjFmMy02MDE1NTJlNTU1NTgifQ.vbWhAbW8TR03GpEWHMAX9bLP65GcUbFnZNAMoq9Yz6A';
+  String bearer = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjM0NjU5MDY1LCJqdGkiOiIxNTRjZDE1NzU3Mzc0M2RkYTMzZjI2MDY0OTdiOWFlZSIsInVzZXJfaWQiOiJlOWJlZmRlYS1jOWEyLTRiYjYtYjFmMy02MDE1NTJlNTU1NTgifQ.itFBwtHrgJNbpjNaw-4_8jeVxKpB9uJClaz-1zjjg4U';
 
   //Subgroups
   @override

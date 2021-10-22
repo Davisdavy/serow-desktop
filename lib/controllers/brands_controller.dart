@@ -1,3 +1,5 @@
+
+import 'package:flutter/material.dart';
 import 'package:serow/models/inventory/brands.dart';
 import 'package:serow/respository/brands_repository.dart';
 
@@ -6,8 +8,8 @@ class BrandsController{
   BrandsController(this._repository);
 
   //get
-  Future<List<Results> >fetchBrandList(){
-    return _repository.getBrandList();
+  Future<List<Results> >fetchBrandList(BuildContext context){
+    return _repository.getBrandList(context);
   }
 
   //patch
@@ -21,12 +23,12 @@ class BrandsController{
   }
 
   //delete
-  Future<void>deleteBrand(String id) async{
-    return _repository.deletedBrand(id);
+  Future<void>deleteBrand(String id, BuildContext context) async{
+    return _repository.deletedBrand(id, context);
   }
 
   //delete
-  Future<Brands>postBrand(String name, String shortName, String country) async{
-    return _repository.postBrand(name,shortName,country);
+  Future<Brands>postBrand(String name, String shortName, String country, BuildContext context) async{
+    return _repository.postBrand(name,shortName,country, context);
   }
 }

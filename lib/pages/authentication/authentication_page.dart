@@ -1,15 +1,30 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 import 'package:serow/constants.dart';
 import 'package:serow/layout.dart';
+import 'package:serow/models/auth/auth.dart';
+import 'package:serow/respository/auth_provider.dart';
+import 'package:serow/respository/inventory_repository/authentication_provider.dart';
+import 'package:serow/respository/user_provider.dart';
 import 'package:serow/widgets/custom_text.dart';
 
-class AuthenticationPage extends StatelessWidget {
+class AuthenticationPage extends StatefulWidget {
   const AuthenticationPage({Key key}) : super(key: key);
 
   @override
+  State<AuthenticationPage> createState() => _AuthenticationPageState();
+}
+
+class _AuthenticationPageState extends State<AuthenticationPage> {
+  @override
   Widget build(BuildContext context) {
+    AuthenticationProvider auth = Provider.of<AuthenticationProvider>(context);
+    final TextEditingController _emailController = TextEditingController();
+    final TextEditingController _passwordController = TextEditingController();
+    bool _validate =false;
+
     return Scaffold(
       body: Container(
         child: Row(
@@ -61,8 +76,14 @@ class AuthenticationPage extends StatelessWidget {
                                 width: 400,
 
                                 child: TextField(
+                                  autofocus: false,
+                                  controller: _emailController,
                                   decoration: InputDecoration(
                                     //  labelText: "Email Address",
+
+                                      errorText: _validate
+                                          ? 'Email or username Can\'t Be Empty'
+                                          : null,
                                       hintText: "Email Address",
                                       hintStyle: TextStyle(fontSize: 14),
                                       focusedBorder: OutlineInputBorder(
@@ -96,9 +117,14 @@ class AuthenticationPage extends StatelessWidget {
                               Container(
                                 width: 400,
                                 child: TextField(
+                                  controller: _passwordController,
                                   obscureText: true,
+                                  autofocus: false,
                                   decoration: InputDecoration(
                                     //  labelText: "Email Address",
+                                      errorText: _validate
+                                          ? 'Password Can\'t Be Empty'
+                                          : null,
                                       hintText: "Password",
                                       hintStyle: TextStyle(fontSize: 14),
                                       focusedBorder: OutlineInputBorder(
@@ -153,7 +179,21 @@ class AuthenticationPage extends StatelessWidget {
                         child: InkWell(
                           onTap: (){
                             //Get.offAllNamed(rootRoute);
-                            Get.offAll(() => Layout());
+                            final Future<Map<String, dynamic>> successfulMessage =
+                            auth.loginUser(_emailController.text, _passwordController.text);
+
+                            successfulMessage.then((response) {
+                              if (response['status']) {
+                                Auth user = response['user'];
+                                print('User saved ${user.user.fullName}');
+                                Provider.of<AuthProvider>(context, listen: false).setAuth(user);
+                                Get.offAll(() => Layout());
+                              } else {
+
+                                Text("Failed Login");
+                              }
+                            });
+
                           },
                           child: Container(
                             decoration: BoxDecoration(color: primaryColor,

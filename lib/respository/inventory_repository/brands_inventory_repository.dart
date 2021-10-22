@@ -1,39 +1,42 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:serow/models/auth/auth.dart';
 import 'package:serow/models/inventory/brands.dart';
+import 'package:serow/respository/auth_provider.dart';
 import 'package:serow/respository/brands_repository.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class BrandsInventoryRepository implements BrandsRepository{
-  
-  String baseUrl = 'https://serow.herrings.co.ke/api/v1';
-  String bearer = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjM0NTk3NDE5LCJqdGkiOiI5OWI5N2FjMjQ5ZDI0ZDY4YmY5MzUyOWMwZTkyNmFjZCIsInVzZXJfaWQiOiJlOWJlZmRlYS1jOWEyLTRiYjYtYjFmMy02MDE1NTJlNTU1NTgifQ.vbWhAbW8TR03GpEWHMAX9bLP65GcUbFnZNAMoq9Yz6A';
+import 'package:serow/services/services.dart';
+
+
+class BrandsInventoryRepository implements BrandsRepository {
 
   //Brands
   @override
-  Future<Results> deletedBrand(String id) async{
-  var url = Uri.parse('$baseUrl/inventory/brands/${id}/');
-
+  Future<Results> deletedBrand(String id, BuildContext context) async{
+    Auth user = Provider.of<AuthProvider>(context, listen: false).auth;
   final http.Response response =
-  await http.delete(url, headers: {
+  await http.delete(Uri.parse('${AppUrl.brands}$id/'), headers: {
     'Content-type': 'application/json',
     'Accept': 'application/json',
-    "Authorization": "$bearer",
+    "Authorization": "Bearer ${user.accessToken.toString()}",
   });
 
   return  Results.fromJson(json.decode(response.body));
   }
 
   @override
-  Future<List<Results>> getBrandList() async {
+  Future<List<Results>> getBrandList( BuildContext context) async {
     //https://serow.herrings.co.ke/api/v1/inventory/brands/
+    //ToDo: Pass ?all=True to get un-paginated data
     List<Results> resultList = [];
-    var url = Uri.parse('$baseUrl/inventory/brands/');
-
-    var response = await http.get(url, headers: {
+    context.watch<AuthProvider>();
+    Auth user = Provider.of<AuthProvider>(context).auth;
+    var response = await http.get(Uri.parse('${AppUrl.brands}'), headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
-      "Authorization":
-      "$bearer"
+      "Authorization": "Bearer ${user.accessToken.toString()}"
     }, );
     print('Get brands status code: ${response.statusCode}');
     var body = json.decode(response.body);//convert
@@ -49,13 +52,12 @@ class BrandsInventoryRepository implements BrandsRepository{
 
   @override
   Future<String> patchBrand(Results result) async {
-    var url = Uri.parse('$baseUrl/inventory/brands/${result.id}');
     //call back
     String responseData = '';
-    await http.patch(url, headers: {
+    await http.patch(Uri.parse('${AppUrl.brands}${result.id}'), headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
-      "Authorization": "$bearer"
+      "Authorization": "Bearer "
     }, body:{'name': result.name.toString(), 'short_name': result.shortName.toString(), 'country': result.country.toString()}
     ).then((response) {
       //screen -> Data
@@ -68,12 +70,12 @@ class BrandsInventoryRepository implements BrandsRepository{
   }
 
   @override
-  Future<Brands> postBrand(String name, String shortName, String country)  async {
-    var url = Uri.parse('$baseUrl/inventory/brands/');
-    var response = await http.post(url,headers: {
+  Future<Brands> postBrand(String name, String shortName, String country, BuildContext context)  async {
+    Auth user = Provider.of<AuthProvider>(context,listen: false).auth;
+    var response = await http.post(Uri.parse('${AppUrl.brands}'),headers: {
       'Content-type': 'application/json',
             'Accept': 'application/json',
-            "Authorization":  "$bearer"
+            "Authorization":  "Bearer ${user.accessToken.toString()}"
     }, body: jsonEncode(<dynamic, String>{
       'name': name,
       'short_name': shortName,
@@ -88,13 +90,12 @@ class BrandsInventoryRepository implements BrandsRepository{
   //Modify passed variables only and treat other variables as NULL or Default
   @override
   Future<String> putBrand(Results result) async {
-    var url = Uri.parse('$baseUrl/inventory/brands/${result.id}');
     //call back
     String responseData = '';
-    await http.put(url, headers: {
+    await http.put(Uri.parse('${AppUrl.brands}${result.id}'), headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
-      "Authorization": "$bearer"
+      "Authorization": "Bearer "
     }, body:{'name': result.name.toString(), 'short_name': result.shortName.toString(), 'country': result.country.toString()}
     ).then((response) {
       //screen -> Data
@@ -107,3 +108,4 @@ class BrandsInventoryRepository implements BrandsRepository{
 
 
 }
+
