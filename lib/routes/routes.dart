@@ -22,6 +22,7 @@ const CountriesPageRoute = 'Countries';
 const RegionsPageRoute = 'Regions';
 const ServersPageRoute = 'Servers';
 const AccountsPageRoute = 'Accounts';
+const CostCentersPageRoute = 'Cost Centers';
 const ReportsPageRoute = 'Reports';
 const OrdersPageRoute = 'Orders';
 const PredictionsPageRoute = 'Predictions';
@@ -36,7 +37,7 @@ List sideMenuItems = [OverviewPageRoute, NotificationsPageRoute];
 List sideItems1 = [ProductsPageRoute, CustomersPageRoute, SuppliersPageRoute];
 
 List sideItems2 = [
-  AccountsPageRoute,
+
   ReportsPageRoute,
   OrdersPageRoute,
   PredictionsPageRoute,
@@ -72,4 +73,9 @@ List sideItems6 = [
   CountriesPageRoute,
   RegionsPageRoute,
   ServersPageRoute
+];
+
+List sideItems7 = [
+  AccountsPageRoute,
+  CostCentersPageRoute
 ];

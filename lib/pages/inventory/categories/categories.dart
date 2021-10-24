@@ -23,14 +23,8 @@ class CategoriesPage extends StatefulWidget {
 
 
 class _CategoriesPageState extends State<CategoriesPage> {
-  GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
-  GlobalKey<RefreshIndicatorState>();
-  //List<Result> category_group_list = [];
-  var loading = false;
+
   double pageCount = 0;
-  bool showLoadingIndicator = false;
-  bool valuefirst = false;
-  bool valuesecond = false;
   String groupId;
   String subgroupId;
 

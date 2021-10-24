@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:serow/pages/accounts/accounts.dart';
+import 'package:serow/pages/accounts/cost_centers/cost_centers.dart';
 import 'package:serow/pages/entities/branches/branches.dart';
 import 'package:serow/pages/entities/clients/clients.dart';
 import 'package:serow/pages/entities/company/company.dart';
@@ -91,6 +92,8 @@ Route<dynamic> generateRoute(RouteSettings settings){
       return _getPageRoute(ReportsPage());
     case AccountsPageRoute:
       return _getPageRoute(AccountsPage());
+    case CostCentersPageRoute:
+      return _getPageRoute(CostCentersPage());
     case OrdersPageRoute:
       return _getPageRoute(OrdersPage());
     default:

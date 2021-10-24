@@ -19,6 +19,8 @@ class AppUrl {
   static const String  company= baseURL + "/inventory/company/";
   static const String  countries= baseURL + "/inventory/countries/";
   static const String  regions= baseURL + "/inventory/regions/";
+  static const String  accounts= baseURL + "/accounts/";
+  static const String  cost_centers= baseURL + "/accounts/costcentres/";
 
 
 

@@ -2,70 +2,60 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:serow/constants.dart';
-import 'package:serow/controllers/branches_controller.dart';
 import 'package:serow/controllers/controller.dart';
 import 'package:serow/controllers/cost_centers_controller.dart';
-import 'package:serow/models/entities/branches.dart';
+import 'package:serow/models/accounts/cost_centers.dart';
 import 'package:serow/respository/accounts_repository/cost_centers_accounts_repository.dart';
-import 'package:serow/respository/entities_repository/branches_entities_repository.dart';
-import 'package:serow/services/branches_data_source.dart';
+import 'package:serow/services/cost_centers_data_source.dart';
 import 'package:serow/widgets/custom_text.dart';
 
 
-class BranchesPage extends StatefulWidget {
-  const BranchesPage({Key key}) : super(key: key);
+class CostCentersPage extends StatefulWidget {
+  const CostCentersPage({Key key}) : super(key: key);
 
   @override
-  _BranchesPageState createState() => _BranchesPageState();
+  _CostCentersPageState createState() => _CostCentersPageState();
 }
 
-class _BranchesPageState extends State<BranchesPage> {
+class _CostCentersPageState extends State<CostCentersPage> {
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _locationController = TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
-  String costCenterId;
+  final TextEditingController _codeController = TextEditingController();
 
   @override
   void dispose() {
     _nameController.dispose();
-    _locationController.dispose();
-    _phoneController.dispose();
+    _codeController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    var branchesController = BranchesController(BranchesEntitiesRepository());
     var costCenterController = CostCentersController(CostCentersAccountsRepository());
     return Container(
         color: Colors.blueGrey.shade100.withOpacity(0.1),
         child: Column(
             children: [
-          Obx(
-            () => Row(
-              children: [
-                Container(
-                    margin: EdgeInsets.only(top: 90),
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 60.0),
-                      child: CustomText(
-                        text: menuController.activeItem.value,
-                        size: 28,
-                        color: bgColor,
-                        weight: FontWeight.bold,
-                      ),
-                    )),
-              ],
-            ),
-          ),
+              Obx(
+                    () => Row(
+                  children: [
+                    Container(
+                        margin: EdgeInsets.only(top: 90),
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 60.0),
+                          child: CustomText(
+                            text: menuController.activeItem.value,
+                            size: 28,
+                            color: bgColor,
+                            weight: FontWeight.bold,
+                          ),
+                        )),
+                  ],
+                ),
+              ),
 
               SingleChildScrollView(
-                child: FutureBuilder(
-                  future: Future.wait<Object>([
-                    branchesController.fetchBranchList(context),
-                    costCenterController.fetchCostCenterList(context),
-                  ]),
-
+                child: FutureBuilder<List<Results>>(
+                    future: costCenterController.fetchCostCenterList(context),
                     builder: (context, snapshot){
                       if(snapshot.connectionState == ConnectionState.waiting){
                         return Center(
@@ -86,7 +76,7 @@ class _BranchesPageState extends State<BranchesPage> {
                                       left: 60.0,
                                     ),
                                     child: CustomText(
-                                      text: "You have a total of 5 branches.",
+                                      text: "You have a total of 5 cost centers.",
                                       //ToDo: Read from count method
                                       size: 12,
                                       color: Colors.blueGrey,
@@ -125,7 +115,7 @@ class _BranchesPageState extends State<BranchesPage> {
                                                     ),
                                                   ),
                                                   border: InputBorder.none,
-                                                  hintText: "Search branches",
+                                                  hintText: "Search cost centers",
                                                   hintStyle: TextStyle(
                                                       color: Colors.grey.shade500,
                                                       fontSize: 16.0,
@@ -191,7 +181,7 @@ class _BranchesPageState extends State<BranchesPage> {
                                         child: InkWell(
                                           child: Container(
                                             height: 40.0,
-                                            width: 150,
+                                            width: 155,
                                             decoration: BoxDecoration(
                                                 color: primaryColor,
                                                 borderRadius: BorderRadius.circular(5.0)),
@@ -204,13 +194,15 @@ class _BranchesPageState extends State<BranchesPage> {
                                                   size: 20,
                                                 ),
                                                 SizedBox(
-                                                  width: 8.0,
+                                                  width: 1.0,
                                                 ),
-                                                Text(
-                                                  "Add Branch",
-                                                  style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontWeight: FontWeight.w400),
+                                                Flexible(
+                                                  child: Text(
+                                                    "Add Cost Center",
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontWeight: FontWeight.w400),
+                                                  ),
                                                 )
                                               ],
                                             ),
@@ -240,7 +232,7 @@ class _BranchesPageState extends State<BranchesPage> {
                                     left: 60.0,
                                   ),
                                   child: CustomText(
-                                    text: "You have a total of 5 branches.",
+                                    text: "You have a total of 5 cost centers.",
                                     //ToDo: Read from count method
                                     size: 12,
                                     color: Colors.blueGrey,
@@ -279,7 +271,7 @@ class _BranchesPageState extends State<BranchesPage> {
                                                   ),
                                                 ),
                                                 border: InputBorder.none,
-                                                hintText: "Search branches",
+                                                hintText: "Search cost centers",
                                                 hintStyle: TextStyle(
                                                     color: Colors.grey.shade500,
                                                     fontSize: 16.0,
@@ -392,7 +384,7 @@ class _BranchesPageState extends State<BranchesPage> {
                                                                       .only(
                                                                       left: 18.0),
                                                                   child: CustomText(
-                                                                    text: "Add Branch",
+                                                                    text: "Add Cost Center",
                                                                     size: 22,
                                                                     color: Colors.blueGrey,
                                                                     weight: FontWeight.w500,
@@ -403,9 +395,7 @@ class _BranchesPageState extends State<BranchesPage> {
                                                                 child: InkWell(
                                                                   onTap: () {
                                                                     _nameController.clear();
-                                                                    _phoneController
-                                                                        .clear();
-                                                                    _locationController
+                                                                    _codeController
                                                                         .clear();
                                                                     Navigator.of(context,
                                                                         rootNavigator: true)
@@ -436,7 +426,7 @@ class _BranchesPageState extends State<BranchesPage> {
                                                             child: Material(
                                                                 child: CustomText(
                                                                   text:
-                                                                  "Enter details to create branch.",
+                                                                  "Enter details to create cost center.",
                                                                   size: 11.0,
                                                                   color: Colors.blueGrey,
                                                                   weight: FontWeight.w500,
@@ -460,7 +450,7 @@ class _BranchesPageState extends State<BranchesPage> {
                                                                           left: 12.0),
                                                                       child: Material(
                                                                           child: Text(
-                                                                            "Branch Name",
+                                                                            "Cost Center Name",
                                                                             style: TextStyle(
                                                                                 color: bgColor,
                                                                                 fontSize: 12,
@@ -490,7 +480,7 @@ class _BranchesPageState extends State<BranchesPage> {
                                                                                 //       ? 'Name Can\'t Be Empty'
                                                                                 //       : null,
                                                                                   hintText:
-                                                                                  "Branch Name",
+                                                                                  "Center Name",
                                                                                   hintStyle: TextStyle(
                                                                                       fontSize:
                                                                                       12),
@@ -532,7 +522,7 @@ class _BranchesPageState extends State<BranchesPage> {
                                                                           left: 12.0),
                                                                       child: Material(
                                                                           child: Text(
-                                                                            "Location",
+                                                                            "Code",
                                                                             style: TextStyle(
                                                                                 color: bgColor,
                                                                                 fontSize: 12,
@@ -554,7 +544,7 @@ class _BranchesPageState extends State<BranchesPage> {
                                                                           height: 40,
                                                                           child: Flexible(
                                                                             child: TextField(
-                                                                              controller: _locationController,
+                                                                              controller: _codeController,
                                                                               decoration:
                                                                               InputDecoration(
                                                                                 //  labelText: "Email Address",
@@ -593,164 +583,8 @@ class _BranchesPageState extends State<BranchesPage> {
                                                               ),
                                                             ],
                                                           ),
-                                                          SizedBox(
-                                                            height: 15.0,
-                                                          ),
-                                                          Row(
-                                                            mainAxisAlignment:
-                                                            MainAxisAlignment.start,
-                                                            children: [
-                                                              Flexible(
-                                                                child: Column(
-                                                                  crossAxisAlignment:
-                                                                  CrossAxisAlignment.start,
-                                                                  children: [
-                                                                    Padding(
-                                                                      padding:
-                                                                      const EdgeInsets.only(
-                                                                          left: 12.0),
-                                                                      child: Material(
-                                                                          child: Text(
-                                                                            "Phone",
-                                                                            style: TextStyle(
-                                                                                color: bgColor,
-                                                                                fontSize: 12,
-                                                                                fontWeight:
-                                                                                FontWeight
-                                                                                    .bold),
-                                                                          )),
-                                                                    ),
-                                                                    SizedBox(
-                                                                      height: 5,
-                                                                    ),
-                                                                    Material(
-                                                                      child: Padding(
-                                                                        padding:
-                                                                        const EdgeInsets.only(
-                                                                            left: 12.0),
-                                                                        child: Container(
-                                                                          width: 240,
-                                                                          height: 40,
-                                                                          child: Flexible(
-                                                                            child: TextField(
-                                                                              controller: _phoneController,
 
-                                                                              decoration:
-                                                                              InputDecoration(
-                                                                                  hintText:
-                                                                                  "Phone",
-                                                                                  hintStyle: TextStyle(
-                                                                                      fontSize:
-                                                                                      12),
-                                                                                  focusedBorder: OutlineInputBorder(
-                                                                                      borderSide: const BorderSide(
-                                                                                          color:
-                                                                                          primaryColor,
-                                                                                          width:
-                                                                                          0.4),
-                                                                                      borderRadius: BorderRadius
-                                                                                          .circular(
-                                                                                          5)),
-                                                                                  enabledBorder: OutlineInputBorder(
-                                                                                      borderSide: const BorderSide(
-                                                                                          color: Colors
-                                                                                              .grey,
-                                                                                          width:
-                                                                                          0.4),
-                                                                                      borderRadius:
-                                                                                      BorderRadius
-                                                                                          .circular(
-                                                                                          5))),
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                              Flexible(
-                                                                child: Column(
-                                                                  crossAxisAlignment:
-                                                                  CrossAxisAlignment.start,
-                                                                  children: [
-                                                                    Padding(
-                                                                      padding:
-                                                                      const EdgeInsets.only(
-                                                                          left: 12.0),
-                                                                      child: Material(
-                                                                          child: Text(
-                                                                            "Select Cost Center",
-                                                                            style: TextStyle(
-                                                                                color: bgColor,
-                                                                                fontSize: 12,
-                                                                                fontWeight:
-                                                                                FontWeight
-                                                                                    .bold),
-                                                                          )),
-                                                                    ),
-                                                                    SizedBox(
-                                                                      height: 5,
-                                                                    ),
-                                                                    Material(
-                                                                      child: Padding(
-                                                                        padding:
-                                                                        const EdgeInsets.only(
-                                                                            left: 12.0),
-                                                                        child: Container(
-                                                                          width: 240,
-                                                                          height: 40,
-                                                                          child: Flexible(
-                                                                            child: StatefulBuilder(
-                                                                              builder: (BuildContext context, StateSetter setState){
-                                                                                return DecoratedBox(
 
-                                                                                  decoration: ShapeDecoration(
-                                                                                      shape: RoundedRectangleBorder(
-                                                                                        side: BorderSide(width: 0.4, style: BorderStyle.solid, color: Colors.grey),
-                                                                                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                                                                                      )
-                                                                                  ),
-                                                                                  child: DropdownButtonHideUnderline(
-                                                                                    child: DropdownButton<String>(
-                                                                                      hint: Padding(
-                                                                                        padding: const EdgeInsets.all(8.0),
-                                                                                        child: Text("Cost Center", style: TextStyle(fontSize:
-                                                                                        12),),
-                                                                                      ),
-                                                                                      value: costCenterId,
-                                                                                      items: snapshot.data[1].map<DropdownMenuItem<String>>((item){
-                                                                                        return new DropdownMenuItem<String>(child: Padding(
-                                                                                          padding: const EdgeInsets.all(8.0),
-                                                                                          child: Text(
-                                                                                            item.name,
-                                                                                            style: TextStyle(fontSize:
-                                                                                            12,),
-                                                                                          ),
-                                                                                        ),
-                                                                                            value: item.id.toString()
-                                                                                        );
-                                                                                      }).toList(),
-                                                                                      onChanged: (String groupValue){
-                                                                                        setState(() {
-                                                                                          costCenterId = groupValue;
-
-                                                                                        });
-                                                                                      },
-                                                                                    ),
-                                                                                  ),
-                                                                                );
-                                                                              },
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
                                                           SizedBox(
                                                             height: 15.0,
                                                           ),
@@ -766,9 +600,7 @@ class _BranchesPageState extends State<BranchesPage> {
                                                                     child: InkWell(
                                                                       onTap: () {
                                                                         _nameController.clear();
-                                                                        _phoneController
-                                                                            .clear();
-                                                                        _locationController
+                                                                        _codeController
                                                                             .clear();
                                                                         Navigator.of(context,
                                                                             rootNavigator: true)
@@ -822,13 +654,11 @@ class _BranchesPageState extends State<BranchesPage> {
                                                                   Material(
                                                                     child: InkWell(
                                                                       onTap: ()  {
-                                                                        if(_nameController.value.text.isNotEmpty && _locationController.value.text.isNotEmpty){
-                                                                          branchesController.postBrand(_nameController.text, _locationController.text, _phoneController.text, context);
+                                                                        if(_nameController.value.text.isNotEmpty && _codeController.value.text.isNotEmpty){
+                                                                          costCenterController.postBrand(_nameController.text, _codeController.text, context);
                                                                           setState(() {
                                                                             _nameController.clear();
-                                                                            _phoneController
-                                                                                .clear();
-                                                                            _locationController
+                                                                            _codeController
                                                                                 .clear();
                                                                             Navigator.of(context, rootNavigator: true).pop();
                                                                           });
@@ -839,7 +669,7 @@ class _BranchesPageState extends State<BranchesPage> {
                                                                       },
                                                                       child: Container(
                                                                         height: 40,
-                                                                        width: 150,
+                                                                        width: 158,
                                                                         decoration: BoxDecoration(
                                                                           color: primaryColor,
                                                                           borderRadius:
@@ -859,17 +689,19 @@ class _BranchesPageState extends State<BranchesPage> {
                                                                               size: 20,
                                                                             ),
                                                                             SizedBox(
-                                                                              width: 8.0,
+                                                                              width: 2.0,
                                                                             ),
-                                                                            Text(
-                                                                              "Add Branch",
-                                                                              style: TextStyle(
-                                                                                  color:
-                                                                                  Colors
-                                                                                      .white,
-                                                                                  fontWeight:
-                                                                                  FontWeight
-                                                                                      .w400),
+                                                                            Flexible(
+                                                                              child: Text(
+                                                                                "Add Cost Center",
+                                                                                style: TextStyle(
+                                                                                    color:
+                                                                                    Colors
+                                                                                        .white,
+                                                                                    fontWeight:
+                                                                                    FontWeight
+                                                                                        .w400),
+                                                                              ),
                                                                             )
                                                                           ],
                                                                         ),
@@ -889,7 +721,7 @@ class _BranchesPageState extends State<BranchesPage> {
                                         },
                                         child: Container(
                                           height: 40.0,
-                                          width: 150,
+                                          width: 155,
                                           decoration: BoxDecoration(
                                               color: primaryColor,
                                               borderRadius: BorderRadius.circular(5.0)),
@@ -902,13 +734,15 @@ class _BranchesPageState extends State<BranchesPage> {
                                                 size: 20,
                                               ),
                                               SizedBox(
-                                                width: 8.0,
+                                                width: 1.0,
                                               ),
-                                              Text(
-                                                "Add Branch",
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontWeight: FontWeight.w400),
+                                              Flexible(
+                                                child: Text(
+                                                  "Add Cost Center",
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight: FontWeight.w400),
+                                                ),
                                               )
                                             ],
                                           ),
@@ -941,17 +775,12 @@ class _BranchesPageState extends State<BranchesPage> {
                                           color: secondaryColor.withOpacity(0.4)),
                                     ),),
                                     DataColumn(label: Text(
-                                      "Location",
+                                      "Code",
                                       style: TextStyle(
                                           fontSize: 13.5,
                                           color: secondaryColor.withOpacity(0.4)),
                                     ),),
-                                    DataColumn(label: Text(
-                                      "Phone",
-                                      style: TextStyle(
-                                          fontSize: 13.5,
-                                          color: secondaryColor.withOpacity(0.4)),
-                                    ),),
+
                                     DataColumn(label: Text(
                                       "Status",
                                       style: TextStyle(
@@ -1021,9 +850,9 @@ class _BranchesPageState extends State<BranchesPage> {
                                       ],
                                     )),
                                   ],
-                                  source: BranchesDataSource(
+                                  source: CostCentersDataSource(
                                     onRowSelect: (index) => () {},
-                                    resultData: snapshot.data[0],
+                                    resultData: snapshot.data,
 
                                   ),
                                 ),
@@ -1034,6 +863,6 @@ class _BranchesPageState extends State<BranchesPage> {
                       );
                     }),
               ),
-        ]));
+            ]));
   }
 }
