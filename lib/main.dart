@@ -91,7 +91,7 @@ class MyApp extends StatelessWidget {
                   return AuthenticationPage();
                 else
                    UserPreferences().removeUser();
-              return Layout(user: snapshot.data ,);
+              return AuthenticationPage();
             }
           },
         ),

@@ -3,51 +3,42 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:serow/constants.dart';
-import 'package:serow/controllers/categories_controller.dart';
+import 'package:serow/controllers/brands_controller.dart';
 import 'package:serow/controllers/controller.dart';
-import 'package:serow/controllers/groups_controller.dart';
-import 'package:serow/controllers/subgroup_controller.dart';
-import 'package:serow/respository/inventory_repository/categories_inventory_repository.dart';
-import 'package:serow/respository/inventory_repository/groups_inventory_repository.dart';
-import 'package:serow/respository/inventory_repository/subgroups_inventory_repository.dart';
-import 'package:serow/services/categories_data_source.dart';
+import 'package:serow/models/inventory/brands.dart';
+import 'package:serow/respository/inventory_repository/brands_inventory_repository.dart';
+import 'package:serow/services/brands_data_source.dart';
 import 'package:serow/widgets/custom_text.dart';
 
-class CategoriesPage extends StatefulWidget {
-  const CategoriesPage({Key key}) : super(key: key);
+class PurchaseOrdersPage extends StatefulWidget {
+  const PurchaseOrdersPage({Key key}) : super(key: key);
 
   @override
-  State<CategoriesPage> createState() => _CategoriesPageState();
+  State<PurchaseOrdersPage> createState() => _PurchaseOrdersPageState();
 }
 
 
-class _CategoriesPageState extends State<CategoriesPage> {
+class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
 
   double pageCount = 0;
-  String groupId;
-  String subgroupId;
-
-  @override
-  void initState() {
-    super.initState();
-    //groupItemList();
-  }
 
   final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _shortNameController = TextEditingController();
+  final TextEditingController _countryController = TextEditingController();
   bool _validate = false;
 
   @override
   void dispose() {
     _nameController.dispose();
+    _shortNameController.dispose();
+    _countryController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     //Dependency injection
-    var categoriesController = CategoriesController(CategoriesInventoryRepository());
-    var groupsController = GroupsController(GroupsInventoryRepository());
-    var subgroupsController = SubgroupController(SubgroupInventoryRepository());
+    var brandsController = BrandsController(BrandsInventoryRepository());
     return Container(
         color: Colors.blueGrey.shade100.withOpacity(0.1),
         child: Column(
@@ -73,13 +64,9 @@ class _CategoriesPageState extends State<CategoriesPage> {
 
 
             SingleChildScrollView(
-              child: FutureBuilder(
-                  future: Future.wait<Object>([
-                    categoriesController.fetchCategoryList(context),
-                    groupsController.fetchGroupsList(context),
-                    subgroupsController.fetchSubgroupsList(context),
-                  ]),
-                  builder: (context,  snapshot){
+              child: FutureBuilder<List<Results>>(
+                  future: brandsController.fetchBrandList(context),
+                  builder: (context, snapshot){
                     if(snapshot.connectionState == ConnectionState.waiting){
                       return Center(
                         child: CircularProgressIndicator(),
@@ -99,7 +86,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                     left: 60.0,
                                   ),
                                   child: CustomText(
-                                    text: "You have a total of 5 categories.",
+                                    text: "You have a total of 5 brands.",
                                     //ToDo: Read from count method
                                     size: 12,
                                     color: Colors.blueGrey,
@@ -138,7 +125,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                                   ),
                                                 ),
                                                 border: InputBorder.none,
-                                                hintText: "Search category",
+                                                hintText: "Search brand",
                                                 hintStyle: TextStyle(
                                                     color: Colors.grey.shade500,
                                                     fontSize: 16.0,
@@ -220,7 +207,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                                 width: 8.0,
                                               ),
                                               Text(
-                                                "Add Category",
+                                                "Add Brand",
                                                 style: TextStyle(
                                                     color: Colors.white,
                                                     fontWeight: FontWeight.w400),
@@ -253,7 +240,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                   left: 60.0,
                                 ),
                                 child: CustomText(
-                                  text: "You have a total of 5 categories.",
+                                  text: "You have a total of 5 brands.",
                                   //ToDo: Read from count method
                                   size: 12,
                                   color: Colors.blueGrey,
@@ -292,7 +279,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                                 ),
                                               ),
                                               border: InputBorder.none,
-                                              hintText: "Search Category",
+                                              hintText: "Search brand",
                                               hintStyle: TextStyle(
                                                   color: Colors.grey.shade500,
                                                   fontSize: 16.0,
@@ -405,7 +392,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                                                     .only(
                                                                     left: 18.0),
                                                                 child: CustomText(
-                                                                  text: "Add Category",
+                                                                  text: "Add Brand",
                                                                   size: 22,
                                                                   color: Colors.blueGrey,
                                                                   weight: FontWeight.w500,
@@ -416,6 +403,10 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                                               child: InkWell(
                                                                 onTap: () {
                                                                   _nameController.clear();
+                                                                  _countryController
+                                                                      .clear();
+                                                                  _shortNameController
+                                                                      .clear();
                                                                   Navigator.of(context,
                                                                       rootNavigator: true)
                                                                       .pop();
@@ -445,7 +436,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                                           child: Material(
                                                               child: CustomText(
                                                                 text:
-                                                                "Enter details to create category.",
+                                                                "Enter details to create brand.",
                                                                 size: 11.0,
                                                                 color: Colors.blueGrey,
                                                                 weight: FontWeight.w500,
@@ -469,7 +460,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                                                         left: 12.0),
                                                                     child: Material(
                                                                         child: Text(
-                                                                          "Category Name",
+                                                                          "Brand Name",
                                                                           style: TextStyle(
                                                                               color: bgColor,
                                                                               fontSize: 12,
@@ -495,11 +486,11 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                                                             decoration:
                                                                             InputDecoration(
                                                                               //  labelText: "Email Address",
-                                                                                errorText: _validate
-                                                                                    ? 'Name Can\'t Be Empty'
-                                                                                    : null,
+                                                                              //   errorText: _validate
+                                                                              //       ? 'Name Can\'t Be Empty'
+                                                                              //       : null,
                                                                                 hintText:
-                                                                                "Category Name",
+                                                                                "Brand Name",
                                                                                 hintStyle: TextStyle(
                                                                                     fontSize:
                                                                                     12),
@@ -541,7 +532,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                                                         left: 12.0),
                                                                     child: Material(
                                                                         child: Text(
-                                                                          "Select Group",
+                                                                          "Brand short name",
                                                                           style: TextStyle(
                                                                               color: bgColor,
                                                                               fontSize: 12,
@@ -562,46 +553,36 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                                                         width: 240,
                                                                         height: 40,
                                                                         child: Flexible(
-                                                                          child: StatefulBuilder(
-                                                                            builder: (BuildContext context, StateSetter setState){
-                                                                              return DecoratedBox(
-
-                                                                                decoration: ShapeDecoration(
-                                                                                  shape: RoundedRectangleBorder(
-                                                                                    side: BorderSide(width: 0.4, style: BorderStyle.solid, color: Colors.grey),
-                                                                                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                                                                                  )
-                                                                                ),
-                                                                                child: DropdownButtonHideUnderline(
-                                                                                  child: DropdownButton<String>(
-                                                                                    hint: Padding(
-                                                                                      padding: const EdgeInsets.all(8.0),
-                                                                                      child: Text("Group", style: TextStyle(fontSize:
-                                                                                      12),),
-                                                                                    ),
-                                                                                    value: groupId,
-                                                                                    items: snapshot.data[1].map<DropdownMenuItem<String>>((item){
-                                                                                      return new DropdownMenuItem<String>(child: Padding(
-                                                                                        padding: const EdgeInsets.all(8.0),
-                                                                                        child: Text(
-                                                                                          item.name,
-                                                                                          style: TextStyle(fontSize:
-                                                                                          12,),
-                                                                                        ),
-                                                                                      ),
-                                                                                          value: item.id.toString()
-                                                                                      );
-                                                                                    }).toList(),
-                                                                                    onChanged: (String groupValue){
-                                                                                      setState(() {
-                                                                                        groupId = groupValue;
-
-                                                                                      });
-                                                                                    },
-                                                                                  ),
-                                                                                ),
-                                                                              );
-                                                                            },
+                                                                          child: TextField(
+                                                                            controller: _shortNameController,
+                                                                            decoration:
+                                                                            InputDecoration(
+                                                                              //  labelText: "Email Address",
+                                                                              //errorText: _validate ? ' Can\'t Be Empty' : null,
+                                                                                hintText:
+                                                                                "Example: KMTC",
+                                                                                hintStyle: TextStyle(
+                                                                                    fontSize:
+                                                                                    12),
+                                                                                focusedBorder: OutlineInputBorder(
+                                                                                    borderSide: const BorderSide(
+                                                                                        color:
+                                                                                        primaryColor,
+                                                                                        width:
+                                                                                        0.4),
+                                                                                    borderRadius: BorderRadius
+                                                                                        .circular(
+                                                                                        5)),
+                                                                                enabledBorder: OutlineInputBorder(
+                                                                                    borderSide: const BorderSide(
+                                                                                        color: Colors
+                                                                                            .grey,
+                                                                                        width:
+                                                                                        0.4),
+                                                                                    borderRadius:
+                                                                                    BorderRadius
+                                                                                        .circular(
+                                                                                        5))),
                                                                           ),
                                                                         ),
                                                                       ),
@@ -630,7 +611,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                                                         left: 12.0),
                                                                     child: Material(
                                                                         child: Text(
-                                                                          "Select Subgroup",
+                                                                          "Country",
                                                                           style: TextStyle(
                                                                               color: bgColor,
                                                                               fontSize: 12,
@@ -651,46 +632,35 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                                                         width: 240,
                                                                         height: 40,
                                                                         child: Flexible(
-                                                                          child: StatefulBuilder(
-                                                                            builder: (BuildContext context, StateSetter setState){
-                                                                              return DecoratedBox(
+                                                                          child: TextField(
+                                                                            controller: _countryController,
 
-                                                                                decoration: ShapeDecoration(
-                                                                                    shape: RoundedRectangleBorder(
-                                                                                      side: BorderSide(width: 0.4, style: BorderStyle.solid, color: Colors.grey),
-                                                                                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                                                                                    )
-                                                                                ),
-                                                                                child: DropdownButtonHideUnderline(
-                                                                                  child: DropdownButton<String>(
-                                                                                    hint: Padding(
-                                                                                      padding: const EdgeInsets.all(8.0),
-                                                                                      child: Text("Subgroup", style: TextStyle(fontSize:
-                                                                                      12),),
-                                                                                    ),
-                                                                                    value: subgroupId,
-                                                                                    items: snapshot.data[2].map<DropdownMenuItem<String>>((item){
-                                                                                      return new DropdownMenuItem<String>(child: Padding(
-                                                                                        padding: const EdgeInsets.all(8.0),
-                                                                                        child: Text(
-                                                                                          item.name,
-                                                                                          style: TextStyle(fontSize:
-                                                                                          12,),
-                                                                                        ),
-                                                                                      ),
-                                                                                          value: item.id.toString()
-                                                                                      );
-                                                                                    }).toList(),
-                                                                                    onChanged: (String subgroupValue){
-                                                                                      setState(() {
-                                                                                        subgroupId = subgroupValue;
-
-                                                                                      });
-                                                                                    },
-                                                                                  ),
-                                                                                ),
-                                                                              );
-                                                                            },
+                                                                            decoration:
+                                                                            InputDecoration(
+                                                                                hintText:
+                                                                                "Country",
+                                                                                hintStyle: TextStyle(
+                                                                                    fontSize:
+                                                                                    12),
+                                                                                focusedBorder: OutlineInputBorder(
+                                                                                    borderSide: const BorderSide(
+                                                                                        color:
+                                                                                        primaryColor,
+                                                                                        width:
+                                                                                        0.4),
+                                                                                    borderRadius: BorderRadius
+                                                                                        .circular(
+                                                                                        5)),
+                                                                                enabledBorder: OutlineInputBorder(
+                                                                                    borderSide: const BorderSide(
+                                                                                        color: Colors
+                                                                                            .grey,
+                                                                                        width:
+                                                                                        0.4),
+                                                                                    borderRadius:
+                                                                                    BorderRadius
+                                                                                        .circular(
+                                                                                        5))),
                                                                           ),
                                                                         ),
                                                                       ),
@@ -715,7 +685,10 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                                                 Material(
                                                                   child: InkWell(
                                                                     onTap: () {
-                                                                      _nameController
+                                                                      _nameController.clear();
+                                                                      _countryController
+                                                                          .clear();
+                                                                      _shortNameController
                                                                           .clear();
                                                                       Navigator.of(context,
                                                                           rootNavigator: true)
@@ -768,22 +741,21 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                                                 ),
                                                                 Material(
                                                                   child: InkWell(
-                                                                    onTap: () {
-                                                                      setState(() {
+                                                                    onTap: ()  {
+                                                                      if(_nameController.value.text.isNotEmpty && _shortNameController.value.text.isNotEmpty){
+                                                                        brandsController.postBrand(_nameController.text, _shortNameController.text, _countryController.text, context);
+                                                                        setState(() {
+                                                                          _nameController.clear();
+                                                                          _countryController
+                                                                              .clear();
+                                                                          _shortNameController
+                                                                              .clear();
+                                                                          Navigator.of(context, rootNavigator: true).pop();
+                                                                        });
+                                                                      } else{
+                                                                        null;
+                                                                      }
 
-                                                                        _nameController.text
-                                                                            .isEmpty
-                                                                            ?
-                                                                        _validate = true
-                                                                            : _validate =
-                                                                        false;
-                                                                        // _shortNameController.text.isEmpty ? _validate = true : _validate = false;
-                                                                        print("Posting..${_nameController.text}, $groupId,$subgroupId}");
-
-                                                                        categoriesController.postCategory(_nameController.text, groupId,subgroupId, context);
-                                                                        Navigator.of(context, rootNavigator: true).pop();
-
-                                                                      });
                                                                     },
                                                                     child: Container(
                                                                       height: 40,
@@ -810,7 +782,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                                                             width: 8.0,
                                                                           ),
                                                                           Text(
-                                                                            "Add Category",
+                                                                            "Add Brand",
                                                                             style: TextStyle(
                                                                                 color:
                                                                                 Colors
@@ -853,7 +825,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                               width: 8.0,
                                             ),
                                             Text(
-                                              "Add Category",
+                                              "Add Brand",
                                               style: TextStyle(
                                                   color: Colors.white,
                                                   fontWeight: FontWeight.w400),
@@ -878,7 +850,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                 dividerColor: Colors.blueGrey.shade100.withOpacity(0.4),
                               ),
                               child: PaginatedDataTable(
-                                rowsPerPage: 5,
+                                rowsPerPage:5,
                                 showCheckboxColumn: true,
                                 dataRowHeight: 60,
                                 columns: [
@@ -889,13 +861,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                         color: secondaryColor.withOpacity(0.4)),
                                   ),),
                                   DataColumn(label: Text(
-                                    "Group",
-                                    style: TextStyle(
-                                        fontSize: 13.5,
-                                        color: secondaryColor.withOpacity(0.4)),
-                                  ),),
-                                  DataColumn(label: Text(
-                                    "Subgroup",
+                                    "Short Name",
                                     style: TextStyle(
                                         fontSize: 13.5,
                                         color: secondaryColor.withOpacity(0.4)),
@@ -969,9 +935,10 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                     ],
                                   )),
                                 ],
-                                source: CategoriesDataSource(
+                                source: ResultDataSource(
                                   onRowSelect: (index) => () {},
-                                  resultData: snapshot.data[0],
+                                  resultData: snapshot.data,
+
                                 ),
                               ),
                             ),

@@ -7,7 +7,6 @@ import 'package:get/get.dart';
 import 'package:serow/constants.dart';
 import 'package:serow/controllers/controller.dart';
 import 'package:serow/models/inventory/brands.dart';
-import 'package:serow/services/brands_data_source.dart';
 import 'package:serow/services/items_data_source.dart';
 import 'package:serow/widgets/custom_text.dart';
 import 'package:http/http.dart' as http;

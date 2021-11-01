@@ -764,7 +764,7 @@ class _CostCentersPageState extends State<CostCentersPage> {
                                   dividerColor: Colors.blueGrey.shade100.withOpacity(0.4),
                                 ),
                                 child: PaginatedDataTable(
-                                  rowsPerPage: snapshot.data.length,
+                                  rowsPerPage: 5,
                                   showCheckboxColumn: true,
                                   dataRowHeight: 60,
                                   columns: [

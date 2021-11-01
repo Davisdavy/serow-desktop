@@ -3,29 +3,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:serow/constants.dart';
-import 'package:serow/controllers/categories_controller.dart';
 import 'package:serow/controllers/controller.dart';
-import 'package:serow/controllers/groups_controller.dart';
-import 'package:serow/controllers/subgroup_controller.dart';
-import 'package:serow/respository/inventory_repository/categories_inventory_repository.dart';
-import 'package:serow/respository/inventory_repository/groups_inventory_repository.dart';
-import 'package:serow/respository/inventory_repository/subgroups_inventory_repository.dart';
-import 'package:serow/services/categories_data_source.dart';
+import 'package:serow/controllers/posting_categories_controller.dart';
+import 'package:serow/controllers/supliers_controller.dart';
+import 'package:serow/respository/suppliers_repository/posting_categories_suppliers_repository.dart';
+import 'package:serow/respository/suppliers_repository/suppliers_provider.dart';
+import 'package:serow/services/suppliers_data_source.dart';
 import 'package:serow/widgets/custom_text.dart';
 
-class CategoriesPage extends StatefulWidget {
-  const CategoriesPage({Key key}) : super(key: key);
+class GoodsReturnNotePage extends StatefulWidget {
+  const GoodsReturnNotePage({Key key}) : super(key: key);
 
   @override
-  State<CategoriesPage> createState() => _CategoriesPageState();
+  State<GoodsReturnNotePage> createState() => _GoodsReturnNotePageState();
 }
 
 
-class _CategoriesPageState extends State<CategoriesPage> {
+class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
 
   double pageCount = 0;
-  String groupId;
-  String subgroupId;
+  String posting_category_id;
+  List<String> supplierContact = [];
 
   @override
   void initState() {
@@ -33,21 +31,29 @@ class _CategoriesPageState extends State<CategoriesPage> {
     //groupItemList();
   }
 
-  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _supplierController = TextEditingController();
+  final TextEditingController _branchController = TextEditingController();
+  final TextEditingController _taxAmountController = TextEditingController();
+  final TextEditingController _totalNetController = TextEditingController();
+  final TextEditingController _discountAmountController = TextEditingController();
+
   bool _validate = false;
 
   @override
   void dispose() {
-    _nameController.dispose();
+    _supplierController.dispose();
+    _branchController.dispose();
+    _totalNetController.dispose();
+    _taxAmountController.dispose();
+    _discountAmountController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     //Dependency injection
-    var categoriesController = CategoriesController(CategoriesInventoryRepository());
-    var groupsController = GroupsController(GroupsInventoryRepository());
-    var subgroupsController = SubgroupController(SubgroupInventoryRepository());
+    var supplierController = SupplierController(SuppliersProvider());
+    var postingCategoriesController = PostingCategoriesController(PostingCategoriesSuppliersRepository());
     return Container(
         color: Colors.blueGrey.shade100.withOpacity(0.1),
         child: Column(
@@ -75,9 +81,8 @@ class _CategoriesPageState extends State<CategoriesPage> {
             SingleChildScrollView(
               child: FutureBuilder(
                   future: Future.wait<Object>([
-                    categoriesController.fetchCategoryList(context),
-                    groupsController.fetchGroupsList(context),
-                    subgroupsController.fetchSubgroupsList(context),
+                    supplierController.fetchSupplierList(context),
+                    postingCategoriesController.fetchPostingCategoryList(context),
                   ]),
                   builder: (context,  snapshot){
                     if(snapshot.connectionState == ConnectionState.waiting){
@@ -99,7 +104,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                     left: 60.0,
                                   ),
                                   child: CustomText(
-                                    text: "You have a total of 5 categories.",
+                                    text: "You have a total of 5 suppliers.",
                                     //ToDo: Read from count method
                                     size: 12,
                                     color: Colors.blueGrey,
@@ -138,7 +143,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                                   ),
                                                 ),
                                                 border: InputBorder.none,
-                                                hintText: "Search category",
+                                                hintText: "Search suppliers",
                                                 hintStyle: TextStyle(
                                                     color: Colors.grey.shade500,
                                                     fontSize: 16.0,
@@ -220,7 +225,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                                 width: 8.0,
                                               ),
                                               Text(
-                                                "Add Category",
+                                                "Add Supplier",
                                                 style: TextStyle(
                                                     color: Colors.white,
                                                     fontWeight: FontWeight.w400),
@@ -253,7 +258,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                   left: 60.0,
                                 ),
                                 child: CustomText(
-                                  text: "You have a total of 5 categories.",
+                                  text: "You have a total of 5 suppliers.",
                                   //ToDo: Read from count method
                                   size: 12,
                                   color: Colors.blueGrey,
@@ -405,7 +410,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                                                     .only(
                                                                     left: 18.0),
                                                                 child: CustomText(
-                                                                  text: "Add Category",
+                                                                  text: "Add Supplier",
                                                                   size: 22,
                                                                   color: Colors.blueGrey,
                                                                   weight: FontWeight.w500,
@@ -415,7 +420,11 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                                             Material(
                                                               child: InkWell(
                                                                 onTap: () {
-                                                                  _nameController.clear();
+                                                                  _supplierController.clear();
+                                                                  _totalNetController.clear();
+                                                                  _branchController.clear();
+                                                                  _taxAmountController.clear();
+                                                                  _discountAmountController.clear();
                                                                   Navigator.of(context,
                                                                       rootNavigator: true)
                                                                       .pop();
@@ -445,7 +454,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                                           child: Material(
                                                               child: CustomText(
                                                                 text:
-                                                                "Enter details to create category.",
+                                                                "Enter details to create supplier.",
                                                                 size: 11.0,
                                                                 color: Colors.blueGrey,
                                                                 weight: FontWeight.w500,
@@ -469,7 +478,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                                                         left: 12.0),
                                                                     child: Material(
                                                                         child: Text(
-                                                                          "Category Name",
+                                                                          "Supplier Company Name",
                                                                           style: TextStyle(
                                                                               color: bgColor,
                                                                               fontSize: 12,
@@ -491,7 +500,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                                                         height: 40,
                                                                         child: Flexible(
                                                                           child: TextField(
-                                                                            controller: _nameController,
+                                                                            controller: _supplierController,
                                                                             decoration:
                                                                             InputDecoration(
                                                                               //  labelText: "Email Address",
@@ -499,7 +508,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                                                                     ? 'Name Can\'t Be Empty'
                                                                                     : null,
                                                                                 hintText:
-                                                                                "Category Name",
+                                                                                "Company Name",
                                                                                 hintStyle: TextStyle(
                                                                                     fontSize:
                                                                                     12),
@@ -541,7 +550,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                                                         left: 12.0),
                                                                     child: Material(
                                                                         child: Text(
-                                                                          "Select Group",
+                                                                          "Select Posting Category",
                                                                           style: TextStyle(
                                                                               color: bgColor,
                                                                               fontSize: 12,
@@ -567,19 +576,19 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                                                               return DecoratedBox(
 
                                                                                 decoration: ShapeDecoration(
-                                                                                  shape: RoundedRectangleBorder(
-                                                                                    side: BorderSide(width: 0.4, style: BorderStyle.solid, color: Colors.grey),
-                                                                                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                                                                                  )
+                                                                                    shape: RoundedRectangleBorder(
+                                                                                      side: BorderSide(width: 0.4, style: BorderStyle.solid, color: Colors.grey),
+                                                                                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                                                                    )
                                                                                 ),
                                                                                 child: DropdownButtonHideUnderline(
                                                                                   child: DropdownButton<String>(
                                                                                     hint: Padding(
                                                                                       padding: const EdgeInsets.all(8.0),
-                                                                                      child: Text("Group", style: TextStyle(fontSize:
+                                                                                      child: Text("Posting Category", style: TextStyle(fontSize:
                                                                                       12),),
                                                                                     ),
-                                                                                    value: groupId,
+                                                                                    value: posting_category_id,
                                                                                     items: snapshot.data[1].map<DropdownMenuItem<String>>((item){
                                                                                       return new DropdownMenuItem<String>(child: Padding(
                                                                                         padding: const EdgeInsets.all(8.0),
@@ -594,7 +603,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                                                                     }).toList(),
                                                                                     onChanged: (String groupValue){
                                                                                       setState(() {
-                                                                                        groupId = groupValue;
+                                                                                        posting_category_id = groupValue;
 
                                                                                       });
                                                                                     },
@@ -630,7 +639,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                                                         left: 12.0),
                                                                     child: Material(
                                                                         child: Text(
-                                                                          "Select Subgroup",
+                                                                          "Supplier Name",
                                                                           style: TextStyle(
                                                                               color: bgColor,
                                                                               fontSize: 12,
@@ -650,47 +659,264 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                                                       child: Container(
                                                                         width: 240,
                                                                         height: 40,
-                                                                        child: Flexible(
-                                                                          child: StatefulBuilder(
-                                                                            builder: (BuildContext context, StateSetter setState){
-                                                                              return DecoratedBox(
-
-                                                                                decoration: ShapeDecoration(
-                                                                                    shape: RoundedRectangleBorder(
-                                                                                      side: BorderSide(width: 0.4, style: BorderStyle.solid, color: Colors.grey),
-                                                                                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                                                                                    )
-                                                                                ),
-                                                                                child: DropdownButtonHideUnderline(
-                                                                                  child: DropdownButton<String>(
-                                                                                    hint: Padding(
-                                                                                      padding: const EdgeInsets.all(8.0),
-                                                                                      child: Text("Subgroup", style: TextStyle(fontSize:
-                                                                                      12),),
-                                                                                    ),
-                                                                                    value: subgroupId,
-                                                                                    items: snapshot.data[2].map<DropdownMenuItem<String>>((item){
-                                                                                      return new DropdownMenuItem<String>(child: Padding(
-                                                                                        padding: const EdgeInsets.all(8.0),
-                                                                                        child: Text(
-                                                                                          item.name,
-                                                                                          style: TextStyle(fontSize:
-                                                                                          12,),
-                                                                                        ),
-                                                                                      ),
-                                                                                          value: item.id.toString()
-                                                                                      );
-                                                                                    }).toList(),
-                                                                                    onChanged: (String subgroupValue){
-                                                                                      setState(() {
-                                                                                        subgroupId = subgroupValue;
-
-                                                                                      });
-                                                                                    },
-                                                                                  ),
-                                                                                ),
-                                                                              );
-                                                                            },
+                                                                        child:  Flexible(
+                                                                          child: TextField(
+                                                                            controller: _taxAmountController,
+                                                                            decoration:
+                                                                            InputDecoration(
+                                                                              //  labelText: "Email Address",
+                                                                                errorText: _validate
+                                                                                    ? 'Name Can\'t Be Empty'
+                                                                                    : null,
+                                                                                hintText:
+                                                                                "Supplier Name",
+                                                                                hintStyle: TextStyle(
+                                                                                    fontSize:
+                                                                                    12),
+                                                                                focusedBorder: OutlineInputBorder(
+                                                                                    borderSide: const BorderSide(
+                                                                                        color:
+                                                                                        primaryColor,
+                                                                                        width:
+                                                                                        0.4),
+                                                                                    borderRadius: BorderRadius
+                                                                                        .circular(
+                                                                                        5)),
+                                                                                enabledBorder: OutlineInputBorder(
+                                                                                    borderSide: const BorderSide(
+                                                                                        color: Colors
+                                                                                            .grey,
+                                                                                        width:
+                                                                                        0.4),
+                                                                                    borderRadius:
+                                                                                    BorderRadius
+                                                                                        .circular(
+                                                                                        5))),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            Flexible(
+                                                              child: Column(
+                                                                crossAxisAlignment:
+                                                                CrossAxisAlignment.start,
+                                                                children: [
+                                                                  Padding(
+                                                                    padding:
+                                                                    const EdgeInsets.only(
+                                                                        left: 12.0),
+                                                                    child: Material(
+                                                                        child: Text(
+                                                                          "Supplier Phone",
+                                                                          style: TextStyle(
+                                                                              color: bgColor,
+                                                                              fontSize: 12,
+                                                                              fontWeight:
+                                                                              FontWeight
+                                                                                  .bold),
+                                                                        )),
+                                                                  ),
+                                                                  SizedBox(
+                                                                    height: 5,
+                                                                  ),
+                                                                  Material(
+                                                                    child: Padding(
+                                                                      padding:
+                                                                      const EdgeInsets.only(
+                                                                          left: 12.0),
+                                                                      child: Container(
+                                                                        width: 240,
+                                                                        height: 40,
+                                                                        child:  Flexible(
+                                                                          child: TextField(
+                                                                            controller: _branchController,
+                                                                            decoration:
+                                                                            InputDecoration(
+                                                                              //  labelText: "Email Address",
+                                                                                errorText: _validate
+                                                                                    ? 'Phone Can\'t Be Empty'
+                                                                                    : null,
+                                                                                hintText:
+                                                                                "Supplier Phone",
+                                                                                hintStyle: TextStyle(
+                                                                                    fontSize:
+                                                                                    12),
+                                                                                focusedBorder: OutlineInputBorder(
+                                                                                    borderSide: const BorderSide(
+                                                                                        color:
+                                                                                        primaryColor,
+                                                                                        width:
+                                                                                        0.4),
+                                                                                    borderRadius: BorderRadius
+                                                                                        .circular(
+                                                                                        5)),
+                                                                                enabledBorder: OutlineInputBorder(
+                                                                                    borderSide: const BorderSide(
+                                                                                        color: Colors
+                                                                                            .grey,
+                                                                                        width:
+                                                                                        0.4),
+                                                                                    borderRadius:
+                                                                                    BorderRadius
+                                                                                        .circular(
+                                                                                        5))),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        SizedBox(
+                                                          height: 15.0,
+                                                        ),
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                          MainAxisAlignment.start,
+                                                          children: [
+                                                            Flexible(
+                                                              child: Column(
+                                                                crossAxisAlignment:
+                                                                CrossAxisAlignment.start,
+                                                                children: [
+                                                                  Padding(
+                                                                    padding:
+                                                                    const EdgeInsets.only(
+                                                                        left: 12.0),
+                                                                    child: Material(
+                                                                        child: Text(
+                                                                          "Supplier Email",
+                                                                          style: TextStyle(
+                                                                              color: bgColor,
+                                                                              fontSize: 12,
+                                                                              fontWeight:
+                                                                              FontWeight
+                                                                                  .bold),
+                                                                        )),
+                                                                  ),
+                                                                  SizedBox(
+                                                                    height: 5,
+                                                                  ),
+                                                                  Material(
+                                                                    child: Padding(
+                                                                      padding:
+                                                                      const EdgeInsets.only(
+                                                                          left: 12.0),
+                                                                      child: Container(
+                                                                        width: 240,
+                                                                        height: 40,
+                                                                        child:  Flexible(
+                                                                          child: TextField(
+                                                                            controller: _totalNetController,
+                                                                            decoration:
+                                                                            InputDecoration(
+                                                                              //  labelText: "Email Address",
+                                                                                errorText: _validate
+                                                                                    ? 'Email Can\'t Be Empty'
+                                                                                    : null,
+                                                                                hintText:
+                                                                                "Supplier Email",
+                                                                                hintStyle: TextStyle(
+                                                                                    fontSize:
+                                                                                    12),
+                                                                                focusedBorder: OutlineInputBorder(
+                                                                                    borderSide: const BorderSide(
+                                                                                        color:
+                                                                                        primaryColor,
+                                                                                        width:
+                                                                                        0.4),
+                                                                                    borderRadius: BorderRadius
+                                                                                        .circular(
+                                                                                        5)),
+                                                                                enabledBorder: OutlineInputBorder(
+                                                                                    borderSide: const BorderSide(
+                                                                                        color: Colors
+                                                                                            .grey,
+                                                                                        width:
+                                                                                        0.4),
+                                                                                    borderRadius:
+                                                                                    BorderRadius
+                                                                                        .circular(
+                                                                                        5))),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            Flexible(
+                                                              child: Column(
+                                                                crossAxisAlignment:
+                                                                CrossAxisAlignment.start,
+                                                                children: [
+                                                                  Padding(
+                                                                    padding:
+                                                                    const EdgeInsets.only(
+                                                                        left: 12.0),
+                                                                    child: Material(
+                                                                        child: Text(
+                                                                          "Supplier Phone",
+                                                                          style: TextStyle(
+                                                                              color: bgColor,
+                                                                              fontSize: 12,
+                                                                              fontWeight:
+                                                                              FontWeight
+                                                                                  .bold),
+                                                                        )),
+                                                                  ),
+                                                                  SizedBox(
+                                                                    height: 5,
+                                                                  ),
+                                                                  Material(
+                                                                    child: Padding(
+                                                                      padding:
+                                                                      const EdgeInsets.only(
+                                                                          left: 12.0),
+                                                                      child: Container(
+                                                                        width: 240,
+                                                                        height: 40,
+                                                                        child:  Flexible(
+                                                                          child: TextField(
+                                                                            controller: _discountAmountController,
+                                                                            decoration:
+                                                                            InputDecoration(
+                                                                              //  labelText: "Email Address",
+                                                                                errorText: _validate
+                                                                                    ? 'Address Can\'t Be Empty'
+                                                                                    : null,
+                                                                                hintText:
+                                                                                "Supplier Address",
+                                                                                hintStyle: TextStyle(
+                                                                                    fontSize:
+                                                                                    12),
+                                                                                focusedBorder: OutlineInputBorder(
+                                                                                    borderSide: const BorderSide(
+                                                                                        color:
+                                                                                        primaryColor,
+                                                                                        width:
+                                                                                        0.4),
+                                                                                    borderRadius: BorderRadius
+                                                                                        .circular(
+                                                                                        5)),
+                                                                                enabledBorder: OutlineInputBorder(
+                                                                                    borderSide: const BorderSide(
+                                                                                        color: Colors
+                                                                                            .grey,
+                                                                                        width:
+                                                                                        0.4),
+                                                                                    borderRadius:
+                                                                                    BorderRadius
+                                                                                        .circular(
+                                                                                        5))),
                                                                           ),
                                                                         ),
                                                                       ),
@@ -715,8 +941,12 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                                                 Material(
                                                                   child: InkWell(
                                                                     onTap: () {
-                                                                      _nameController
+                                                                      _supplierController
                                                                           .clear();
+                                                                      _taxAmountController.clear();
+                                                                      _totalNetController.clear();
+                                                                      _branchController.clear();
+                                                                      _discountAmountController.clear();
                                                                       Navigator.of(context,
                                                                           rootNavigator: true)
                                                                           .pop();
@@ -771,16 +1001,43 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                                                     onTap: () {
                                                                       setState(() {
 
-                                                                        _nameController.text
+                                                                        _supplierController.text
+                                                                            .isEmpty
+                                                                            ?
+                                                                        _validate = true
+                                                                            : _validate =
+                                                                        false;
+                                                                        _discountAmountController.text
+                                                                            .isEmpty
+                                                                            ?
+                                                                        _validate = true
+                                                                            : _validate =
+                                                                        false;
+                                                                        _totalNetController.text
+                                                                            .isEmpty
+                                                                            ?
+                                                                        _validate = true
+                                                                            : _validate =
+                                                                        false;
+                                                                        _branchController.text
+                                                                            .isEmpty
+                                                                            ?
+                                                                        _validate = true
+                                                                            : _validate =
+                                                                        false;
+                                                                        _taxAmountController.text
                                                                             .isEmpty
                                                                             ?
                                                                         _validate = true
                                                                             : _validate =
                                                                         false;
                                                                         // _shortNameController.text.isEmpty ? _validate = true : _validate = false;
-                                                                        print("Posting..${_nameController.text}, $groupId,$subgroupId}");
-
-                                                                        categoriesController.postCategory(_nameController.text, groupId,subgroupId, context);
+                                                                        print("Posting..${_supplierController.text}, $posting_category_id, ${_taxAmountController.text},${_branchController.text}, ${_totalNetController.text}, ${_discountAmountController}");
+                                                                        supplierContact.add(_taxAmountController.text);
+                                                                        supplierContact.add(_discountAmountController.text);
+                                                                        supplierContact.add(_totalNetController.text);
+                                                                        supplierContact.add(_branchController.text);
+                                                                        supplierController.postSupplier(_supplierController.text, posting_category_id,supplierContact, context);
                                                                         Navigator.of(context, rootNavigator: true).pop();
 
                                                                       });
@@ -810,7 +1067,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                                                             width: 8.0,
                                                                           ),
                                                                           Text(
-                                                                            "Add Category",
+                                                                            "Add Supplier",
                                                                             style: TextStyle(
                                                                                 color:
                                                                                 Colors
@@ -853,7 +1110,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                               width: 8.0,
                                             ),
                                             Text(
-                                              "Add Category",
+                                              "Add Supplier",
                                               style: TextStyle(
                                                   color: Colors.white,
                                                   fontWeight: FontWeight.w400),
@@ -889,13 +1146,13 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                         color: secondaryColor.withOpacity(0.4)),
                                   ),),
                                   DataColumn(label: Text(
-                                    "Group",
+                                    "Email",
                                     style: TextStyle(
                                         fontSize: 13.5,
                                         color: secondaryColor.withOpacity(0.4)),
                                   ),),
                                   DataColumn(label: Text(
-                                    "Subgroup",
+                                    "Phone",
                                     style: TextStyle(
                                         fontSize: 13.5,
                                         color: secondaryColor.withOpacity(0.4)),
@@ -969,7 +1226,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                     ],
                                   )),
                                 ],
-                                source: CategoriesDataSource(
+                                source: SuppliersDataSource(
                                   onRowSelect: (index) => () {},
                                   resultData: snapshot.data[0],
                                 ),

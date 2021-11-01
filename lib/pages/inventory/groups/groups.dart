@@ -704,7 +704,7 @@ class _GroupsPageState extends State<GroupsPage> {
                                                                             : _validate =
                                                                         false;
 
-                                                                        groupsController.postGroup(_nameController.text, _shortNameController.text, context);
+                                                                        groupsController.postGroup(_nameController.text, priorityValue, context);
                                                                         Navigator.of(context, rootNavigator: true).pop();
 
                                                                       });
@@ -802,7 +802,7 @@ class _GroupsPageState extends State<GroupsPage> {
                                 dividerColor: Colors.blueGrey.shade100.withOpacity(0.4),
                               ),
                               child: PaginatedDataTable(
-                                rowsPerPage: snapshot.data.length ?? 1,
+                                rowsPerPage:5,
                                 showCheckboxColumn: true,
                                 dataRowHeight: 60,
                                 columns: [

@@ -23,6 +23,11 @@ const RegionsPageRoute = 'Regions';
 const ServersPageRoute = 'Servers';
 const AccountsPageRoute = 'Accounts';
 const CostCentersPageRoute = 'Cost Centers';
+const SuppliersInvoicesPageRoute = 'Suppliers Invoices';
+const PurchaseOrdersPageRoute = 'Purchase Orders';
+const PostingCategoriesPageRoute = 'Posting Categories';
+const GoodsReturnNotePageRoute = 'Goods Return Note';
+const GoodsReceivedNotePageRoute = 'Goods Received Note';
 const ReportsPageRoute = 'Reports';
 const OrdersPageRoute = 'Orders';
 const PredictionsPageRoute = 'Predictions';
@@ -34,7 +39,7 @@ const AuthenticationPageRoute = 'Log Out';
 
 List sideMenuItems = [OverviewPageRoute, NotificationsPageRoute];
 
-List sideItems1 = [ProductsPageRoute, CustomersPageRoute, SuppliersPageRoute];
+List sideItems1 = [ProductsPageRoute, CustomersPageRoute];
 
 List sideItems2 = [
 
@@ -73,6 +78,15 @@ List sideItems6 = [
   CountriesPageRoute,
   RegionsPageRoute,
   ServersPageRoute
+];
+
+List sideItems8 = [
+  SuppliersPageRoute,
+  GoodsReceivedNotePageRoute,
+  GoodsReturnNotePageRoute,
+  PostingCategoriesPageRoute,
+  PurchaseOrdersPageRoute,
+  SuppliersInvoicesPageRoute
 ];
 
 List sideItems7 = [

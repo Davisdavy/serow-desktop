@@ -27,8 +27,13 @@ import 'package:serow/pages/predictions/predictions.dart';
 import 'package:serow/pages/products/products.dart';
 import 'package:serow/pages/reports/reports.dart';
 import 'package:serow/pages/sales/customers/customers.dart';
-import 'package:serow/pages/sales/suppliers/suppliers.dart';
 import 'package:serow/pages/settings/settings.dart';
+import 'package:serow/pages/suppliers/goods_received_note/goods_received_note.dart';
+import 'package:serow/pages/suppliers/goods_return_note/goods_return_note.dart';
+import 'package:serow/pages/suppliers/posting_categories/posting_categories.dart';
+import 'package:serow/pages/suppliers/purchase_orders/purchase_orders.dart';
+import 'package:serow/pages/suppliers/supplier_invoices/supplier_invoices.dart';
+import 'package:serow/pages/suppliers/suppliers.dart';
 
 import 'package:serow/pages/teams/teams.dart';
 import 'package:serow/routes/routes.dart';
@@ -80,6 +85,16 @@ Route<dynamic> generateRoute(RouteSettings settings){
       return _getPageRoute(SuppliersPage());
     case PredictionsPageRoute:
       return _getPageRoute(PredictionsPage());
+    case SuppliersInvoicesPageRoute:
+      return _getPageRoute(SupplierInvoicesPage());
+    case PurchaseOrdersPageRoute:
+      return _getPageRoute(PurchaseOrdersPage());
+    case PostingCategoriesPageRoute:
+      return _getPageRoute(PostingCategoriesPage());
+    case GoodsReturnNotePageRoute:
+      return _getPageRoute(GoodsReturnNotePage());
+    case GoodsReceivedNotePageRoute:
+      return _getPageRoute(GoodsReceivedNotePage());
     case FAQPageRoute:
       return _getPageRoute(FAQsPage());
     case TeamPageRoute:

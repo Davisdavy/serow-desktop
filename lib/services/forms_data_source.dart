@@ -19,7 +19,7 @@ class FormsDataSource extends  DataTableSource{
   final List<Results> _resultData;
   final OnRowSelect onRowSelect;
 
-
+  int _selectedCount = 0;
 
   @override
   DataRow getRow(int index) {

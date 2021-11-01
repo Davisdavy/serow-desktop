@@ -710,7 +710,7 @@ class _FormsPageState extends State<FormsPage> {
                                 dividerColor: Colors.blueGrey.shade100.withOpacity(0.4),
                               ),
                               child: PaginatedDataTable(
-                                rowsPerPage: snapshot.data.length ?? 1,
+                                rowsPerPage: 5,
                                 showCheckboxColumn: true,
                                 dataRowHeight: 60,
                                 columns: [

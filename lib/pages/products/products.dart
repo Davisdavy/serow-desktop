@@ -3,7 +3,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:serow/constants.dart';
 import 'package:serow/controllers/controller.dart';
-import 'package:serow/pages/products/widgets/products_available.dart';
 import 'package:serow/widgets/custom_text.dart';
 import 'package:steps_indicator/steps_indicator.dart';
 
