@@ -25,6 +25,8 @@ class AppUrl {
   static const String  posting_categories= baseURL + "/suppliers/posting-categories/";
   static const String goods_received_notes = baseURL + "/suppliers/goods-received-note/";
   static const String goods_return_notes = baseURL + "/suppliers/goods-return-note/";
+  static const String purchase_orders = baseURL + "/suppliers/purchase-orders/";
+
 
 
 

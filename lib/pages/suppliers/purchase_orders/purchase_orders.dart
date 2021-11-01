@@ -3,11 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:serow/constants.dart';
-import 'package:serow/controllers/brands_controller.dart';
+import 'package:serow/controllers/branches_controller.dart';
 import 'package:serow/controllers/controller.dart';
-import 'package:serow/models/inventory/brands.dart';
-import 'package:serow/respository/inventory_repository/brands_inventory_repository.dart';
-import 'package:serow/services/brands_data_source.dart';
+import 'package:serow/controllers/goods_received_notes_controller.dart';
+import 'package:serow/controllers/purchase_orders_controller.dart';
+import 'package:serow/controllers/supliers_controller.dart';
+import 'package:serow/respository/entities_repository/branches_entities_repository.dart';
+import 'package:serow/respository/suppliers_repository/goods_received_notes_supliers_repository.dart';
+import 'package:serow/respository/suppliers_repository/purchase_orders_suppliers_repository.dart';
+import 'package:serow/respository/suppliers_repository/suppliers_provider.dart';
+import 'package:serow/services/goods_received_notes_data_source.dart';
+import 'package:serow/services/purchase_orders_data_source.dart';
 import 'package:serow/widgets/custom_text.dart';
 
 class PurchaseOrdersPage extends StatefulWidget {
@@ -21,24 +27,40 @@ class PurchaseOrdersPage extends StatefulWidget {
 class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
 
   double pageCount = 0;
+  String supplier_name_id;
+  String branch_name_id;
+  List<String> supplierContact = [];
+
+  @override
+  void initState() {
+    super.initState();
+    //groupItemList();
+  }
 
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _shortNameController = TextEditingController();
-  final TextEditingController _countryController = TextEditingController();
+  final TextEditingController _totalNetController = TextEditingController();
+  final TextEditingController _discountAmountController = TextEditingController();
+  final TextEditingController _taxAmountController = TextEditingController();
+  final TextEditingController _totalAmountController = TextEditingController();
+
   bool _validate = false;
 
   @override
   void dispose() {
     _nameController.dispose();
-    _shortNameController.dispose();
-    _countryController.dispose();
+    _totalNetController.dispose();
+    _taxAmountController.dispose();
+    _discountAmountController.dispose();
+    _totalAmountController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     //Dependency injection
-    var brandsController = BrandsController(BrandsInventoryRepository());
+    var  purchaseOrdersController = PurchaseOrdersController(PurchaseOrdersSupplierRepository());
+    var supplierController = SupplierController(SuppliersProvider());
+    var branchController = BranchesController(BranchesEntitiesRepository());
     return Container(
         color: Colors.blueGrey.shade100.withOpacity(0.1),
         child: Column(
@@ -64,9 +86,13 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
 
 
             SingleChildScrollView(
-              child: FutureBuilder<List<Results>>(
-                  future: brandsController.fetchBrandList(context),
-                  builder: (context, snapshot){
+              child: FutureBuilder(
+                  future: Future.wait<Object>([
+                    purchaseOrdersController.fetchPurchaseOrderList(context),
+                    supplierController.fetchSupplierList(context),
+                    branchController.fetchBranchList(context)
+                  ]),
+                  builder: (context,  snapshot){
                     if(snapshot.connectionState == ConnectionState.waiting){
                       return Center(
                         child: CircularProgressIndicator(),
@@ -86,7 +112,7 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                                     left: 60.0,
                                   ),
                                   child: CustomText(
-                                    text: "You have a total of 5 brands.",
+                                    text: "You have a total of 5 purchase orders.",
                                     //ToDo: Read from count method
                                     size: 12,
                                     color: Colors.blueGrey,
@@ -97,7 +123,7 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     Padding(
-                                      padding: const EdgeInsets.only(top: 5.0, bottom: 8.0),
+                                      padding: const EdgeInsets.only(top: 5.0, bottom: 8.0,),
                                       child: Container(
                                         width: 180,
                                         height: 40,
@@ -125,7 +151,7 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                                                   ),
                                                 ),
                                                 border: InputBorder.none,
-                                                hintText: "Search brand",
+                                                hintText: "Search purchase orders",
                                                 hintStyle: TextStyle(
                                                     color: Colors.grey.shade500,
                                                     fontSize: 16.0,
@@ -138,7 +164,7 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                                       ),
                                     ),
                                     SizedBox(
-                                      width: 18.0,
+                                      width: 10.0,
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.only(top: 0.0, bottom: 8.0),
@@ -184,14 +210,14 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                                       ),
                                     ),
                                     SizedBox(
-                                      width: 18.0,
+                                      width: 8.0,
                                     ),
                                     Padding(
-                                      padding: const EdgeInsets.only(bottom: 24.0),
+                                      padding: const EdgeInsets.only(bottom: 24.0, ),
                                       child: InkWell(
                                         child: Container(
                                           height: 40.0,
-                                          width: 150,
+                                          width: 250  ,
                                           decoration: BoxDecoration(
                                               color: primaryColor,
                                               borderRadius: BorderRadius.circular(5.0)),
@@ -204,10 +230,10 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                                                 size: 20,
                                               ),
                                               SizedBox(
-                                                width: 8.0,
+                                                width:1.0,
                                               ),
                                               Text(
-                                                "Add Brand",
+                                                "Add Purchase Order",
                                                 style: TextStyle(
                                                     color: Colors.white,
                                                     fontWeight: FontWeight.w400),
@@ -240,7 +266,7 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                                   left: 60.0,
                                 ),
                                 child: CustomText(
-                                  text: "You have a total of 5 brands.",
+                                  text: "You have a total of 5 purchase orders.",
                                   //ToDo: Read from count method
                                   size: 12,
                                   color: Colors.blueGrey,
@@ -279,7 +305,7 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                                                 ),
                                               ),
                                               border: InputBorder.none,
-                                              hintText: "Search brand",
+                                              hintText: "Search purchase orders",
                                               hintStyle: TextStyle(
                                                   color: Colors.grey.shade500,
                                                   fontSize: 16.0,
@@ -392,7 +418,7 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                                                                     .only(
                                                                     left: 18.0),
                                                                 child: CustomText(
-                                                                  text: "Add Brand",
+                                                                  text: "Add Purchase Order",
                                                                   size: 22,
                                                                   color: Colors.blueGrey,
                                                                   weight: FontWeight.w500,
@@ -403,10 +429,10 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                                                               child: InkWell(
                                                                 onTap: () {
                                                                   _nameController.clear();
-                                                                  _countryController
-                                                                      .clear();
-                                                                  _shortNameController
-                                                                      .clear();
+                                                                  _taxAmountController.clear();
+                                                                  _totalNetController.clear();
+                                                                  _discountAmountController.clear();
+                                                                  _totalAmountController.clear();
                                                                   Navigator.of(context,
                                                                       rootNavigator: true)
                                                                       .pop();
@@ -436,7 +462,7 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                                                           child: Material(
                                                               child: CustomText(
                                                                 text:
-                                                                "Enter details to create brand.",
+                                                                "Enter details to create purchase order",
                                                                 size: 11.0,
                                                                 color: Colors.blueGrey,
                                                                 weight: FontWeight.w500,
@@ -460,7 +486,7 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                                                                         left: 12.0),
                                                                     child: Material(
                                                                         child: Text(
-                                                                          "Brand Name",
+                                                                          "Select Supplier Name",
                                                                           style: TextStyle(
                                                                               color: bgColor,
                                                                               fontSize: 12,
@@ -481,16 +507,185 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                                                                         width: 240,
                                                                         height: 40,
                                                                         child: Flexible(
+                                                                          child: StatefulBuilder(
+                                                                            builder: (BuildContext context, StateSetter setState){
+                                                                              return DecoratedBox(
+
+                                                                                decoration: ShapeDecoration(
+                                                                                    shape: RoundedRectangleBorder(
+                                                                                      side: BorderSide(width: 0.4, style: BorderStyle.solid, color: Colors.grey),
+                                                                                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                                                                    )
+                                                                                ),
+                                                                                child: DropdownButtonHideUnderline(
+                                                                                  child: DropdownButton<String>(
+                                                                                    hint: Padding(
+                                                                                      padding: const EdgeInsets.all(8.0),
+                                                                                      child: Text("Supplier Name", style: TextStyle(fontSize:
+                                                                                      12),),
+                                                                                    ),
+                                                                                    value: supplier_name_id,
+                                                                                    items: snapshot.data[1].map<DropdownMenuItem<String>>((item){
+                                                                                      return new DropdownMenuItem<String>(child: Padding(
+                                                                                        padding: const EdgeInsets.all(8.0),
+                                                                                        child: Text(
+                                                                                          item.name,
+                                                                                          style: TextStyle(fontSize:
+                                                                                          12,),
+                                                                                        ),
+                                                                                      ),
+                                                                                          value: item.id.toString()
+                                                                                      );
+                                                                                    }).toList(),
+                                                                                    onChanged: (String groupValue){
+                                                                                      setState(() {
+                                                                                        supplier_name_id = groupValue;
+
+                                                                                      });
+                                                                                    },
+                                                                                  ),
+                                                                                ),
+                                                                              );
+                                                                            },
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            Flexible(
+                                                              child: Column(
+                                                                crossAxisAlignment:
+                                                                CrossAxisAlignment.start,
+                                                                children: [
+                                                                  Padding(
+                                                                    padding:
+                                                                    const EdgeInsets.only(
+                                                                        left: 12.0),
+                                                                    child: Material(
+                                                                        child: Text(
+                                                                          "Select Branch Name",
+                                                                          style: TextStyle(
+                                                                              color: bgColor,
+                                                                              fontSize: 12,
+                                                                              fontWeight:
+                                                                              FontWeight
+                                                                                  .bold),
+                                                                        )),
+                                                                  ),
+                                                                  SizedBox(
+                                                                    height: 5,
+                                                                  ),
+                                                                  Material(
+                                                                    child: Padding(
+                                                                      padding:
+                                                                      const EdgeInsets.only(
+                                                                          left: 12.0),
+                                                                      child: Container(
+                                                                        width: 240,
+                                                                        height: 40,
+                                                                        child: Flexible(
+                                                                          child: StatefulBuilder(
+                                                                            builder: (BuildContext context, StateSetter setState){
+                                                                              return DecoratedBox(
+
+                                                                                decoration: ShapeDecoration(
+                                                                                    shape: RoundedRectangleBorder(
+                                                                                      side: BorderSide(width: 0.4, style: BorderStyle.solid, color: Colors.grey),
+                                                                                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                                                                    )
+                                                                                ),
+                                                                                child: DropdownButtonHideUnderline(
+                                                                                  child: DropdownButton<String>(
+                                                                                    hint: Padding(
+                                                                                      padding: const EdgeInsets.all(8.0),
+                                                                                      child: Text("Branch Name", style: TextStyle(fontSize:
+                                                                                      12),),
+                                                                                    ),
+                                                                                    value: branch_name_id,
+                                                                                    items: snapshot.data[2].map<DropdownMenuItem<String>>((item){
+                                                                                      return new DropdownMenuItem<String>(child: Padding(
+                                                                                        padding: const EdgeInsets.all(8.0),
+                                                                                        child: Text(
+                                                                                          item.name,
+                                                                                          style: TextStyle(fontSize:
+                                                                                          12,),
+                                                                                        ),
+                                                                                      ),
+                                                                                          value: item.id.toString()
+                                                                                      );
+                                                                                    }).toList(),
+                                                                                    onChanged: (String groupValue){
+                                                                                      setState(() {
+                                                                                        branch_name_id = groupValue;
+
+                                                                                      });
+                                                                                    },
+                                                                                  ),
+                                                                                ),
+                                                                              );
+                                                                            },
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        SizedBox(
+                                                          height: 15.0,
+                                                        ),
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                          MainAxisAlignment.start,
+                                                          children: [
+                                                            Flexible(
+                                                              child: Column(
+                                                                crossAxisAlignment:
+                                                                CrossAxisAlignment.start,
+                                                                children: [
+                                                                  Padding(
+                                                                    padding:
+                                                                    const EdgeInsets.only(
+                                                                        left: 12.0),
+                                                                    child: Material(
+                                                                        child: Text(
+                                                                          "Discount Amount",
+                                                                          style: TextStyle(
+                                                                              color: bgColor,
+                                                                              fontSize: 12,
+                                                                              fontWeight:
+                                                                              FontWeight
+                                                                                  .bold),
+                                                                        )),
+                                                                  ),
+                                                                  SizedBox(
+                                                                    height: 5,
+                                                                  ),
+                                                                  Material(
+                                                                    child: Padding(
+                                                                      padding:
+                                                                      const EdgeInsets.only(
+                                                                          left: 12.0),
+                                                                      child: Container(
+                                                                        width: 240,
+                                                                        height: 40,
+                                                                        child:  Flexible(
                                                                           child: TextField(
-                                                                            controller: _nameController,
+                                                                            controller: _discountAmountController,
                                                                             decoration:
                                                                             InputDecoration(
                                                                               //  labelText: "Email Address",
-                                                                              //   errorText: _validate
-                                                                              //       ? 'Name Can\'t Be Empty'
-                                                                              //       : null,
+                                                                                errorText: _validate
+                                                                                    ? 'Name Can\'t Be Empty'
+                                                                                    : null,
                                                                                 hintText:
-                                                                                "Brand Name",
+                                                                                "Discount Amount",
                                                                                 hintStyle: TextStyle(
                                                                                     fontSize:
                                                                                     12),
@@ -532,7 +727,7 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                                                                         left: 12.0),
                                                                     child: Material(
                                                                         child: Text(
-                                                                          "Brand short name",
+                                                                          "Total Net",
                                                                           style: TextStyle(
                                                                               color: bgColor,
                                                                               fontSize: 12,
@@ -552,15 +747,17 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                                                                       child: Container(
                                                                         width: 240,
                                                                         height: 40,
-                                                                        child: Flexible(
+                                                                        child:  Flexible(
                                                                           child: TextField(
-                                                                            controller: _shortNameController,
+                                                                            controller: _totalNetController,
                                                                             decoration:
                                                                             InputDecoration(
                                                                               //  labelText: "Email Address",
-                                                                              //errorText: _validate ? ' Can\'t Be Empty' : null,
+                                                                                errorText: _validate
+                                                                                    ? 'Phone Can\'t Be Empty'
+                                                                                    : null,
                                                                                 hintText:
-                                                                                "Example: KMTC",
+                                                                                "Net",
                                                                                 hintStyle: TextStyle(
                                                                                     fontSize:
                                                                                     12),
@@ -611,7 +808,7 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                                                                         left: 12.0),
                                                                     child: Material(
                                                                         child: Text(
-                                                                          "Country",
+                                                                          "Tax Amount",
                                                                           style: TextStyle(
                                                                               color: bgColor,
                                                                               fontSize: 12,
@@ -631,14 +828,89 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                                                                       child: Container(
                                                                         width: 240,
                                                                         height: 40,
-                                                                        child: Flexible(
+                                                                        child:  Flexible(
                                                                           child: TextField(
-                                                                            controller: _countryController,
-
+                                                                            controller: _taxAmountController,
                                                                             decoration:
                                                                             InputDecoration(
+                                                                              //  labelText: "Email Address",
+                                                                                errorText: _validate
+                                                                                    ? 'Tax Can\'t Be Empty'
+                                                                                    : null,
                                                                                 hintText:
-                                                                                "Country",
+                                                                                "Tax",
+                                                                                hintStyle: TextStyle(
+                                                                                    fontSize:
+                                                                                    12),
+                                                                                focusedBorder: OutlineInputBorder(
+                                                                                    borderSide: const BorderSide(
+                                                                                        color:
+                                                                                        primaryColor,
+                                                                                        width:
+                                                                                        0.4),
+                                                                                    borderRadius: BorderRadius
+                                                                                        .circular(
+                                                                                        5)),
+                                                                                enabledBorder: OutlineInputBorder(
+                                                                                    borderSide: const BorderSide(
+                                                                                        color: Colors
+                                                                                            .grey,
+                                                                                        width:
+                                                                                        0.4),
+                                                                                    borderRadius:
+                                                                                    BorderRadius
+                                                                                        .circular(
+                                                                                        5))),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            Flexible(
+                                                              child: Column(
+                                                                crossAxisAlignment:
+                                                                CrossAxisAlignment.start,
+                                                                children: [
+                                                                  Padding(
+                                                                    padding:
+                                                                    const EdgeInsets.only(
+                                                                        left: 12.0),
+                                                                    child: Material(
+                                                                        child: Text(
+                                                                          "Total Amount",
+                                                                          style: TextStyle(
+                                                                              color: bgColor,
+                                                                              fontSize: 12,
+                                                                              fontWeight:
+                                                                              FontWeight
+                                                                                  .bold),
+                                                                        )),
+                                                                  ),
+                                                                  SizedBox(
+                                                                    height: 5,
+                                                                  ),
+                                                                  Material(
+                                                                    child: Padding(
+                                                                      padding:
+                                                                      const EdgeInsets.only(
+                                                                          left: 12.0),
+                                                                      child: Container(
+                                                                        width: 240,
+                                                                        height: 40,
+                                                                        child:  Flexible(
+                                                                          child: TextField(
+                                                                            controller: _totalAmountController,
+                                                                            decoration:
+                                                                            InputDecoration(
+                                                                              //  labelText: "Email Address",
+                                                                                errorText: _validate
+                                                                                    ? 'Amount Can\'t Be Empty'
+                                                                                    : null,
+                                                                                hintText:
+                                                                                "Total Amount",
                                                                                 hintStyle: TextStyle(
                                                                                     fontSize:
                                                                                     12),
@@ -685,11 +957,12 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                                                                 Material(
                                                                   child: InkWell(
                                                                     onTap: () {
-                                                                      _nameController.clear();
-                                                                      _countryController
+                                                                      _nameController
                                                                           .clear();
-                                                                      _shortNameController
-                                                                          .clear();
+                                                                      _discountAmountController.clear();
+                                                                      _taxAmountController.clear();
+                                                                      _totalNetController.clear();
+                                                                      _totalAmountController.clear();
                                                                       Navigator.of(context,
                                                                           rootNavigator: true)
                                                                           .pop();
@@ -741,25 +1014,53 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                                                                 ),
                                                                 Material(
                                                                   child: InkWell(
-                                                                    onTap: ()  {
-                                                                      if(_nameController.value.text.isNotEmpty && _shortNameController.value.text.isNotEmpty){
-                                                                        brandsController.postBrand(_nameController.text, _shortNameController.text, _countryController.text, context);
-                                                                        setState(() {
-                                                                          _nameController.clear();
-                                                                          _countryController
-                                                                              .clear();
-                                                                          _shortNameController
-                                                                              .clear();
-                                                                          Navigator.of(context, rootNavigator: true).pop();
-                                                                        });
-                                                                      } else{
-                                                                        null;
-                                                                      }
+                                                                    onTap: () {
+                                                                      setState(() {
 
+                                                                        _nameController.text
+                                                                            .isEmpty
+                                                                            ?
+                                                                        _validate = true
+                                                                            : _validate =
+                                                                        false;
+                                                                        _totalAmountController.text
+                                                                            .isEmpty
+                                                                            ?
+                                                                        _validate = true
+                                                                            : _validate =
+                                                                        false;
+                                                                        _taxAmountController.text
+                                                                            .isEmpty
+                                                                            ?
+                                                                        _validate = true
+                                                                            : _validate =
+                                                                        false;
+                                                                        _totalNetController.text
+                                                                            .isEmpty
+                                                                            ?
+                                                                        _validate = true
+                                                                            : _validate =
+                                                                        false;
+                                                                        _discountAmountController.text
+                                                                            .isEmpty
+                                                                            ?
+                                                                        _validate = true
+                                                                            : _validate =
+                                                                        false;
+                                                                        // _shortNameController.text.isEmpty ? _validate = true : _validate = false;
+                                                                        print("Posting..${_nameController.text}, $supplier_name_id, ${_discountAmountController.text},${_totalNetController.text}, ${_taxAmountController.text}, ${_totalAmountController}");
+                                                                        supplierContact.add(_discountAmountController.text);
+                                                                        supplierContact.add(_totalAmountController.text);
+                                                                        supplierContact.add(_taxAmountController.text);
+                                                                        supplierContact.add(_totalNetController.text);
+                                                                        supplierController.postSupplier(_nameController.text, supplier_name_id,supplierContact, context);
+                                                                        Navigator.of(context, rootNavigator: true).pop();
+
+                                                                      });
                                                                     },
                                                                     child: Container(
                                                                       height: 40,
-                                                                      width: 150,
+                                                                      width: 190,
                                                                       decoration: BoxDecoration(
                                                                         color: primaryColor,
                                                                         borderRadius:
@@ -779,17 +1080,19 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                                                                             size: 20,
                                                                           ),
                                                                           SizedBox(
-                                                                            width: 8.0,
+                                                                            width: 2.0,
                                                                           ),
-                                                                          Text(
-                                                                            "Add Brand",
-                                                                            style: TextStyle(
-                                                                                color:
-                                                                                Colors
-                                                                                    .white,
-                                                                                fontWeight:
-                                                                                FontWeight
-                                                                                    .w400),
+                                                                          Flexible(
+                                                                            child: Text(
+                                                                              "Add Purchase Order",
+                                                                              style: TextStyle(
+                                                                                  color:
+                                                                                  Colors
+                                                                                      .white,
+                                                                                  fontWeight:
+                                                                                  FontWeight
+                                                                                      .w400),
+                                                                            ),
                                                                           )
                                                                         ],
                                                                       ),
@@ -809,7 +1112,7 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                                       },
                                       child: Container(
                                         height: 40.0,
-                                        width: 150,
+                                        width: 190,
                                         decoration: BoxDecoration(
                                             color: primaryColor,
                                             borderRadius: BorderRadius.circular(5.0)),
@@ -822,10 +1125,10 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                                               size: 20,
                                             ),
                                             SizedBox(
-                                              width: 8.0,
+                                              width: 2.0,
                                             ),
                                             Text(
-                                              "Add Brand",
+                                              "Add Purchase Order",
                                               style: TextStyle(
                                                   color: Colors.white,
                                                   fontWeight: FontWeight.w400),
@@ -850,18 +1153,24 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                                 dividerColor: Colors.blueGrey.shade100.withOpacity(0.4),
                               ),
                               child: PaginatedDataTable(
-                                rowsPerPage:5,
+                                rowsPerPage: 5,
                                 showCheckboxColumn: true,
                                 dataRowHeight: 60,
                                 columns: [
                                   DataColumn(label: Text(
-                                    "Name",
+                                    "Supplier",
                                     style: TextStyle(
                                         fontSize: 13.5,
                                         color: secondaryColor.withOpacity(0.4)),
                                   ),),
                                   DataColumn(label: Text(
-                                    "Short Name",
+                                    "Branch",
+                                    style: TextStyle(
+                                        fontSize: 13.5,
+                                        color: secondaryColor.withOpacity(0.4)),
+                                  ),),
+                                  DataColumn(label: Text(
+                                    "Total Amount",
                                     style: TextStyle(
                                         fontSize: 13.5,
                                         color: secondaryColor.withOpacity(0.4)),
@@ -935,10 +1244,9 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                                     ],
                                   )),
                                 ],
-                                source: ResultDataSource(
+                                source: PurchaseOrdersDataSource(
                                   onRowSelect: (index) => () {},
-                                  resultData: snapshot.data,
-
+                                  resultData: snapshot.data[0],
                                 ),
                               ),
                             ),
