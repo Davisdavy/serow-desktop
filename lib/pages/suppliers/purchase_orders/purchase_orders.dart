@@ -400,7 +400,7 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                                                         .of(context)
                                                         .size
                                                         .height -
-                                                        300,
+                                                        200,
                                                     padding: EdgeInsets.all(20),
                                                     child: Column(
                                                       crossAxisAlignment:
