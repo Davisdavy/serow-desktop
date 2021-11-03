@@ -35,7 +35,11 @@ class _GroupsPageState extends State<GroupsPage> {
   void initState() {
     super.initState();
   }
-
+  void updateUI(){
+    setState(() {
+      //Refresh page
+    });
+  }
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _shortNameController = TextEditingController();
   final TextEditingController _countryController = TextEditingController();
@@ -254,6 +258,18 @@ class _GroupsPageState extends State<GroupsPage> {
                                 ),
                                 child: CustomText(
                                   text: "You have a total of 5 groups.",
+                                  //ToDo: Read from count method
+                                  size: 12,
+                                  color: Colors.blueGrey,
+                                  weight: FontWeight.w500,
+                                ),
+                              ),
+                              InkWell(
+                                onTap:(){
+                                  updateUI();
+                                },
+                                child: CustomText(
+                                  text: "Refresh",
                                   //ToDo: Read from count method
                                   size: 12,
                                   color: Colors.blueGrey,
@@ -688,26 +704,25 @@ class _GroupsPageState extends State<GroupsPage> {
                                                                 Material(
                                                                   child: InkWell(
                                                                     onTap: () {
-                                                                      setState(() {
-
-                                                                        _nameController.text
-                                                                            .isEmpty
-                                                                            ?
-                                                                        _validate = true
-                                                                            : _validate =
-                                                                        false;
-                                                                        // _shortNameController.text.isEmpty ? _validate = true : _validate = false;
-                                                                        _countryController
-                                                                            .text.isEmpty
-                                                                            ?
-                                                                        _validate = true
-                                                                            : _validate =
-                                                                        false;
-
-                                                                        groupsController.postGroup(_nameController.text, priorityValue, context);
-                                                                        Navigator.of(context, rootNavigator: true).pop();
-
-                                                                      });
+                                                                      if( _nameController.value.text.isNotEmpty) {
+                                                                        groupsController
+                                                                            .postGroup(
+                                                                            _nameController
+                                                                                .text,
+                                                                            priorityValue,
+                                                                            context);
+                                                                        setState(() {
+                                                                          _nameController
+                                                                              .clear();
+                                                                          Navigator
+                                                                              .of(
+                                                                              context,
+                                                                              rootNavigator: true)
+                                                                              .pop();
+                                                                        });
+                                                                      }else {
+                                                                        null;
+                                                                      }
                                                                     },
                                                                     child: Container(
                                                                       height: 40,

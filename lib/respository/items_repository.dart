@@ -10,6 +10,6 @@ abstract class ItemsRepository {
 //
 //   Future<Results> deletedItem(String id);
 //
-//   Future<Locations> postItem(String name, String code, String branchId);
+//   Future<Items> postItem(String name, String code, String branchId);
 
 }

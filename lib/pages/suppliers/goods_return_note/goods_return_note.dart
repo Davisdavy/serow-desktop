@@ -48,7 +48,11 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
     _discountAmountController.dispose();
     super.dispose();
   }
-
+  void updateUI(){
+    setState(() {
+      //Refresh page
+    });
+  }
   @override
   Widget build(BuildContext context) {
     //Dependency injection
@@ -259,6 +263,18 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
                                 ),
                                 child: CustomText(
                                   text: "You have a total of 5 suppliers.",
+                                  //ToDo: Read from count method
+                                  size: 12,
+                                  color: Colors.blueGrey,
+                                  weight: FontWeight.w500,
+                                ),
+                              ),
+                              InkWell(
+                                onTap:(){
+                                  updateUI();
+                                },
+                                child: CustomText(
+                                  text: "Refresh",
                                   //ToDo: Read from count method
                                   size: 12,
                                   color: Colors.blueGrey,

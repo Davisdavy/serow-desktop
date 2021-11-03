@@ -12,7 +12,7 @@ import 'package:serow/services/services.dart';
 class CategoriesInventoryRepository implements CategoriesRepository{
 
   @override
-  Future<Result> deletedCategory(String id, BuildContext context) async{
+  Future<http.Response> deletedCategory(String id, BuildContext context) async{
     Auth user = Provider.of<AuthProvider>(context, listen: false).auth;
 
     final http.Response response =
@@ -22,7 +22,12 @@ class CategoriesInventoryRepository implements CategoriesRepository{
       "Authorization": "Bearer ${user.accessToken.toString()}",
     });
 
-    return  Result.fromJson(json.decode(response.body));
+    try{
+      return  response;
+    }catch(e){
+      print("Error: $e");
+    }
+    return  response;
   }
 
   @override

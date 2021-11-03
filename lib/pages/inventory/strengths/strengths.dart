@@ -47,7 +47,11 @@ class _StrengthsPageState extends State<StrengthsPage> {
     _shortNameController.dispose();
     super.dispose();
   }
-
+  void updateUI(){
+    setState(() {
+      //Refresh page
+    });
+  }
   @override
   Widget build(BuildContext context) {
     //Dependency injection
@@ -641,6 +645,18 @@ class _StrengthsPageState extends State<StrengthsPage> {
                                   ),
                                   child: CustomText(
                                     text: "You have a total of 5 strengths.",
+                                    //ToDo: Read from count method
+                                    size: 12,
+                                    color: Colors.blueGrey,
+                                    weight: FontWeight.w500,
+                                  ),
+                                ),
+                                InkWell(
+                                  onTap:(){
+                                    updateUI();
+                                  },
+                                  child: CustomText(
+                                    text: "Refresh",
                                     //ToDo: Read from count method
                                     size: 12,
                                     color: Colors.blueGrey,

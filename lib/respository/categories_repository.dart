@@ -9,7 +9,7 @@ abstract class CategoriesRepository {
 
   Future<String> putCategory(Result categories);
 
-  Future<Result> deletedCategory(String id, BuildContext context);
+  Future<dynamic> deletedCategory(String id, BuildContext context);
 
   Future<Categories> postCategory(String name, String shortName,
       String country, BuildContext context);

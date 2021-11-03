@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 import 'package:serow/constants.dart';
 import 'package:serow/controllers/brands_controller.dart';
 import 'package:serow/models/inventory/brands.dart';
@@ -84,6 +85,7 @@ class ResultDataSource extends  DataTableSource{
                             PopupMenuItem(
                               onTap: ()  {
                                 //Here is the delete functionality
+
                                 brandsController.deleteBrand(_result.id.toString(), context);
                               },
                               child:Row(

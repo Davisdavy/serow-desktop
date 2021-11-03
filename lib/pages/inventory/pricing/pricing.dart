@@ -32,7 +32,11 @@ class _PricingPageState extends State<PricingPage> {
     super.initState();
     //groupItemList();
   }
-
+  void updateUI(){
+    setState(() {
+      //Refresh page
+    });
+  }
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _formulaController = TextEditingController();
   bool _validate = false;
@@ -253,6 +257,18 @@ class _PricingPageState extends State<PricingPage> {
                                 ),
                                 child: CustomText(
                                   text: "You have a total of 5 locations.",
+                                  //ToDo: Read from count method
+                                  size: 12,
+                                  color: Colors.blueGrey,
+                                  weight: FontWeight.w500,
+                                ),
+                              ),
+                              InkWell(
+                                onTap:(){
+                                  updateUI();
+                                },
+                                child: CustomText(
+                                  text: "Refresh",
                                   //ToDo: Read from count method
                                   size: 12,
                                   color: Colors.blueGrey,

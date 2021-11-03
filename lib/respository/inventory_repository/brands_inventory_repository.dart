@@ -14,16 +14,20 @@ class BrandsInventoryRepository implements BrandsRepository {
 
   //Brands
   @override
-  Future<Results> deletedBrand(String id, BuildContext context) async{
+  Future<http.Response> deletedBrand(String id, BuildContext context) async{
     Auth user = Provider.of<AuthProvider>(context, listen: false).auth;
   final http.Response response =
   await http.delete(Uri.parse('${AppUrl.brands}$id/'), headers: {
-    'Content-type': 'application/json',
+    'Content-Type': 'application/json; charset=UTF-8',
     'Accept': 'application/json',
     "Authorization": "Bearer ${user.accessToken.toString()}",
   });
-
-  return  Results.fromJson(json.decode(response.body));
+  try{
+    return  response;
+  }catch(e){
+    print("Error: $e");
+  }
+    return  response;
   }
 
   @override

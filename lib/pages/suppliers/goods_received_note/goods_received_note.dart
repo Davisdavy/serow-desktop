@@ -33,7 +33,11 @@ class _GoodsReceivedNotePageState extends State<GoodsReceivedNotePage> {
     super.initState();
     //groupItemList();
   }
-
+  void updateUI(){
+    setState(() {
+      //Refresh page
+    });
+  }
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _supplierPhoneController = TextEditingController();
   final TextEditingController _supplierNameController = TextEditingController();
@@ -264,6 +268,18 @@ class _GoodsReceivedNotePageState extends State<GoodsReceivedNotePage> {
                                 ),
                                 child: CustomText(
                                   text: "You have a total of 5 goods received notes.",
+                                  //ToDo: Read from count method
+                                  size: 12,
+                                  color: Colors.blueGrey,
+                                  weight: FontWeight.w500,
+                                ),
+                              ),
+                              InkWell(
+                                onTap:(){
+                                  updateUI();
+                                },
+                                child: CustomText(
+                                  text: "Refresh",
                                   //ToDo: Read from count method
                                   size: 12,
                                   color: Colors.blueGrey,

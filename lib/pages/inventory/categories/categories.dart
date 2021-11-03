@@ -32,6 +32,11 @@ class _CategoriesPageState extends State<CategoriesPage> {
     super.initState();
     //groupItemList();
   }
+  void updateUI(){
+    setState(() {
+      //Refresh page
+    });
+  }
 
   final TextEditingController _nameController = TextEditingController();
   bool _validate = false;
@@ -254,6 +259,18 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                 ),
                                 child: CustomText(
                                   text: "You have a total of 5 categories.",
+                                  //ToDo: Read from count method
+                                  size: 12,
+                                  color: Colors.blueGrey,
+                                  weight: FontWeight.w500,
+                                ),
+                              ),
+                              InkWell(
+                                onTap:(){
+                                  updateUI();
+                                },
+                                child: CustomText(
+                                  text: "Refresh",
                                   //ToDo: Read from count method
                                   size: 12,
                                   color: Colors.blueGrey,
@@ -769,21 +786,22 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                                                 Material(
                                                                   child: InkWell(
                                                                     onTap: () {
-                                                                      setState(() {
-
-                                                                        _nameController.text
-                                                                            .isEmpty
-                                                                            ?
-                                                                        _validate = true
-                                                                            : _validate =
-                                                                        false;
-                                                                        // _shortNameController.text.isEmpty ? _validate = true : _validate = false;
-                                                                        print("Posting..${_nameController.text}, $groupId,$subgroupId}");
-
+                                                                      if(_nameController.value.text.isNotEmpty) {
                                                                         categoriesController.postCategory(_nameController.text, groupId,subgroupId, context);
-                                                                        Navigator.of(context, rootNavigator: true).pop();
-
-                                                                      });
+                                                                        setState(() {
+                                                                          _nameController.clear();
+                                                                          print(
+                                                                              "Posting..${_nameController
+                                                                                  .text}, $groupId,$subgroupId}");
+                                                                          Navigator
+                                                                              .of(
+                                                                              context,
+                                                                              rootNavigator: true)
+                                                                              .pop();
+                                                                        });
+                                                                      }else{
+                                                                        null;
+                                                                      }
                                                                     },
                                                                     child: Container(
                                                                       height: 40,

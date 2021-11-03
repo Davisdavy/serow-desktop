@@ -40,6 +40,11 @@ String groupId;
   final TextEditingController _countryController = TextEditingController();
   bool _validate = false;
 
+  void updateUI(){
+    setState(() {
+      //Refresh page
+    });
+  }
   @override
   void dispose() {
     _nameController.dispose();
@@ -258,6 +263,18 @@ String groupId;
                                 ),
                                 child: CustomText(
                                   text: "You have a total of 5 subgroups.",
+                                  //ToDo: Read from count method
+                                  size: 12,
+                                  color: Colors.blueGrey,
+                                  weight: FontWeight.w500,
+                                ),
+                              ),
+                              InkWell(
+                                onTap:(){
+                                  updateUI();
+                                },
+                                child: CustomText(
+                                  text: "Refresh",
                                   //ToDo: Read from count method
                                   size: 12,
                                   color: Colors.blueGrey,
@@ -800,7 +817,7 @@ String groupId;
                                 dividerColor: Colors.blueGrey.shade100.withOpacity(0.4),
                               ),
                               child: PaginatedDataTable(
-                                rowsPerPage: snapshot.data.length ?? 1,
+                                rowsPerPage:5,
                                 showCheckboxColumn: true,
                                 dataRowHeight: 60,
                                 columns: [

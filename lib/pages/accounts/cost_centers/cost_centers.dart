@@ -28,6 +28,12 @@ class _CostCentersPageState extends State<CostCentersPage> {
     super.dispose();
   }
 
+  void updateUI(){
+    setState(() {
+      //Refresh page
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     var costCenterController = CostCentersController(CostCentersAccountsRepository());
@@ -233,6 +239,18 @@ class _CostCentersPageState extends State<CostCentersPage> {
                                   ),
                                   child: CustomText(
                                     text: "You have a total of 5 cost centers.",
+                                    //ToDo: Read from count method
+                                    size: 12,
+                                    color: Colors.blueGrey,
+                                    weight: FontWeight.w500,
+                                  ),
+                                ),
+                                InkWell(
+                                  onTap:(){
+                                    updateUI();
+                                  },
+                                  child: CustomText(
+                                    text: "Refresh",
                                     //ToDo: Read from count method
                                     size: 12,
                                     color: Colors.blueGrey,

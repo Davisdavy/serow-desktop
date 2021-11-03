@@ -24,9 +24,6 @@ class _LocationsPageState extends State<LocationsPage> {
   //List<Result> category_group_list = [];
   var loading = false;
   double pageCount = 0;
-  bool showLoadingIndicator = false;
-  bool valuefirst = false;
-  bool valuesecond = false;
   String branchId;
 
   @override
@@ -44,7 +41,11 @@ class _LocationsPageState extends State<LocationsPage> {
     _nameController.dispose();
     super.dispose();
   }
-
+  void updateUI(){
+    setState(() {
+      //Refresh page
+    });
+  }
   @override
   Widget build(BuildContext context) {
     //Dependency injection
@@ -255,6 +256,18 @@ class _LocationsPageState extends State<LocationsPage> {
                                 ),
                                 child: CustomText(
                                   text: "You have a total of 5 locations.",
+                                  //ToDo: Read from count method
+                                  size: 12,
+                                  color: Colors.blueGrey,
+                                  weight: FontWeight.w500,
+                                ),
+                              ),
+                              InkWell(
+                                onTap:(){
+                                  updateUI();
+                                },
+                                child: CustomText(
+                                  text: "Refresh",
                                   //ToDo: Read from count method
                                   size: 12,
                                   color: Colors.blueGrey,

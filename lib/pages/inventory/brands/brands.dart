@@ -8,7 +8,9 @@ import 'package:provider/provider.dart';
 import 'package:serow/constants.dart';
 import 'package:serow/controllers/brands_controller.dart';
 import 'package:serow/controllers/controller.dart';
+import 'package:serow/models/auth/auth.dart';
 import 'package:serow/models/inventory/brands.dart';
+import 'package:serow/respository/auth_provider.dart';
 import 'package:serow/respository/inventory_repository/brands_inventory_repository.dart';
 import 'package:serow/services/brands_data_source.dart';
 import 'package:serow/widgets/custom_text.dart';
@@ -37,6 +39,12 @@ class _BrandsPageState extends State<BrandsPage> {
     _countryController.dispose();
     super.dispose();
   }
+  void updateUI(){
+    setState(() {
+     //Refresh page
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -244,6 +252,18 @@ class _BrandsPageState extends State<BrandsPage> {
                                   ),
                                   child: CustomText(
                                     text: "You have a total of 5 brands.",
+                                    //ToDo: Read from count method
+                                    size: 12,
+                                    color: Colors.blueGrey,
+                                    weight: FontWeight.w500,
+                                  ),
+                                ),
+                                InkWell(
+                                  onTap:(){
+                                    updateUI();
+                                  },
+                                  child: CustomText(
+                                    text: "Refresh",
                                     //ToDo: Read from count method
                                     size: 12,
                                     color: Colors.blueGrey,

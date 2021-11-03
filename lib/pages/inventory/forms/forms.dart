@@ -45,6 +45,11 @@ class _FormsPageState extends State<FormsPage> {
     super.dispose();
   }
 
+  void updateUI(){
+    setState(() {
+      //Refresh page
+    });
+  }
   @override
   Widget build(BuildContext context) {
     //Dependency injection
@@ -251,6 +256,18 @@ class _FormsPageState extends State<FormsPage> {
                                 ),
                                 child: CustomText(
                                   text: "You have a total of 5 forms.",
+                                  //ToDo: Read from count method
+                                  size: 12,
+                                  color: Colors.blueGrey,
+                                  weight: FontWeight.w500,
+                                ),
+                              ),
+                              InkWell(
+                                onTap:(){
+                                  updateUI();
+                                },
+                                child: CustomText(
+                                  text: "Refresh",
                                   //ToDo: Read from count method
                                   size: 12,
                                   color: Colors.blueGrey,

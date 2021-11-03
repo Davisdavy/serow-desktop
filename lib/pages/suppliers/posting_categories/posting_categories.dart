@@ -25,6 +25,12 @@ class _PostingCategoriesPageState extends State<PostingCategoriesPage> {
   final TextEditingController _codeController = TextEditingController();
   bool _validate = false;
 
+  void updateUI(){
+    setState(() {
+      //Refresh page
+    });
+  }
+
   @override
   void dispose() {
     _nameController.dispose();
@@ -265,6 +271,18 @@ class _PostingCategoriesPageState extends State<PostingCategoriesPage> {
                                 ),
                                 child: CustomText(
                                   text: "You have a total of 5 posting categories.",
+                                  //ToDo: Read from count method
+                                  size: 12,
+                                  color: Colors.blueGrey,
+                                  weight: FontWeight.w500,
+                                ),
+                              ),
+                              InkWell(
+                                onTap:(){
+                                  updateUI();
+                                },
+                                child: CustomText(
+                                  text: "Refresh",
                                   //ToDo: Read from count method
                                   size: 12,
                                   color: Colors.blueGrey,

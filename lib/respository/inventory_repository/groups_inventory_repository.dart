@@ -49,7 +49,7 @@ class GroupsInventoryRepository implements GroupsRepository{
       "Authorization": "Bearer ${user.accessToken.toString()}",
     });
 
-    return  Results.fromJson(json.decode(response.body));
+    return  Results.fromJson(json.decode(response.body.toString()));
   }
 
   @override

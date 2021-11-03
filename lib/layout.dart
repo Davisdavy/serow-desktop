@@ -10,9 +10,9 @@ import 'package:serow/widgets/side_menu.dart';
 import 'package:serow/widgets/top_nav.dart';
 
 class Layout extends StatelessWidget {
-  final Auth  user;
 
-  Layout({Key key, @required this.user}) : super(key: key);
+
+  Layout({Key key}) : super(key: key);
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
   @override
   Widget build(BuildContext context) {
