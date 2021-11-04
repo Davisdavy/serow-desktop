@@ -23,7 +23,7 @@ class BrandsController{
   }
 
   //delete
-  Future<void>deleteBrand(String id, BuildContext context) async{
+  Future<String>deleteBrand(String id, BuildContext context) async{
     return _repository.deletedBrand(id, context);
   }
 

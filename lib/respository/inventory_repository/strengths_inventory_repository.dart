@@ -13,7 +13,7 @@ class StrengthInventoryRepository implements StrengthsRepository {
 
 
   @override
-  Future<Results> deletedStrength(String id, BuildContext context) async{
+  Future<String> deletedStrength(String id, BuildContext context) async{
     Auth user = Provider.of<AuthProvider>(context, listen: false).auth;
 
     final http.Response response =
@@ -23,7 +23,7 @@ class StrengthInventoryRepository implements StrengthsRepository {
       "Authorization": "Bearer ${user.accessToken.toString()}",
     });
 
-    return  Results.fromJson(json.decode(response.body));
+    return json.decode(json.encode(response.body));
   }
 
   @override

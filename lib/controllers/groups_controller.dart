@@ -27,7 +27,7 @@ class GroupsController{
   }
 
   //delete
-  Future<Groups>postGroup(String name, String priority, BuildContext context) async{
+  Future<Group>postGroup(String name, String priority, BuildContext context) async{
     return _repository.postGroup(name,priority, context);
   }
 }

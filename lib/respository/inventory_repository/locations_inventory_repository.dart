@@ -13,7 +13,7 @@ class LocationsInventoryRepository implements LocationsRepository{
 
   //Subgroups
   @override
-  Future<Results> deletedLocation(String id, BuildContext context) async {
+  Future<String> deletedLocation(String id, BuildContext context) async {
     Auth user = Provider.of<AuthProvider>(context, listen: false).auth;
     final http.Response response =
     await http.delete(Uri.parse('${AppUrl.locations}$id/'), headers: {
@@ -22,7 +22,7 @@ class LocationsInventoryRepository implements LocationsRepository{
       "Authorization": "Bearer ${user.accessToken.toString()}",
     });
 
-    return  Results.fromJson(json.decode(response.body));
+    return json.decode(json.encode(response.body));
   }
 
   @override

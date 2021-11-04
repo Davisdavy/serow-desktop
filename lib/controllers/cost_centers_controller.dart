@@ -22,7 +22,7 @@ class CostCentersController{
   }
 
   //delete
-  Future<void>deleteCostCenter(String id, BuildContext context) async{
+  Future<String>deleteCostCenter(String id, BuildContext context) async{
     return _repository.deletedCostCenter(id, context);
   }
 

@@ -4,18 +4,18 @@
 
 import 'dart:convert';
 
-Subgroups subgroupFromJson(String str) => Subgroups.fromJson(json.decode(str));
+Subgroup subgroupFromJson(String str) => Subgroup.fromJson(json.decode(str));
 
 
-class Subgroups {
+class Subgroup {
   int count;
   Null next;
   Null previous;
   List<Results> results;
 
-  Subgroups({this.count, this.next, this.previous, this.results});
+  Subgroup({this.count, this.next, this.previous, this.results});
 
-  Subgroups.fromJson(Map<String, dynamic> json) {
+  Subgroup.fromJson(Map<String, dynamic> json) {
     count = json['count'];
     next = json['next'];
     previous = json['previous'];

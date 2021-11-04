@@ -70,7 +70,7 @@ class SubgroupInventoryRepository implements SubgroupRepository{
   }
 
   @override
-  Future<Subgroups> postSubGroup(String name, String groupId, BuildContext context) async {
+  Future<Subgroup> postSubGroup(String name, String groupId, BuildContext context) async {
     Auth user = Provider.of<AuthProvider>(context,listen: false).auth;
     var response = await http.post(Uri.parse('${AppUrl.subgroups}'),headers: {
       'Content-type': 'application/json',

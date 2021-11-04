@@ -11,6 +11,6 @@ abstract class SubgroupRepository {
 
   Future<Results> deletedSubGroup(String id, BuildContext context);
 
-  Future<Subgroups> postSubGroup(String name, String groupId, BuildContext context);
+  Future<Subgroup> postSubGroup(String name, String groupId, BuildContext context);
 
 }

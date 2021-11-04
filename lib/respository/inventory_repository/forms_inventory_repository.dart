@@ -12,7 +12,7 @@ import 'package:serow/services/services.dart';
 class FormsInventoryRepository implements FormsRepository {
 
   @override
-  Future<Results> deletedForms(String id, BuildContext context) async {
+  Future<String> deletedForms(String id, BuildContext context) async {
     Auth user = Provider.of<AuthProvider>(context, listen: false).auth;
 
     final http.Response response = await http.delete(Uri.parse('${AppUrl.forms}$id/'), headers: {
@@ -21,7 +21,7 @@ class FormsInventoryRepository implements FormsRepository {
       "Authorization": "Bearer ${user.accessToken.toString()}",
     });
 
-    return Results.fromJson(json.decode(response.body));
+    return json.decode(json.encode(response.body));;
   }
 
   @override
@@ -53,7 +53,7 @@ class FormsInventoryRepository implements FormsRepository {
   Future<String> patchForms(Results result) async {
     //call back
     String responseData = '';
-    await http.patch(Uri.parse('${AppUrl.brands}${result.id}'), headers: {
+    await http.patch(Uri.parse('${AppUrl.forms}${result.id}'), headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
       "Authorization": "Bearer "
@@ -73,7 +73,7 @@ class FormsInventoryRepository implements FormsRepository {
   Future<Forms> postForms(String name, BuildContext context) async {
     Auth user = Provider.of<AuthProvider>(context,listen: false).auth;
     var response = await http.post(
-      Uri.parse('${AppUrl.brands}'),
+      Uri.parse('${AppUrl.forms}'),
       headers: {
         'Content-type': 'application/json',
         'Accept': 'application/json',
@@ -94,7 +94,7 @@ class FormsInventoryRepository implements FormsRepository {
 
     //call back
     String responseData = '';
-    await http.put(Uri.parse('${AppUrl.brands}${result.id}'), headers: {
+    await http.put(Uri.parse('${AppUrl.forms}${result.id}'), headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
       "Authorization": "Bearer "

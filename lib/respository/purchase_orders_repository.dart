@@ -7,7 +7,7 @@ abstract class PurchaseOrdersRepository {
   Future<List<Results>> getPurchaseOrderList(BuildContext context);
   Future<String> patchPurchaseOrder(Results result);
   Future<String> putPurchaseOrder(Results result);
-  Future<Results> deletedPurchaseOrder(String id, BuildContext context);
+  Future<String> deletedPurchaseOrder(String id, BuildContext context);
   Future<PurchaseOrders> postPurchaseOrder(String supplier, String branch,List<String>purchase_order_items, BuildContext context);
 
 

@@ -4,17 +4,17 @@
 
 import 'dart:convert';
 
-Groups groupFromJson(String str) => Groups.fromJson(json.decode(str));
+Group groupFromJson(String str) => Group.fromJson(json.decode(str));
 
-class Groups {
+class   Group {
   int count;
   Null next;
   Null previous;
   List<Results> results;
 
-  Groups({this.count, this.next, this.previous, this.results});
+  Group({this.count, this.next, this.previous, this.results});
 
-  Groups.fromJson(Map<String, dynamic> json) {
+  Group.fromJson(Map<String, dynamic> json) {
     count = json['count'];
     next = json['next'];
     previous = json['previous'];

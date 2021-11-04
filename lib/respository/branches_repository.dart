@@ -8,8 +8,6 @@ abstract class BranchesRepository {
   Future<List<Results>> getBranchList(BuildContext context);
   Future<String> patchBranch(Results result);
   Future<String> putBranch(Results result);
-  Future<Results> deletedBranch(String id, BuildContext context);
+  Future<String> deletedBranch(String id, BuildContext context);
   Future<Branches> postBranch(String name, String location, String phone, BuildContext context);
-
-
 }

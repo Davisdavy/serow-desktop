@@ -25,7 +25,7 @@ class ShelvesController{
   }
 
   //delete
-  Future<void>deleteShelf(String id, BuildContext context) async{
+  Future<String>deleteShelf(String id, BuildContext context) async{
     return _repository.deletedShelf(id, context);
   }
 

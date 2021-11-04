@@ -13,7 +13,7 @@ import 'package:serow/services/services.dart';
 
 class BranchesEntitiesRepository implements BranchesRepository {
   @override
-  Future<Results> deletedBranch(String id, BuildContext context) async{
+  Future<String> deletedBranch(String id, BuildContext context) async{
     Auth user = Provider.of<AuthProvider>(context, listen: false).auth;
     final http.Response response =
         await http.delete(Uri.parse('${AppUrl.branches}$id/'), headers: {
@@ -22,7 +22,7 @@ class BranchesEntitiesRepository implements BranchesRepository {
       "Authorization": "Bearer ${user.accessToken.toString()}",
     });
 
-    return  Results.fromJson(json.decode(response.body));
+    return json.decode(json.encode(response.body));
   }
 
   @override

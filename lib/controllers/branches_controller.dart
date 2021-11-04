@@ -23,7 +23,7 @@ class BranchesController{
   }
 
   //delete
-  Future<void>deleteBranch(String id, BuildContext context) async{
+  Future<String>deleteBranch(String id, BuildContext context) async{
     return _repository.deletedBranch(id, context);
   }
 

@@ -10,7 +10,7 @@ import 'dart:convert';
 
 class SupplierInvoicesSupplierRepository implements SupplierInvoicesRepository {
   @override
-  Future<Results> deletedSupplierInvoice(String id, BuildContext context) async {
+  Future<String> deletedSupplierInvoice(String id, BuildContext context) async {
     Auth user = Provider.of<AuthProvider>(context, listen: false).auth;
     final http.Response response =
         await http.delete(Uri.parse('${AppUrl.supplier_invoices}$id/'), headers: {
@@ -19,7 +19,7 @@ class SupplierInvoicesSupplierRepository implements SupplierInvoicesRepository {
       "Authorization": "Bearer ${user.accessToken.toString()}",
     });
 
-    return  Results.fromJson(json.decode(response.body));
+    return json.decode(json.encode(response.body));
   }
 
   @override

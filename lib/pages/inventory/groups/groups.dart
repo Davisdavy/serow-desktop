@@ -22,7 +22,7 @@ class GroupsPage extends StatefulWidget {
 class _GroupsPageState extends State<GroupsPage> {
   GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
   GlobalKey<RefreshIndicatorState>();
-  List<Groups> listResult = [];
+  List<Group> listResult = [];
   List brandCount = [];
   var loading = false;
   double pageCount = 0;

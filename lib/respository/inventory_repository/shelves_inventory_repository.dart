@@ -13,7 +13,7 @@ class ShelvesInventoryRepository implements ShelvesRepository{
 
   //Subgroups
   @override
-  Future<Results> deletedShelf(String id, BuildContext context) async{
+  Future<String> deletedShelf(String id, BuildContext context) async{
     Auth user = Provider.of<AuthProvider>(context, listen: false).auth;
 
     final http.Response response =
@@ -23,7 +23,7 @@ class ShelvesInventoryRepository implements ShelvesRepository{
       "Authorization": "Bearer ${user.accessToken.toString()}",
     });
 
-    return  Results.fromJson(json.decode(response.body));
+    return json.decode(json.encode(response.body));
   }
 
   @override

@@ -23,7 +23,7 @@ class LocationsController{
   }
 
   //delete
-  Future<void>deleteLocations(String id, BuildContext context) async{
+  Future<String>deleteLocations(String id, BuildContext context) async{
     return _repository.deletedLocation(id, context);
   }
 

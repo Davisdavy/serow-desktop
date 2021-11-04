@@ -9,6 +9,7 @@ import 'package:serow/controllers/navigation_controller.dart';
 import 'package:serow/layout.dart';
 import 'package:serow/models/auth/auth.dart';
 import 'package:serow/pages/authentication/authentication_page.dart';
+import 'package:serow/pages/inventory/items/items.dart';
 import 'package:serow/respository/auth_provider.dart';
 import 'package:serow/respository/inventory_repository/authentication_provider.dart';
 import 'package:serow/respository/user_provider.dart';
@@ -44,6 +45,7 @@ class MyApp extends StatelessWidget {
       ,
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
+        scrollBehavior: AppScrollBehavior(),
         theme: ThemeData(
           primaryColor: const Color(0xff4b5764),
           primaryColorDark: const Color(0xFF5d5b8c),

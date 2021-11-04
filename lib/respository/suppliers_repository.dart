@@ -8,7 +8,7 @@ abstract class SuppliersRepository {
   Future<List<Results>> getSupplierList(BuildContext context);
   Future<String> patchSupplier(Results result);
   Future<String> putSupplier(Results result);
-  Future<Results> deletedSupplier(String id, BuildContext context);
+  Future<String> deletedSupplier(String id, BuildContext context);
   Future<Suppliers> postSupplier(String name, String postingCategory,List<String>supplier_contacts, BuildContext context);
 
 

@@ -10,7 +10,7 @@ abstract class LocationsRepository {
 
   Future<String> putLocation(Results groups);
 
-  Future<Results> deletedLocation(String id, BuildContext context);
+  Future<String> deletedLocation(String id, BuildContext context);
 
   Future<Locations> postLocation(String name, String code, String branchId, BuildContext context);
 

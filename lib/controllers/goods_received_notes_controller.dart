@@ -22,7 +22,7 @@ class GoodsReceivedNotesController{
   }
 
   //delete
-  Future<void>deleteGoodsReceivedNote(String id, BuildContext context) async{
+  Future<String>deleteGoodsReceivedNote(String id, BuildContext context) async{
     return _repository.deletedGoodsReceivedNote(id, context);
   }
 

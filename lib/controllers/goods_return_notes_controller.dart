@@ -21,7 +21,7 @@ class GoodsReturnNotesController {
   }
 
   //delete
-  Future<void> deleteGoodsReturnNote(String id, BuildContext context) async {
+  Future<String> deleteGoodsReturnNote(String id, BuildContext context) async {
     return _repository.deletedGoodsReturnNote(id, context);
   }
 

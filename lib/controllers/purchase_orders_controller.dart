@@ -22,7 +22,7 @@ class PurchaseOrdersController {
   }
 
   //delete
-  Future<void> deletePurchaseOrder(String id, BuildContext context) async {
+  Future<String> deletePurchaseOrder(String id, BuildContext context) async {
     return _repository.deletedPurchaseOrder(id, context);
   }
 

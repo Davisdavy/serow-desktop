@@ -26,7 +26,7 @@ class PostingCategoriesController{
   }
 
   //delete
-  Future<void>deletePostingCategory(String id, BuildContext context) async{
+  Future<String>deletePostingCategory(String id, BuildContext context) async{
     return _repository.deletedPostingCategory(id, context);
   }
 

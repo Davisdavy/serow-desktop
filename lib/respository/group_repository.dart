@@ -12,5 +12,5 @@ abstract class GroupsRepository {
 
   Future<Results> deletedGroup(String id, BuildContext context);
 
-  Future<Groups> postGroup(String name, String priority, BuildContext context);
+  Future<Group> postGroup(String name, String priority, BuildContext context);
 }

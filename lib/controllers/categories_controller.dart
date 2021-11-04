@@ -22,7 +22,7 @@ class CategoriesController{
   }
 
   //delete
-  Future<void>deleteCategory(String id,BuildContext context) async{
+  Future<String>deleteCategory(String id,BuildContext context) async{
     return _repository.deletedCategory(id, context);
   }
 

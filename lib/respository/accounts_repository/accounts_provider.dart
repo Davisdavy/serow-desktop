@@ -11,7 +11,7 @@ import 'package:serow/services/services.dart';
 
 class AccountsProvider implements AccountsRepository {
   @override
-  Future<Results> deletedAccount(String id, BuildContext context) async{
+  Future<String> deletedAccount(String id, BuildContext context) async{
     Auth user = Provider.of<AuthProvider>(context, listen: false).auth;
     final http.Response response =
         await http.delete(Uri.parse('${AppUrl.accounts}$id/'), headers: {
@@ -20,7 +20,7 @@ class AccountsProvider implements AccountsRepository {
       "Authorization": "Bearer ${user.accessToken.toString()}",
     });
 
-    return  Results.fromJson(json.decode(response.body));
+    return json.decode(json.encode(response.body));
   }
 
   @override

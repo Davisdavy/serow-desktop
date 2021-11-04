@@ -1106,7 +1106,7 @@ class _StockRequisitionPageState extends State<StockRequisitionPage> {
                       ],
                       source: ItemsDataSource(
                         onRowSelect: (index) =>(){},
-                        resultData: listResult,
+                       // resultData: listResult,
                       ),
                     ),
                   ),

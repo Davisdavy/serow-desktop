@@ -9,7 +9,7 @@ abstract class StrengthsRepository {
   Future<List<Results>> getStrengthsList(BuildContext context);
   Future<String> patchStrength(Results result);
   Future<String> putStrength(Results result);
-  Future<Results> deletedStrength(String id, BuildContext context);
+  Future<String> deletedStrength(String id, BuildContext context);
   Future<Strengths> postStrength(String name, String shortName, BuildContext context);
 
 

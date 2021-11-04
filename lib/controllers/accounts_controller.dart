@@ -25,7 +25,7 @@ class AccountsController{
   }
 
   //delete
-  Future<void>deleteAccount(String id, BuildContext context) async{
+  Future<String>deleteAccount(String id, BuildContext context) async{
     return _repository.deletedAccount(id, context);
   }
 

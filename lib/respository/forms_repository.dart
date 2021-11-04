@@ -8,7 +8,7 @@ abstract class FormsRepository {
   Future<List<Results>> getFormsList(BuildContext context);
   Future<String> patchForms(Results result);
   Future<String> putForms(Results result);
-  Future<Results> deletedForms(String id, BuildContext context);
+  Future<String> deletedForms(String id, BuildContext context);
   Future<Forms> postForms(String name, BuildContext context);
 
 

@@ -73,7 +73,7 @@ class GroupsInventoryRepository implements GroupsRepository{
   }
 
   @override
-  Future<Groups> postGroup(String name, String priority, BuildContext context) async{
+  Future<Group> postGroup(String name, String priority, BuildContext context) async{
     Auth user = Provider.of<AuthProvider>(context,listen: false).auth;
     var response = await http.post(Uri.parse('${AppUrl.groups}'),headers: {
       'Content-type': 'application/json',

@@ -8,7 +8,7 @@ abstract class CostCentersRepository {
   Future<List<Results>> getCostCenterList(BuildContext context);
   Future<String> patchCostCenter(Results result);
   Future<String> putCostCenter(Results result);
-  Future<Results> deletedCostCenter(String id, BuildContext context);
+  Future<String> deletedCostCenter(String id, BuildContext context);
   Future<CostCenters> postCostCenter(String name, String location, BuildContext context);
 
 

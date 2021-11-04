@@ -12,7 +12,7 @@ abstract class ShelvesRepository {
 
   Future<String> putShelf(Results groups);
 
-  Future<Results> deletedShelf(String id, BuildContext context);
+  Future<String> deletedShelf(String id, BuildContext context);
 
   Future<Shelves> postShelf(String name, String locationId, BuildContext context);
 

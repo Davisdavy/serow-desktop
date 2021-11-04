@@ -11,7 +11,7 @@ import 'dart:convert';
 
 class PurchaseOrdersSupplierRepository implements PurchaseOrdersRepository {
   @override
-  Future<Results> deletedPurchaseOrder(String id, BuildContext context)async {
+  Future<String> deletedPurchaseOrder(String id, BuildContext context)async {
     Auth user = Provider.of<AuthProvider>(context, listen: false).auth;
     final http.Response response =
     await http.delete(Uri.parse('${AppUrl.purchase_orders}$id/'), headers: {
@@ -20,7 +20,7 @@ class PurchaseOrdersSupplierRepository implements PurchaseOrdersRepository {
       "Authorization": "Bearer ${user.accessToken.toString()}",
     });
 
-    return  Results.fromJson(json.decode(response.body));
+    return json.decode(json.encode(response.body));
   }
 
   @override

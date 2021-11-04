@@ -12,7 +12,7 @@ import 'package:http/http.dart' as http;
 
 class SuppliersProvider implements SuppliersRepository {
   @override
-  Future<Results> deletedSupplier(String id, BuildContext context) async{
+  Future<String> deletedSupplier(String id, BuildContext context) async{
     Auth user = Provider.of<AuthProvider>(context, listen: false).auth;
     final http.Response response =
     await http.delete(Uri.parse('${AppUrl.suppliers}$id/'), headers: {
@@ -21,7 +21,7 @@ class SuppliersProvider implements SuppliersRepository {
       "Authorization": "Bearer ${user.accessToken.toString()}",
     });
 
-    return  Results.fromJson(json.decode(response.body));
+    return json.decode(json.encode(response.body));
   }
 
   @override

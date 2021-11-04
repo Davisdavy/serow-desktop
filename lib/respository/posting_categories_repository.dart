@@ -10,7 +10,7 @@ abstract class PostingCategoriesRepository {
 
   Future<String> putPostingCategory(Results groups);
 
-  Future<Results> deletedPostingCategory(String id, BuildContext context);
+  Future<String> deletedPostingCategory(String id, BuildContext context);
 
   Future<PostingCategories> postPostingCategory(String name, String code, String accountId,BuildContext context);
 

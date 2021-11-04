@@ -14,7 +14,7 @@ class BrandsInventoryRepository implements BrandsRepository {
 
   //Brands
   @override
-  Future<http.Response> deletedBrand(String id, BuildContext context) async{
+  Future<String> deletedBrand(String id, BuildContext context) async{
     Auth user = Provider.of<AuthProvider>(context, listen: false).auth;
   final http.Response response =
   await http.delete(Uri.parse('${AppUrl.brands}$id/'), headers: {
@@ -22,12 +22,7 @@ class BrandsInventoryRepository implements BrandsRepository {
     'Accept': 'application/json',
     "Authorization": "Bearer ${user.accessToken.toString()}",
   });
-  try{
-    return  response;
-  }catch(e){
-    print("Error: $e");
-  }
-    return  response;
+   return json.decode(json.encode(response.body));
   }
 
   @override

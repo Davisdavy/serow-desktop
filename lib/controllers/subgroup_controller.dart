@@ -27,7 +27,7 @@ class SubgroupController{
   }
 
   //delete
-  Future<Subgroups>postSubgroup(String name, String groupId, BuildContext context) async{
+  Future<Subgroup>postSubgroup(String name, String groupId, BuildContext context) async{
     return _repository.postSubGroup(name,groupId, context);
   }
 }

@@ -23,7 +23,7 @@ class SupplierController{
   }
 
   //delete
-  Future<void>deleteSupplier(String id, BuildContext context) async{
+  Future<String>deleteSupplier(String id, BuildContext context) async{
     return _repository.deletedSupplier(id, context);
   }
 

@@ -24,7 +24,7 @@ class StrengthsController{
   }
 
   //delete
-  Future<void>deleteStrength(String id, BuildContext context) async{
+  Future<String>deleteStrength(String id, BuildContext context) async{
     return _repository.deletedStrength(id, context);
   }
 

@@ -22,7 +22,7 @@ class SubgroupsPage extends StatefulWidget {
 
 
 class _SubgroupsPageState extends State<SubgroupsPage> {
-  List<Subgroups> listResult = [];
+  List<Subgroup> listResult = [];
   List brandCount = [];
   var loading = false;
   double pageCount = 0;

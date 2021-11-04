@@ -24,7 +24,7 @@ class FormsController{
   }
 
   //delete
-  Future<void>deleteForms(String id, BuildContext context) async{
+  Future<String>deleteForms(String id, BuildContext context) async{
     return _repository.deletedForms(id, context);
   }
 

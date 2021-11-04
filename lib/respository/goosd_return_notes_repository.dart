@@ -8,7 +8,7 @@ abstract class GoodsReturnNotesRepository {
   Future<List<Results>> getGoodsReturnNoteList(BuildContext context);
   Future<String> patchGoodsReturnNote(Results result);
   Future<String> putGoodsReturnNote(Results result);
-  Future<Results> deletedGoodsReturnNote(String id, BuildContext context);
+  Future<String> deletedGoodsReturnNote(String id, BuildContext context);
   Future<GoodsReturnNotes> postGoodsReturnNote(String supplier, String branch,List<String>goods_return_note_items, BuildContext context);
 
 
