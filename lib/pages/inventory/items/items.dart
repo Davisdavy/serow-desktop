@@ -34,7 +34,7 @@ class _ItemsPageState extends State<ItemsPage> {
   String groupId;
 String subgroupId;
 String brandId;
-  PageController pageController = PageController();
+  PageController controller = PageController();
 
   final _stepsText = ["Details", "Pricing", "Finish"];
 
@@ -532,8 +532,10 @@ String brandId;
                                                               SizedBox(
                                                                 height: 15,
                                                               ),
-                                                              Expanded(
+                                                              Container(
+                                                                height: MediaQuery.of(context).size.height / 1.9,
                                                                 child: PageView(
+                                                                  controller: controller,
                                                                   onPageChanged: (i){
                                                                     setState(() {
                                                                       _curPage = i+1;
@@ -582,7 +584,6 @@ String brandId;
                                                                                             controller: _nameController,
                                                                                             decoration:
                                                                                             InputDecoration(
-//  labelText: "Email Address",
                                                                                                 errorText: _validate
                                                                                                     ? 'Name Can\'t Be Empty'
                                                                                                     : null,
@@ -1208,124 +1209,340 @@ String brandId;
                                                                             ),
                                                                           ],
                                                                         ),
+
+                                                                      ],
+                                                                    ),
+                                                                    Column(
+
+                                                                      children: [
+                                                                        Row(
+                                                                          mainAxisAlignment:
+                                                                          MainAxisAlignment.start,
+                                                                          children: [
+                                                                            Flexible(
+                                                                              child: Column(
+                                                                                crossAxisAlignment:
+                                                                                CrossAxisAlignment.start,
+                                                                                children: [
+                                                                                  Padding(
+                                                                                    padding:
+                                                                                    const EdgeInsets.only(
+                                                                                        left: 12.0),
+                                                                                    child: Material(
+                                                                                        child: Text(
+                                                                                          "Item Name",
+                                                                                          style: TextStyle(
+                                                                                              color: bgColor,
+                                                                                              fontSize: 12,
+                                                                                              fontWeight:
+                                                                                              FontWeight
+                                                                                                  .bold),
+                                                                                        )),
+                                                                                  ),
+                                                                                  SizedBox(
+                                                                                    height: 5,
+                                                                                  ),
+                                                                                  Material(
+                                                                                    child: Padding(
+                                                                                      padding:
+                                                                                      const EdgeInsets.only(
+                                                                                          left: 12.0),
+                                                                                      child: Container(
+                                                                                        width: 240,
+                                                                                        height: 40,
+                                                                                        child: Flexible(
+                                                                                          child: TextField(
+                                                                                            controller: _nameController,
+                                                                                            decoration:
+                                                                                            InputDecoration(
+                                                                                                errorText: _validate
+                                                                                                    ? 'Name Can\'t Be Empty'
+                                                                                                    : null,
+                                                                                                hintText:
+                                                                                                "Item Name",
+                                                                                                hintStyle: TextStyle(
+                                                                                                    fontSize:
+                                                                                                    12),
+                                                                                                focusedBorder: OutlineInputBorder(
+                                                                                                    borderSide: const BorderSide(
+                                                                                                        color:
+                                                                                                        primaryColor,
+                                                                                                        width:
+                                                                                                        0.4),
+                                                                                                    borderRadius: BorderRadius
+                                                                                                        .circular(
+                                                                                                        5)),
+                                                                                                enabledBorder: OutlineInputBorder(
+                                                                                                    borderSide: const BorderSide(
+                                                                                                        color: Colors
+                                                                                                            .grey,
+                                                                                                        width:
+                                                                                                        0.4),
+                                                                                                    borderRadius:
+                                                                                                    BorderRadius
+                                                                                                        .circular(
+                                                                                                        5))),
+                                                                                          ),
+                                                                                        ),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                            ),
+                                                                            Flexible(
+                                                                              child: Column(
+                                                                                crossAxisAlignment:
+                                                                                CrossAxisAlignment.start,
+                                                                                children: [
+                                                                                  Padding(
+                                                                                    padding:
+                                                                                    const EdgeInsets.only(
+                                                                                        left: 12.0),
+                                                                                    child: Material(
+                                                                                        child: Text(
+                                                                                          "Select Group",
+                                                                                          style: TextStyle(
+                                                                                              color: bgColor,
+                                                                                              fontSize: 12,
+                                                                                              fontWeight:
+                                                                                              FontWeight
+                                                                                                  .bold),
+                                                                                        )),
+                                                                                  ),
+                                                                                  SizedBox(
+                                                                                    height: 5,
+                                                                                  ),
+                                                                                  Material(
+                                                                                    child: Padding(
+                                                                                      padding:
+                                                                                      const EdgeInsets.only(
+                                                                                          left: 12.0),
+                                                                                      child: Container(
+                                                                                        width: 240,
+                                                                                        height: 40,
+                                                                                        child: Flexible(
+                                                                                          child: StatefulBuilder(
+                                                                                            builder: (BuildContext context, StateSetter setState){
+                                                                                              return DecoratedBox(
+
+                                                                                                decoration: ShapeDecoration(
+                                                                                                    shape: RoundedRectangleBorder(
+                                                                                                      side: BorderSide(width: 0.4, style: BorderStyle.solid, color: Colors.grey),
+                                                                                                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                                                                                    )
+                                                                                                ),
+                                                                                                child: DropdownButtonHideUnderline(
+                                                                                                  child: DropdownButton<String>(
+                                                                                                    hint: Padding(
+                                                                                                      padding: const EdgeInsets.all(8.0),
+                                                                                                      child: Text("Group", style: TextStyle(fontSize:
+                                                                                                      12),),
+                                                                                                    ),
+                                                                                                    value: groupId,
+                                                                                                    items: snapshot.data[1].map<DropdownMenuItem<String>>((item){
+                                                                                                      return new DropdownMenuItem<String>(child: Padding(
+                                                                                                        padding: const EdgeInsets.all(8.0),
+                                                                                                        child: Text(
+                                                                                                          item.name,
+                                                                                                          style: TextStyle(fontSize:
+                                                                                                          12,),
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                          value: item.id.toString()
+                                                                                                      );
+                                                                                                    }).toList(),
+                                                                                                    onChanged: (String groupValue){
+                                                                                                      setState(() {
+                                                                                                        groupId = groupValue;
+
+                                                                                                      });
+                                                                                                    },
+                                                                                                  ),
+                                                                                                ),
+                                                                                              );
+                                                                                            },
+                                                                                          ),
+                                                                                        ),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                        ),
                                                                         SizedBox(
                                                                           height: 15.0,
                                                                         ),
-                                                                        Flexible(
-                                                                          child: Padding(
-                                                                            padding: const EdgeInsets.only(
-                                                                                right: 25.0),
-                                                                            child: Row(
-                                                                              mainAxisAlignment:
-                                                                              MainAxisAlignment.end,
-                                                                              children: [
-                                                                                Material(
-                                                                                  child: InkWell(
-                                                                                    onTap: () {
-                                                                                      _nameController
-                                                                                          .clear();
-                                                                                      Navigator.of(context,
-                                                                                          rootNavigator: true)
-                                                                                          .pop();
-                                                                                    },
-                                                                                    child: Container(
-                                                                                      height: 40,
-                                                                                      width: 100,
-                                                                                      decoration: BoxDecoration(
-                                                                                        color: Colors.white,
-                                                                                        border: Border.all(
-                                                                                            color:
-                                                                                            secondaryColor),
-                                                                                        borderRadius:
-                                                                                        BorderRadius
-                                                                                            .circular(
-                                                                                            5.0),
-                                                                                      ),
-                                                                                      child: Row(
-                                                                                        mainAxisAlignment:
-                                                                                        MainAxisAlignment
-                                                                                            .center,
-                                                                                        children: [
-                                                                                          SvgPicture
-                                                                                              .asset(
-                                                                                            "assets/icons/cancel.svg",
-                                                                                            color:
-                                                                                            secondaryColor,
-                                                                                            height: 10,
+                                                                        Row(
+                                                                          mainAxisAlignment:
+                                                                          MainAxisAlignment.start,
+                                                                          children: [
+                                                                            Flexible(
+                                                                              child: Column(
+                                                                                crossAxisAlignment:
+                                                                                CrossAxisAlignment.start,
+                                                                                children: [
+                                                                                  Padding(
+                                                                                    padding:
+                                                                                    const EdgeInsets.only(
+                                                                                        left: 12.0),
+                                                                                    child: Material(
+                                                                                        child: Text(
+                                                                                          "Select Subgroup",
+                                                                                          style: TextStyle(
+                                                                                              color: bgColor,
+                                                                                              fontSize: 12,
+                                                                                              fontWeight:
+                                                                                              FontWeight
+                                                                                                  .bold),
+                                                                                        )),
+                                                                                  ),
+                                                                                  SizedBox(
+                                                                                    height: 5,
+                                                                                  ),
+                                                                                  Material(
+                                                                                    child: Padding(
+                                                                                      padding:
+                                                                                      const EdgeInsets.only(
+                                                                                          left: 12.0),
+                                                                                      child: Container(
+                                                                                        width: 240,
+                                                                                        height: 40,
+                                                                                        child: Flexible(
+                                                                                          child: StatefulBuilder(
+                                                                                            builder: (BuildContext context, StateSetter setState){
+                                                                                              return DecoratedBox(
+
+                                                                                                decoration: ShapeDecoration(
+                                                                                                    shape: RoundedRectangleBorder(
+                                                                                                      side: BorderSide(width: 0.4, style: BorderStyle.solid, color: Colors.grey),
+                                                                                                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                                                                                    )
+                                                                                                ),
+                                                                                                child: DropdownButtonHideUnderline(
+                                                                                                  child: DropdownButton<String>(
+                                                                                                    hint: Padding(
+                                                                                                      padding: const EdgeInsets.all(8.0),
+                                                                                                      child: Text("Subgroup", style: TextStyle(fontSize:
+                                                                                                      12),),
+                                                                                                    ),
+                                                                                                    value: subgroupId,
+                                                                                                    items: snapshot.data[2].map<DropdownMenuItem<String>>((item){
+                                                                                                      return new DropdownMenuItem<String>(child: Padding(
+                                                                                                        padding: const EdgeInsets.all(8.0),
+                                                                                                        child: Text(
+                                                                                                          item.name,
+                                                                                                          style: TextStyle(fontSize:
+                                                                                                          12,),
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                          value: item.id.toString()
+                                                                                                      );
+                                                                                                    }).toList(),
+                                                                                                    onChanged: (String groupValue){
+                                                                                                      setState(() {
+                                                                                                        subgroupId = groupValue;
+
+                                                                                                      });
+                                                                                                    },
+                                                                                                  ),
+                                                                                                ),
+                                                                                              );
+                                                                                            },
                                                                                           ),
-                                                                                          SizedBox(
-                                                                                            width: 8.0,
-                                                                                          ),
-                                                                                          Text(
-                                                                                            "Cancel",
-                                                                                            style: TextStyle(
-                                                                                                color:
-                                                                                                secondaryColor,
-                                                                                                fontWeight:
-                                                                                                FontWeight
-                                                                                                    .w400),
-                                                                                          )
-                                                                                        ],
+                                                                                        ),
                                                                                       ),
                                                                                     ),
                                                                                   ),
-                                                                                ),
-                                                                                SizedBox(
-                                                                                  width: 10,
-                                                                                ),
-                                                                                Material(
-                                                                                  child: InkWell(
-                                                                                    onTap: () {
-                                                                                      setState(() {
-
-
-                                                                                        // subgroupsController.postSubgroup(_nameController.text, groupId, context);
-                                                                                        // Navigator.of(context, rootNavigator: true).pop();
-
-                                                                                      });
-                                                                                    },
-                                                                                    child: Container(
-                                                                                      height: 40,
-                                                                                      width: 150,
-                                                                                      decoration: BoxDecoration(
-                                                                                        color: primaryColor,
-                                                                                        borderRadius:
-                                                                                        BorderRadius
-                                                                                            .circular(
-                                                                                            5.0),
-                                                                                      ),
-                                                                                      child: Row(
-                                                                                        mainAxisAlignment:
-                                                                                        MainAxisAlignment
-                                                                                            .center,
-                                                                                        children: [
-                                                                                          Icon(
-                                                                                            Icons.add,
-                                                                                            color: Colors
-                                                                                                .white,
-                                                                                            size: 20,
-                                                                                          ),
-                                                                                          SizedBox(
-                                                                                            width: 8.0,
-                                                                                          ),
-                                                                                          Text(
-                                                                                            "Next Step",
-                                                                                            style: TextStyle(
-                                                                                                color:
-                                                                                                Colors
-                                                                                                    .white,
-                                                                                                fontWeight:
-                                                                                                FontWeight
-                                                                                                    .w400),
-                                                                                          )
-                                                                                        ],
-                                                                                      ),
-                                                                                    ),
-                                                                                  ),
-                                                                                ),
-                                                                              ],
+                                                                                ],
+                                                                              ),
                                                                             ),
-                                                                          ),
+                                                                            Flexible(
+                                                                              child: Column(
+                                                                                crossAxisAlignment:
+                                                                                CrossAxisAlignment.start,
+                                                                                children: [
+                                                                                  Padding(
+                                                                                    padding:
+                                                                                    const EdgeInsets.only(
+                                                                                        left: 12.0),
+                                                                                    child: Material(
+                                                                                        child: Text(
+                                                                                          "Select Brand",
+                                                                                          style: TextStyle(
+                                                                                              color: bgColor,
+                                                                                              fontSize: 12,
+                                                                                              fontWeight:
+                                                                                              FontWeight
+                                                                                                  .bold),
+                                                                                        )),
+                                                                                  ),
+                                                                                  SizedBox(
+                                                                                    height: 5,
+                                                                                  ),
+                                                                                  Material(
+                                                                                    child: Padding(
+                                                                                      padding:
+                                                                                      const EdgeInsets.only(
+                                                                                          left: 12.0),
+                                                                                      child: Container(
+                                                                                        width: 240,
+                                                                                        height: 40,
+                                                                                        child: Flexible(
+                                                                                          child: StatefulBuilder(
+                                                                                            builder: (BuildContext context, StateSetter setState){
+                                                                                              return DecoratedBox(
+
+                                                                                                decoration: ShapeDecoration(
+                                                                                                    shape: RoundedRectangleBorder(
+                                                                                                      side: BorderSide(width: 0.4, style: BorderStyle.solid, color: Colors.grey),
+                                                                                                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                                                                                    )
+                                                                                                ),
+                                                                                                child: DropdownButtonHideUnderline(
+                                                                                                  child: DropdownButton<String>(
+                                                                                                    hint: Padding(
+                                                                                                      padding: const EdgeInsets.all(8.0),
+                                                                                                      child: Text("Brand", style: TextStyle(fontSize:
+                                                                                                      12),),
+                                                                                                    ),
+                                                                                                    value: brandId,
+                                                                                                    items: snapshot.data[3].map<DropdownMenuItem<String>>((item){
+                                                                                                      return new DropdownMenuItem<String>(child: Padding(
+                                                                                                        padding: const EdgeInsets.all(8.0),
+                                                                                                        child: Text(
+                                                                                                          item.name,
+                                                                                                          style: TextStyle(fontSize:
+                                                                                                          12,),
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                          value: item.id.toString()
+                                                                                                      );
+                                                                                                    }).toList(),
+                                                                                                    onChanged: (String groupValue){
+                                                                                                      setState(() {
+                                                                                                        brandId = groupValue;
+
+                                                                                                      });
+                                                                                                    },
+                                                                                                  ),
+                                                                                                ),
+                                                                                              );
+                                                                                            },
+                                                                                          ),
+                                                                                        ),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                        SizedBox(
+                                                                          height: 15.0,
                                                                         ),
                                                                       ],
                                                                     ),
@@ -1372,7 +1589,6 @@ String brandId;
                                                                                             controller: _nameController,
                                                                                             decoration:
                                                                                             InputDecoration(
-//  labelText: "Email Address",
                                                                                                 errorText: _validate
                                                                                                     ? 'Name Can\'t Be Empty'
                                                                                                     : null,
@@ -1667,7 +1883,372 @@ String brandId;
                                                                   ],
                                                                 ),
                                                               ),
+                                                              _curPage ==1 ?
+                                                              Flexible(
+                                                                child: Padding(
+                                                                  padding: const EdgeInsets.only(
+                                                                      right: 25.0),
+                                                                  child: Row(
+                                                                    mainAxisAlignment:
+                                                                    MainAxisAlignment.end,
+                                                                    children: [
+                                                                      Material(
+                                                                        child: InkWell(
+                                                                          onTap: () {
+                                                                            _nameController
+                                                                                .clear();
+                                                                            Navigator.of(context,
+                                                                                rootNavigator: true)
+                                                                                .pop();
+                                                                          },
+                                                                          child: Container(
+                                                                            height: 40,
+                                                                            width: 100,
+                                                                            decoration: BoxDecoration(
+                                                                              color: Colors.white,
+                                                                              border: Border.all(
+                                                                                  color:
+                                                                                  secondaryColor),
+                                                                              borderRadius:
+                                                                              BorderRadius
+                                                                                  .circular(
+                                                                                  5.0),
+                                                                            ),
+                                                                            child: Row(
+                                                                              mainAxisAlignment:
+                                                                              MainAxisAlignment
+                                                                                  .center,
+                                                                              children: [
+                                                                                SvgPicture
+                                                                                    .asset(
+                                                                                  "assets/icons/cancel.svg",
+                                                                                  color:
+                                                                                  secondaryColor,
+                                                                                  height: 10,
+                                                                                ),
+                                                                                SizedBox(
+                                                                                  width: 8.0,
+                                                                                ),
+                                                                                Text(
+                                                                                  "Cancel",
+                                                                                  style: TextStyle(
+                                                                                      color:
+                                                                                      secondaryColor,
+                                                                                      fontWeight:
+                                                                                      FontWeight
+                                                                                          .w400),
+                                                                                )
+                                                                              ],
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      SizedBox(
+                                                                        width: 10,
+                                                                      ),
+                                                                      Material(
+                                                                        child: InkWell(
+                                                                          onTap: () {
+                                                                            if (controller.hasClients) {
+                                                                              controller.animateToPage(
+                                                                                1,
+                                                                                duration: const Duration(milliseconds: 400),
+                                                                                curve: Curves.easeInOut,
+                                                                              );
+                                                                            }
+                                                                            setState(() {
 
+                                                                              // subgroupsController.postSubgroup(_nameController.text, groupId, context);
+                                                                              // Navigator.of(context, rootNavigator: true).pop();
+
+                                                                            });
+                                                                          },
+                                                                          child: Container(
+                                                                            height: 40,
+                                                                            width: 150,
+                                                                            decoration: BoxDecoration(
+                                                                              color: primaryColor,
+                                                                              borderRadius:
+                                                                              BorderRadius
+                                                                                  .circular(
+                                                                                  5.0),
+                                                                            ),
+                                                                            child: Row(
+                                                                              mainAxisAlignment:
+                                                                              MainAxisAlignment
+                                                                                  .center,
+                                                                              children: [
+                                                                                Icon(
+                                                                                  Icons.arrow_forward_ios,
+                                                                                  color: Colors
+                                                                                      .white,
+                                                                                  size: 15,
+                                                                                ),
+                                                                                SizedBox(
+                                                                                  width: 8.0,
+                                                                                ),
+                                                                                Text(
+                                                                                  "Next Step",
+                                                                                  style: TextStyle(
+                                                                                      color:
+                                                                                      Colors
+                                                                                          .white,
+                                                                                      fontWeight:
+                                                                                      FontWeight
+                                                                                          .w400),
+                                                                                )
+                                                                              ],
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ) :
+                                                                  _curPage == 2 ?
+                                                              Flexible(
+                                                                child: Padding(
+                                                                  padding: const EdgeInsets.only(
+                                                                      right: 25.0),
+                                                                  child: Row(
+                                                                    mainAxisAlignment:
+                                                                    MainAxisAlignment.end,
+                                                                    children: [
+                                                                      Material(
+                                                                        child: InkWell(
+                                                                          onTap: () {
+                                                                            if (controller.hasClients) {
+                                                                              controller.animateToPage(
+                                                                                0,
+                                                                                duration: const Duration(milliseconds: 400),
+                                                                                curve: Curves.easeInOut,
+                                                                              );
+                                                                            }
+                                                                          },
+                                                                          child: Container(
+                                                                            height: 40,
+                                                                            width: 100,
+                                                                            decoration: BoxDecoration(
+                                                                              color: Colors.white,
+                                                                              border: Border.all(
+                                                                                  color:
+                                                                                  secondaryColor),
+                                                                              borderRadius:
+                                                                              BorderRadius
+                                                                                  .circular(
+                                                                                  5.0),
+                                                                            ),
+                                                                            child: Row(
+                                                                              mainAxisAlignment:
+                                                                              MainAxisAlignment
+                                                                                  .center,
+                                                                              children: [
+                                                                                Icon(Icons.arrow_back_ios,
+                                                                                  color: secondaryColor,
+                                                                                  size: 15,
+                                                                                ),
+                                                                                SizedBox(
+                                                                                  width: 8.0,
+                                                                                ),
+                                                                                Text(
+                                                                                  "Back",
+                                                                                  style: TextStyle(
+                                                                                      color:
+                                                                                      secondaryColor,
+                                                                                      fontWeight:
+                                                                                      FontWeight
+                                                                                          .w400),
+                                                                                )
+                                                                              ],
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      SizedBox(
+                                                                        width: 10,
+                                                                      ),
+                                                                      Material(
+                                                                        child: InkWell(
+                                                                          onTap: () {
+                                                                            if (controller.hasClients) {
+                                                                              controller.animateToPage(
+                                                                                3,
+                                                                                duration: const Duration(milliseconds: 400),
+                                                                                curve: Curves.easeInOut,
+                                                                              );
+                                                                            }
+                                                                            setState(() {
+
+                                                                              // subgroupsController.postSubgroup(_nameController.text, groupId, context);
+                                                                              // Navigator.of(context, rootNavigator: true).pop();
+
+                                                                            });
+                                                                          },
+                                                                          child: Container(
+                                                                            height: 40,
+                                                                            width: 150,
+                                                                            decoration: BoxDecoration(
+                                                                              color: primaryColor,
+                                                                              borderRadius:
+                                                                              BorderRadius
+                                                                                  .circular(
+                                                                                  5.0),
+                                                                            ),
+                                                                            child: Row(
+                                                                              mainAxisAlignment:
+                                                                              MainAxisAlignment
+                                                                                  .center,
+                                                                              children: [
+                                                                                Icon(
+                                                                                  Icons.arrow_forward_ios,
+                                                                                  color: Colors
+                                                                                      .white,
+                                                                                  size: 15,
+                                                                                ),
+                                                                                SizedBox(
+                                                                                  width: 8.0,
+                                                                                ),
+                                                                                Text(
+                                                                                  "Next Step",
+                                                                                  style: TextStyle(
+                                                                                      color:
+                                                                                      Colors
+                                                                                          .white,
+                                                                                      fontWeight:
+                                                                                      FontWeight
+                                                                                          .w400),
+                                                                                )
+                                                                              ],
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ) :
+                                                                  Flexible(
+                                                                    child: Padding(
+                                                                      padding: const EdgeInsets.only(
+                                                                          right: 25.0),
+                                                                      child: Row(
+                                                                        mainAxisAlignment:
+                                                                        MainAxisAlignment.end,
+                                                                        children: [
+                                                                          Material(
+                                                                            child: InkWell(
+                                                                              onTap: () {
+                                                                                if (controller.hasClients) {
+                                                                                  controller.animateToPage(
+                                                                                    1,
+                                                                                    duration: const Duration(milliseconds: 400),
+                                                                                    curve: Curves.easeInOut,
+                                                                                  );
+                                                                                }
+                                                                              },
+                                                                              child: Container(
+                                                                                height: 40,
+                                                                                width: 100,
+                                                                                decoration: BoxDecoration(
+                                                                                  color: Colors.white,
+                                                                                  border: Border.all(
+                                                                                      color:
+                                                                                      secondaryColor),
+                                                                                  borderRadius:
+                                                                                  BorderRadius
+                                                                                      .circular(
+                                                                                      5.0),
+                                                                                ),
+                                                                                child: Row(
+                                                                                  mainAxisAlignment:
+                                                                                  MainAxisAlignment
+                                                                                      .center,
+                                                                                  children: [
+                                                                                    Icon(Icons.arrow_back_ios,
+                                                                                      color: secondaryColor,
+                                                                                      size: 15,
+                                                                                    ),
+                                                                                    SizedBox(
+                                                                                      width: 8.0,
+                                                                                    ),
+                                                                                    Text(
+                                                                                      "Back",
+                                                                                      style: TextStyle(
+                                                                                          color:
+                                                                                          secondaryColor,
+                                                                                          fontWeight:
+                                                                                          FontWeight
+                                                                                              .w400),
+                                                                                    )
+                                                                                  ],
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                          SizedBox(
+                                                                            width: 10,
+                                                                          ),
+                                                                          Material(
+                                                                            child: InkWell(
+                                                                              onTap: () {
+                                                                                // if (controller.hasClients) {
+                                                                                //   controller.animateToPage(
+                                                                                //     1,
+                                                                                //     duration: const Duration(milliseconds: 400),
+                                                                                //     curve: Curves.easeInOut,
+                                                                                //   );
+                                                                                // }
+                                                                                setState(() {
+
+                                                                                  // subgroupsController.postSubgroup(_nameController.text, groupId, context);
+                                                                                  // Navigator.of(context, rootNavigator: true).pop();
+
+                                                                                });
+                                                                              },
+                                                                              child: Container(
+                                                                                height: 40,
+                                                                                width: 150,
+                                                                                decoration: BoxDecoration(
+                                                                                  color: primaryColor,
+                                                                                  borderRadius:
+                                                                                  BorderRadius
+                                                                                      .circular(
+                                                                                      5.0),
+                                                                                ),
+                                                                                child: Row(
+                                                                                  mainAxisAlignment:
+                                                                                  MainAxisAlignment
+                                                                                      .center,
+                                                                                  children: [
+                                                                                    Icon(
+                                                                                      Icons.add,
+                                                                                      color: Colors
+                                                                                          .white,
+                                                                                      size: 15,
+                                                                                    ),
+                                                                                    SizedBox(
+                                                                                      width: 8.0,
+                                                                                    ),
+                                                                                    Text(
+                                                                                      "Add",
+                                                                                      style: TextStyle(
+                                                                                          color:
+                                                                                          Colors
+                                                                                              .white,
+                                                                                          fontWeight:
+                                                                                          FontWeight
+                                                                                              .w400),
+                                                                                    )
+                                                                                  ],
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                  )
                                                             ],
                                                           ),
                                                         ),

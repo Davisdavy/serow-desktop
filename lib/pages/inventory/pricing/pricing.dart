@@ -23,8 +23,6 @@ class _PricingPageState extends State<PricingPage> {
   var loading = false;
   double pageCount = 0;
   bool showLoadingIndicator = false;
-  bool valuefirst = false;
-  bool valuesecond = false;
   String branchId;
 
   @override
@@ -74,7 +72,6 @@ class _PricingPageState extends State<PricingPage> {
                     ],
                   ),
             ),
-
 
             SingleChildScrollView(
               child: FutureBuilder(
