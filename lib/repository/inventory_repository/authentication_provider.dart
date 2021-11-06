@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:serow/models/auth/auth.dart';
-import 'package:serow/respository/auth_repository.dart';
+import 'package:serow/repository/auth_repository.dart';
 import 'package:serow/services/preferences.dart';
 import 'package:serow/services/services.dart';
 import 'dart:convert';

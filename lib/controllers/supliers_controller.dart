@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:serow/models/suppliers/suppliers.dart';
-import 'package:serow/respository/suppliers_repository.dart';
+import 'package:serow/repository/suppliers_repository.dart';
 
 class SupplierController{
   final SuppliersRepository _repository;

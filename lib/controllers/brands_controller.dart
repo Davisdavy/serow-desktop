@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:serow/models/inventory/brands.dart';
-import 'package:serow/respository/brands_repository.dart';
+import 'package:serow/repository/brands_repository.dart';
 
 class BrandsController{
   final BrandsRepository _repository;

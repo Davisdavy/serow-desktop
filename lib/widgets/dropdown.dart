@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:serow/controllers/groups_controller.dart';
-import 'package:serow/respository/inventory_repository/groups_inventory_repository.dart';
+import 'package:serow/repository/inventory_repository/groups_inventory_repository.dart';
 
 class DropDownSelect extends StatefulWidget {
   const DropDownSelect({Key key}) : super(key: key);

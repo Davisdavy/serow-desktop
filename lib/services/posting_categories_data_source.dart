@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:serow/constants.dart';
 import 'package:serow/controllers/posting_categories_controller.dart';
 import 'package:serow/models/suppliers/posting_categories.dart';
-import 'package:serow/respository/suppliers_repository/posting_categories_suppliers_repository.dart';
+import 'package:serow/repository/suppliers_repository/posting_categories_suppliers_repository.dart';
 
 
 typedef OnRowSelect = void Function(int index);

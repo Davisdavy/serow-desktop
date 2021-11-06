@@ -5,7 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:serow/constants.dart';
 import 'package:serow/controllers/cost_centers_controller.dart';
 import 'package:serow/models/accounts/cost_centers.dart';
-import 'package:serow/respository/accounts_repository/cost_centers_accounts_repository.dart';
+import 'package:serow/repository/accounts_repository/cost_centers_accounts_repository.dart';
 
 
 typedef OnRowSelect = void Function(int index);

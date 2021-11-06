@@ -1,64 +1,61 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:serow/models/auth/auth.dart';
-import 'package:serow/models/inventory/categories.dart';
-import 'package:serow/respository/auth_provider.dart';
-import 'package:serow/respository/categories_repository.dart';
+
+import 'package:flutter/src/widgets/framework.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
+import 'package:serow/models/accounts/cost_centers.dart';
+import 'package:serow/models/auth/auth.dart';
+import 'package:serow/repository/auth_provider.dart';
+import 'package:serow/repository/cost_centers_repository.dart';
 import 'dart:convert';
 
 import 'package:serow/services/services.dart';
 
-class CategoriesInventoryRepository implements CategoriesRepository{
-
+class CostCentersAccountsRepository implements CostCentersRepository {
   @override
-  Future<String> deletedCategory(String id, BuildContext context) async{
+  Future<String> deletedCostCenter(String id, BuildContext context) async {
     Auth user = Provider.of<AuthProvider>(context, listen: false).auth;
-
     final http.Response response =
-    await http.delete(Uri.parse('${AppUrl.categories}$id/'), headers: {
+        await http.delete(Uri.parse('${AppUrl.cost_centers}$id/'), headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
       "Authorization": "Bearer ${user.accessToken.toString()}",
     });
 
-
     return json.decode(json.encode(response.body));
   }
 
   @override
-  Future<List<Result>> getCategoryList(BuildContext context) async {
-    //https://serow.herrings.co.ke/api/v1/inventory/categories/
-    List<Result> categoryList = [];
+  Future<List<Results>> getCostCenterList(BuildContext context) async {
+    //https://serow.herrings.co.ke/api/v1/accounts/costcenters/
+    //ToDo: Pass ?all=True to get un-paginated data
+    List<Results> resultList = [];
     context.watch<AuthProvider>();
     Auth user = Provider.of<AuthProvider>(context).auth;
-    var response = await http.get(Uri.parse('${AppUrl.categories}'), headers: {
+    var response = await http.get(Uri.parse('${AppUrl.cost_centers}'), headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
-      "Authorization":
-      "Bearer ${user.accessToken.toString()}"
+      "Authorization": "Bearer ${user.accessToken.toString()}"
     }, );
-    print('Get get categories status code: ${response.statusCode}');
+    print('Get cost centers status code: ${response.statusCode}');
     var body = json.decode(response.body);//convert
     //parse
-    print('Categories body: ${body['results']}');
+    print('Result body: ${body['results']}');
     for (Map<String, dynamic> i in body["results"]) {
-      categoryList.add(Result.fromJson(i));
+      resultList.add(Results.fromJson(i));
     }
 
-    return categoryList;
+    return resultList;
   }
 
   @override
-  Future<String> patchCategory(Result categories) async{
+  Future<String> patchCostCenter(Results result) async {
     //call back
     String responseData = '';
-    await http.patch(Uri.parse('${AppUrl.categories}${categories.id}'), headers: {
+    await http.patch(Uri.parse('${AppUrl.cost_centers}${result.id}'), headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
       "Authorization": "Bearer "
-    },
-        body:{'name': categories.name.toString(), 'slug': categories.slug.toString(), 'priority': categories.group.id.toString()}
+    }, body:{'name': result.name.toString(), 'short_name': result.code.toString()}
     ).then((response) {
       //screen -> Data
       Map<String, dynamic> result = json.decode(response.body);
@@ -69,32 +66,32 @@ class CategoriesInventoryRepository implements CategoriesRepository{
   }
 
   @override
-  Future<Categories> postCategory(String name, String group, String subgroup, BuildContext context) async{
+  Future<CostCenters> postCostCenter(String name, String code, BuildContext context) async{
     Auth user = Provider.of<AuthProvider>(context,listen: false).auth;
-    var response = await http.post(Uri.parse('${AppUrl.categories}'),headers: {
+    var response = await http.post(Uri.parse('${AppUrl.cost_centers}'),headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
       "Authorization":  "Bearer ${user.accessToken.toString()}"
     }, body: jsonEncode(<dynamic, String>{
       'name': name,
-      'group': group,
-      'subgroup': subgroup
+      'code': code
+
     }),);
     print('Post status code: ${response.statusCode}');
     print('Post body: ${response.body}');
     // print('Post toJSON: ${br}');
-    return categoriesFromJson(response.body);
+    return costCentersFromJson(response.body);
   }
 
   @override
-  Future<String> putCategory(Result categories) async{
+  Future<String> putCostCenter(Results result)async {
     //call back
     String responseData = '';
-    await http.put(Uri.parse('${AppUrl.brands}${categories.id}'), headers: {
+    await http.put(Uri.parse('${AppUrl.cost_centers}${result.id}'), headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
       "Authorization": "Bearer "
-    }, body:{'name': categories.name.toString(), 'slug': categories.slug.toString(), 'country': categories.group.id.toString()}
+    }, body:{'name': result.name.toString(), 'short_name': result.code.toString()}
     ).then((response) {
       //screen -> Data
       Map<String, dynamic> result = json.decode(response.body);
@@ -103,4 +100,5 @@ class CategoriesInventoryRepository implements CategoriesRepository{
     });
     return responseData;
   }
+
 }

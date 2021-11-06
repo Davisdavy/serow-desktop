@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:serow/constants.dart';
 import 'package:serow/controllers/shelves_controller.dart';
 import 'package:serow/models/inventory/shelves.dart';
-import 'package:serow/respository/inventory_repository/shelves_inventory_repository.dart';
+import 'package:serow/repository/inventory_repository/shelves_inventory_repository.dart';
 typedef OnRowSelect = void Function(int index);
 
 class ShelvesDataSource extends  DataTableSource{

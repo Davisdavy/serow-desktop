@@ -4,7 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:serow/constants.dart';
 import 'package:serow/controllers/supplier_invoices_controller.dart';
 import 'package:serow/models/suppliers/supplier_invoices.dart';
-import 'package:serow/respository/suppliers_repository/supplier_invoices_suppliers_repository.dart';
+import 'package:serow/repository/suppliers_repository/supplier_invoices_suppliers_repository.dart';
 
 
 

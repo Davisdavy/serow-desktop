@@ -1,64 +1,68 @@
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:serow/models/auth/auth.dart';
-import 'package:serow/models/inventory/locations.dart';
-import 'package:serow/respository/auth_provider.dart';
-import 'package:serow/respository/locations_repository.dart';
+import 'package:serow/models/inventory/groups.dart';
+import 'package:serow/repository/auth_provider.dart';
+import 'package:serow/repository/group_repository.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:serow/services/services.dart';
 
-class LocationsInventoryRepository implements LocationsRepository{
+class GroupsInventoryRepository implements GroupsRepository{
 
-  //Subgroups
-  @override
-  Future<String> deletedLocation(String id, BuildContext context) async {
-    Auth user = Provider.of<AuthProvider>(context, listen: false).auth;
-    final http.Response response =
-    await http.delete(Uri.parse('${AppUrl.locations}$id/'), headers: {
-      'Content-type': 'application/json',
-      'Accept': 'application/json',
-      "Authorization": "Bearer ${user.accessToken.toString()}",
-    });
-
-    return json.decode(json.encode(response.body));
-  }
+  //Groups
 
   @override
-  Future<List<Results>> getLocationList(BuildContext context) async {
-    //https://serow.herrings.co.ke/api/v1/inventory/brands/
-    List<Results> subgroupList = [];
+  Future<List<Results>> getGroupList(BuildContext context) async {
+    //https://serow.herrings.co.ke/api/v1/inventory/groups/
+    List<Results> groupList = [];
     context.watch<AuthProvider>();
     Auth user = Provider.of<AuthProvider>(context).auth;
-    var response = await http.get(Uri.parse('${AppUrl.locations}'), headers: {
+
+    var response = await http.get(Uri.parse('${AppUrl.groups}'), headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
       "Authorization":
       "Bearer ${user.accessToken.toString()}"
     }, );
-    print('Get subgroups status code: ${response.statusCode}');
+    print('Get groups status code: ${response.statusCode}');
     var body = json.decode(response.body);//convert
     //parse
     print('Result body: ${body['results']}');
     for (Map<String, dynamic> i in body["results"]) {
-      subgroupList.add(Results.fromJson(i));
+      groupList.add(Results.fromJson(i));
     }
 
-    return subgroupList;
+    return groupList;
+
+  }
+
+
+  @override
+  Future<Results> deletedGroup(String id, BuildContext context) async {
+    Auth user = Provider.of<AuthProvider>(context, listen: false).auth;
+    final http.Response response =
+    await http.delete(Uri.parse('${AppUrl.groups}$id/'), headers: {
+      'Content-type': 'application/json',
+      'Accept': 'application/json',
+      "Authorization": "Bearer ${user.accessToken.toString()}",
+    });
+
+    return  Results.fromJson(json.decode(response.body.toString()));
   }
 
   @override
-  Future<String> patchLocation(Results results) async {
+  Future<String> patchGroup(Results groups) async {
 
     //call back
     String responseData = '';
-    await http.patch(Uri.parse('${AppUrl.locations}${results.id}'), headers: {
+    await http.patch(Uri.parse('${AppUrl.groups}${groups.id}'), headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
       "Authorization": "Bearer "
     },
-        body:{'name': results.name.toString(), 'slug': results.code.toString(), 'priority': results.branch.id.toString()}
+        body:{'name': groups.name.toString(), 'slug': groups.slug.toString(), 'priority': groups.priority.toString()}
     ).then((response) {
       //screen -> Data
       Map<String, dynamic> result = json.decode(response.body);
@@ -69,32 +73,32 @@ class LocationsInventoryRepository implements LocationsRepository{
   }
 
   @override
-  Future<Locations> postLocation(String name, String code, String branchId, BuildContext context) async {
+  Future<Group> postGroup(String name, String priority, BuildContext context) async{
     Auth user = Provider.of<AuthProvider>(context,listen: false).auth;
-    var response = await http.post(Uri.parse('${AppUrl.locations}'),headers: {
+    var response = await http.post(Uri.parse('${AppUrl.groups}'),headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
       "Authorization":  "Bearer ${user.accessToken.toString()}"
     }, body: jsonEncode(<dynamic, String>{
       'name': name,
-      'code': code,
-      'branch': branchId
+      'priority': priority,
+
     }),);
     print('Post status code: ${response.statusCode}');
     print('Post body: ${response.body}');
     // print('Post toJSON: ${br}');
-    return locationsFromJson(response.body);
+    return groupFromJson(response.body);
   }
 
   @override
-  Future<String> putLocation(Results results) async {
+  Future<String> putGroup(Results groups)async {
     //call back
     String responseData = '';
-    await http.put(Uri.parse('${AppUrl.locations}${results.id}'), headers: {
+    await http.put(Uri.parse('${AppUrl.groups}${groups.id}'), headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
       "Authorization": "Bearer "
-    }, body:{'name': results.name.toString(), 'slug': results.code.toString(), 'country': results.branch.id.toString()}
+    }, body:{'name': groups.name.toString(), 'slug': groups.slug.toString(), 'country': groups.priority.toString()}
     ).then((response) {
       //screen -> Data
       Map<String, dynamic> result = json.decode(response.body);

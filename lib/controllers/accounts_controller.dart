@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:serow/models/accounts/accounts.dart';
-import 'package:serow/respository/accounts_repository.dart';
+import 'package:serow/repository/accounts_repository.dart';
 
 
 class AccountsController{

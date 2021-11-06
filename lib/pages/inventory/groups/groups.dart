@@ -7,7 +7,7 @@ import 'package:serow/constants.dart';
 import 'package:serow/controllers/controller.dart';
 import 'package:serow/controllers/groups_controller.dart';
 import 'package:serow/models/inventory/groups.dart';
-import 'package:serow/respository/inventory_repository/groups_inventory_repository.dart';
+import 'package:serow/repository/inventory_repository/groups_inventory_repository.dart';
 import 'package:serow/services/groups_data_source.dart';
 import 'package:serow/widgets/custom_text.dart';
 

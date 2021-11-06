@@ -1,6 +1,6 @@
 import 'package:serow/models/inventory/pricing.dart';
 
-import 'package:serow/respository/pricing_repository.dart';
+import 'package:serow/repository/pricing_repository.dart';
 
 class PricingInventoryRepository implements PricingRepository {
 

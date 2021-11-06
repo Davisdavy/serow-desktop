@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:serow/models/suppliers/goods_received_notes.dart';
-import 'package:serow/respository/goods_received_notes_repository.dart';
+import 'package:serow/repository/goods_received_notes_repository.dart';
 
 class GoodsReceivedNotesController{
   final GoodsReceivedNotesRepository _repository;

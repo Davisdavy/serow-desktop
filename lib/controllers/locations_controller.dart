@@ -1,7 +1,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:serow/models/inventory/locations.dart';
-import 'package:serow/respository/locations_repository.dart';
+import 'package:serow/repository/locations_repository.dart';
 
 class LocationsController{
   final LocationsRepository _repository;

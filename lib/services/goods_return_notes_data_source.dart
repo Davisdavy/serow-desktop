@@ -4,7 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:serow/constants.dart';
 import 'package:serow/controllers/goods_return_notes_controller.dart';
 import 'package:serow/models/suppliers/goods_return_notes.dart';
-import 'package:serow/respository/suppliers_repository/goods_return_notes_suppliers_repository.dart';
+import 'package:serow/repository/suppliers_repository/goods_return_notes_suppliers_repository.dart';
 
 
 typedef OnRowSelect = void Function(int index);

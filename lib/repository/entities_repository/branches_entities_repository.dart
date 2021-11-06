@@ -1,21 +1,22 @@
 
+
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
-import 'package:serow/models/accounts/cost_centers.dart';
 import 'package:serow/models/auth/auth.dart';
-import 'package:serow/respository/auth_provider.dart';
-import 'package:serow/respository/cost_centers_repository.dart';
+import 'package:serow/models/entities/branches.dart';
+import 'package:serow/repository/auth_provider.dart';
+import 'package:serow/repository/branches_repository.dart';
+import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:serow/services/services.dart';
 
-class CostCentersAccountsRepository implements CostCentersRepository {
+class BranchesEntitiesRepository implements BranchesRepository {
   @override
-  Future<String> deletedCostCenter(String id, BuildContext context) async {
+  Future<String> deletedBranch(String id, BuildContext context) async{
     Auth user = Provider.of<AuthProvider>(context, listen: false).auth;
     final http.Response response =
-        await http.delete(Uri.parse('${AppUrl.cost_centers}$id/'), headers: {
+        await http.delete(Uri.parse('${AppUrl.branches}$id/'), headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
       "Authorization": "Bearer ${user.accessToken.toString()}",
@@ -25,18 +26,18 @@ class CostCentersAccountsRepository implements CostCentersRepository {
   }
 
   @override
-  Future<List<Results>> getCostCenterList(BuildContext context) async {
-    //https://serow.herrings.co.ke/api/v1/accounts/costcenters/
+  Future<List<Results>> getBranchList(BuildContext context) async{
+    //https://serow.herrings.co.ke/api/v1/inventory/branches/
     //ToDo: Pass ?all=True to get un-paginated data
     List<Results> resultList = [];
     context.watch<AuthProvider>();
     Auth user = Provider.of<AuthProvider>(context).auth;
-    var response = await http.get(Uri.parse('${AppUrl.cost_centers}'), headers: {
+    var response = await http.get(Uri.parse('${AppUrl.branches}'), headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
       "Authorization": "Bearer ${user.accessToken.toString()}"
     }, );
-    print('Get cost centers status code: ${response.statusCode}');
+    print('Get branch status code: ${response.statusCode}');
     var body = json.decode(response.body);//convert
     //parse
     print('Result body: ${body['results']}');
@@ -48,14 +49,14 @@ class CostCentersAccountsRepository implements CostCentersRepository {
   }
 
   @override
-  Future<String> patchCostCenter(Results result) async {
+  Future<String> patchBranch(Results result) async {
     //call back
     String responseData = '';
-    await http.patch(Uri.parse('${AppUrl.cost_centers}${result.id}'), headers: {
+    await http.patch(Uri.parse('${AppUrl.branches}${result.id}'), headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
       "Authorization": "Bearer "
-    }, body:{'name': result.name.toString(), 'short_name': result.code.toString()}
+    }, body:{'name': result.name.toString(), 'short_name': result.location.toString(), 'country': result.company.toString()}
     ).then((response) {
       //screen -> Data
       Map<String, dynamic> result = json.decode(response.body);
@@ -63,35 +64,36 @@ class CostCentersAccountsRepository implements CostCentersRepository {
       return responseData = result['name'];
     });
     return responseData;
+
   }
 
   @override
-  Future<CostCenters> postCostCenter(String name, String code, BuildContext context) async{
+  Future<Branches> postBranch(String name, String location, String phone, BuildContext context) async{
     Auth user = Provider.of<AuthProvider>(context,listen: false).auth;
-    var response = await http.post(Uri.parse('${AppUrl.cost_centers}'),headers: {
+    var response = await http.post(Uri.parse('${AppUrl.branches}'),headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
       "Authorization":  "Bearer ${user.accessToken.toString()}"
     }, body: jsonEncode(<dynamic, String>{
       'name': name,
-      'code': code
-
+      'location': location,
+      'phone': phone
     }),);
     print('Post status code: ${response.statusCode}');
     print('Post body: ${response.body}');
     // print('Post toJSON: ${br}');
-    return costCentersFromJson(response.body);
+    return branchesFromJson(response.body);
   }
 
   @override
-  Future<String> putCostCenter(Results result)async {
+  Future<String> putBranch(Results result)async {
     //call back
     String responseData = '';
-    await http.put(Uri.parse('${AppUrl.cost_centers}${result.id}'), headers: {
+    await http.put(Uri.parse('${AppUrl.branches}${result.id}'), headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
       "Authorization": "Bearer "
-    }, body:{'name': result.name.toString(), 'short_name': result.code.toString()}
+    }, body:{'name': result.name.toString(), 'short_name': result.location.toString(), 'country': result.phone.toString()}
     ).then((response) {
       //screen -> Data
       Map<String, dynamic> result = json.decode(response.body);
@@ -100,5 +102,5 @@ class CostCentersAccountsRepository implements CostCentersRepository {
     });
     return responseData;
   }
-
+  
 }

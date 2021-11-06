@@ -4,7 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:serow/constants.dart';
 import 'package:serow/controllers/purchase_orders_controller.dart';
 import 'package:serow/models/suppliers/purchase_orders.dart';
-import 'package:serow/respository/suppliers_repository/purchase_orders_suppliers_repository.dart';
+import 'package:serow/repository/suppliers_repository/purchase_orders_suppliers_repository.dart';
 
 
 

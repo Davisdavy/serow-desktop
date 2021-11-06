@@ -43,7 +43,7 @@ class Results {
   Null deletedAt;
   String code;
   String name;
-  String account;
+  dynamic account;
   String company;
 
   Results(

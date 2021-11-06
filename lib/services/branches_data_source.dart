@@ -5,7 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:serow/constants.dart';
 import 'package:serow/controllers/branches_controller.dart';
 import 'package:serow/models/entities/branches.dart';
-import 'package:serow/respository/entities_repository/branches_entities_repository.dart';
+import 'package:serow/repository/entities_repository/branches_entities_repository.dart';
 
 typedef OnRowSelect = void Function(int index);
 

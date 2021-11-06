@@ -2,7 +2,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:serow/models/inventory/strengths.dart';
-import 'package:serow/respository/strengths_repository.dart';
+import 'package:serow/repository/strengths_repository.dart';
 
 class StrengthsController{
   final StrengthsRepository _repository;

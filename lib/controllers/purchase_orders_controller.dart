@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:serow/models/suppliers/purchase_orders.dart';
-import 'package:serow/respository/purchase_orders_repository.dart';
+import 'package:serow/repository/purchase_orders_repository.dart';
 
 class PurchaseOrdersController {
   final PurchaseOrdersRepository _repository;

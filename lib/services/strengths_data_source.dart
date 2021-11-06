@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:serow/constants.dart';
 import 'package:serow/controllers/strengths_controller.dart';
 import 'package:serow/models/inventory/strengths.dart';
-import 'package:serow/respository/inventory_repository/strengths_inventory_repository.dart';
+import 'package:serow/repository/inventory_repository/strengths_inventory_repository.dart';
 
 typedef OnRowSelect = void Function(int index);
 

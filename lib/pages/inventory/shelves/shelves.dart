@@ -7,8 +7,8 @@ import 'package:serow/constants.dart';
 import 'package:serow/controllers/controller.dart';
 import 'package:serow/controllers/locations_controller.dart';
 import 'package:serow/controllers/shelves_controller.dart';
-import 'package:serow/respository/inventory_repository/locations_inventory_repository.dart';
-import 'package:serow/respository/inventory_repository/shelves_inventory_repository.dart';
+import 'package:serow/repository/inventory_repository/locations_inventory_repository.dart';
+import 'package:serow/repository/inventory_repository/shelves_inventory_repository.dart';
 import 'package:serow/services/shelves_data_source.dart';
 import 'package:serow/widgets/custom_text.dart';
 

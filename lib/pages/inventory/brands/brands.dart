@@ -10,8 +10,8 @@ import 'package:serow/controllers/brands_controller.dart';
 import 'package:serow/controllers/controller.dart';
 import 'package:serow/models/auth/auth.dart';
 import 'package:serow/models/inventory/brands.dart';
-import 'package:serow/respository/auth_provider.dart';
-import 'package:serow/respository/inventory_repository/brands_inventory_repository.dart';
+import 'package:serow/repository/auth_provider.dart';
+import 'package:serow/repository/inventory_repository/brands_inventory_repository.dart';
 import 'package:serow/services/brands_data_source.dart';
 import 'package:serow/widgets/custom_text.dart';
 

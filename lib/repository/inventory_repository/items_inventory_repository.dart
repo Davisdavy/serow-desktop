@@ -4,8 +4,8 @@ import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:serow/models/auth/auth.dart';
 import 'package:serow/models/inventory/items.dart';
-import 'package:serow/respository/auth_provider.dart';
-import 'package:serow/respository/items_repository.dart';
+import 'package:serow/repository/auth_provider.dart';
+import 'package:serow/repository/items_repository.dart';
 import 'dart:convert';
 
 import 'package:serow/services/services.dart';

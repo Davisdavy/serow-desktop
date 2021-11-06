@@ -1,68 +1,66 @@
 import 'package:flutter/cupertino.dart';
+import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:serow/models/auth/auth.dart';
-import 'package:serow/models/inventory/groups.dart';
-import 'package:serow/respository/auth_provider.dart';
-import 'package:serow/respository/group_repository.dart';
-import 'package:http/http.dart' as http;
+import 'package:serow/models/inventory/shelves.dart';
+import 'package:serow/repository/auth_provider.dart';
 import 'dart:convert';
 
+import 'package:serow/repository/shelves_repository.dart';
 import 'package:serow/services/services.dart';
 
-class GroupsInventoryRepository implements GroupsRepository{
+class ShelvesInventoryRepository implements ShelvesRepository{
 
-  //Groups
-
+  //Subgroups
   @override
-  Future<List<Results>> getGroupList(BuildContext context) async {
-    //https://serow.herrings.co.ke/api/v1/inventory/groups/
-    List<Results> groupList = [];
-    context.watch<AuthProvider>();
-    Auth user = Provider.of<AuthProvider>(context).auth;
-
-    var response = await http.get(Uri.parse('${AppUrl.groups}'), headers: {
-      'Content-type': 'application/json',
-      'Accept': 'application/json',
-      "Authorization":
-      "Bearer ${user.accessToken.toString()}"
-    }, );
-    print('Get groups status code: ${response.statusCode}');
-    var body = json.decode(response.body);//convert
-    //parse
-    print('Result body: ${body['results']}');
-    for (Map<String, dynamic> i in body["results"]) {
-      groupList.add(Results.fromJson(i));
-    }
-
-    return groupList;
-
-  }
-
-
-  @override
-  Future<Results> deletedGroup(String id, BuildContext context) async {
+  Future<String> deletedShelf(String id, BuildContext context) async{
     Auth user = Provider.of<AuthProvider>(context, listen: false).auth;
+
     final http.Response response =
-    await http.delete(Uri.parse('${AppUrl.groups}$id/'), headers: {
+        await http.delete(Uri.parse('${AppUrl.shelves}$id/'), headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
       "Authorization": "Bearer ${user.accessToken.toString()}",
     });
 
-    return  Results.fromJson(json.decode(response.body.toString()));
+    return json.decode(json.encode(response.body));
   }
 
   @override
-  Future<String> patchGroup(Results groups) async {
+  Future<List<Results>> getShelveList(BuildContext context) async{
+    //https://serow.herrings.co.ke/api/v1/inventory/shelves/
+    List<Results> subgroupList = [];
+    context.watch<AuthProvider>();
+    Auth user = Provider.of<AuthProvider>(context).auth;
+
+    var response = await http.get(Uri.parse('${AppUrl.shelves}'), headers: {
+      'Content-type': 'application/json',
+      'Accept': 'application/json',
+      "Authorization":
+      "Bearer ${user.accessToken.toString()}"
+    }, );
+    print('Get shelves status code: ${response.statusCode}');
+    var body = json.decode(response.body);//convert
+    //parse
+    print('Result body: ${body['results']}');
+    for (Map<String, dynamic> i in body["results"]) {
+      subgroupList.add(Results.fromJson(i));
+    }
+
+    return subgroupList;
+  }
+
+  @override
+  Future<String> patchShelf(Results shelves) async{
 
     //call back
     String responseData = '';
-    await http.patch(Uri.parse('${AppUrl.groups}${groups.id}'), headers: {
+    await http.patch(Uri.parse('${AppUrl.brands}${shelves.id}'), headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
       "Authorization": "Bearer "
     },
-        body:{'name': groups.name.toString(), 'slug': groups.slug.toString(), 'priority': groups.priority.toString()}
+        body:{'name': shelves.name.toString(), 'slug': shelves.location.id.toString()}
     ).then((response) {
       //screen -> Data
       Map<String, dynamic> result = json.decode(response.body);
@@ -73,32 +71,32 @@ class GroupsInventoryRepository implements GroupsRepository{
   }
 
   @override
-  Future<Group> postGroup(String name, String priority, BuildContext context) async{
+  Future<Shelves> postShelf(String name, String locationId, BuildContext context)async {
     Auth user = Provider.of<AuthProvider>(context,listen: false).auth;
-    var response = await http.post(Uri.parse('${AppUrl.groups}'),headers: {
+    var response = await http.post(Uri.parse('${AppUrl.shelves}'),headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
       "Authorization":  "Bearer ${user.accessToken.toString()}"
     }, body: jsonEncode(<dynamic, String>{
       'name': name,
-      'priority': priority,
-
+      'location': locationId,
     }),);
     print('Post status code: ${response.statusCode}');
     print('Post body: ${response.body}');
     // print('Post toJSON: ${br}');
-    return groupFromJson(response.body);
+    return shelvesFromJson(response.body);
   }
 
   @override
-  Future<String> putGroup(Results groups)async {
+  Future<String> putShelf(Results shelf) async {
+
     //call back
     String responseData = '';
-    await http.put(Uri.parse('${AppUrl.groups}${groups.id}'), headers: {
+    await http.put(Uri.parse('${AppUrl.brands}${shelf.id}'), headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
       "Authorization": "Bearer "
-    }, body:{'name': groups.name.toString(), 'slug': groups.slug.toString(), 'country': groups.priority.toString()}
+    }, body:{'name': shelf.name.toString(), 'slug': shelf.location.id.toString()}
     ).then((response) {
       //screen -> Data
       Map<String, dynamic> result = json.decode(response.body);
@@ -107,4 +105,5 @@ class GroupsInventoryRepository implements GroupsRepository{
     });
     return responseData;
   }
+  
 }

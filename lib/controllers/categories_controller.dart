@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:serow/models/inventory/categories.dart';
-import 'package:serow/respository/categories_repository.dart';
+import 'package:serow/repository/categories_repository.dart';
 
 class CategoriesController{
   final CategoriesRepository _repository;

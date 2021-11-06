@@ -1,13 +1,12 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:serow/constants.dart';
 import 'package:serow/layout.dart';
 import 'package:serow/models/auth/auth.dart';
-import 'package:serow/respository/auth_provider.dart';
-import 'package:serow/respository/inventory_repository/authentication_provider.dart';
-import 'package:serow/respository/user_provider.dart';
+import 'package:serow/repository/auth_provider.dart';
+import 'package:serow/repository/inventory_repository/authentication_provider.dart';
+import 'package:serow/repository/user_provider.dart';
 import 'package:serow/widgets/custom_text.dart';
 
 class AuthenticationPage extends StatefulWidget {

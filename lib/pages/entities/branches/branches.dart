@@ -6,8 +6,8 @@ import 'package:serow/controllers/branches_controller.dart';
 import 'package:serow/controllers/controller.dart';
 import 'package:serow/controllers/cost_centers_controller.dart';
 import 'package:serow/models/entities/branches.dart';
-import 'package:serow/respository/accounts_repository/cost_centers_accounts_repository.dart';
-import 'package:serow/respository/entities_repository/branches_entities_repository.dart';
+import 'package:serow/repository/accounts_repository/cost_centers_accounts_repository.dart';
+import 'package:serow/repository/entities_repository/branches_entities_repository.dart';
 import 'package:serow/services/branches_data_source.dart';
 import 'package:serow/widgets/custom_text.dart';
 

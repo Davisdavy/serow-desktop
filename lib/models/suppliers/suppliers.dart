@@ -1,221 +1,273 @@
+// To parse this JSON data, do
+//
+//     final suppliers = suppliersFromJson(jsonString);
 
 import 'dart:convert';
 
 Suppliers suppliersFromJson(String str) => Suppliers.fromJson(json.decode(str));
+
+String suppliersToJson(Suppliers data) => json.encode(data.toJson());
+
 class Suppliers {
+  Suppliers({
+    this.count,
+    this.next,
+    this.previous,
+    this.results,
+  });
+
   int count;
-  Null next;
-  Null previous;
+  dynamic next;
+  dynamic previous;
   List<Results> results;
 
-  Suppliers({this.count, this.next, this.previous, this.results});
-
-  Suppliers.fromJson(Map<String, dynamic> json) {
-    count = json['count'];
-    next = json['next'];
-    previous = json['previous'];
-    if (json['results'] != null) {
-      results = new List<Results>();
-      json['results'].forEach((v) {
-        results.add(new Results.fromJson(v));
-      });
-    }
+  factory Suppliers.fromJson(Map<String, dynamic> json){
+    var list = json["results"] as List;
+    List<Results> resultList = list.map((i) => Results.fromJson(i)).toList();
+    return  Suppliers(
+      count: json["count"],
+      next: json["next"],
+      previous: json["previous"],
+      results: resultList
+    );
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['count'] = this.count;
-    data['next'] = this.next;
-    data['previous'] = this.previous;
-    if (this.results != null) {
-      data['results'] = this.results.map((v) => v.toJson()).toList();
-    }
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+    "count": count,
+    "next": next,
+    "previous": previous,
+    "results": List<dynamic>.from(results.map((x) => x.toJson())),
+  };
 }
 
 class Results {
+  Results({
+    this.id,
+    this.supplierContacts,
+    this.postingCategory,
+    this.createdAt,
+    this.modifiedAt,
+    this.isActive,
+    this.isDeleted,
+    this.deletedAt,
+    this.code,
+    this.name,
+    this.logo,
+    this.description,
+    this.email,
+    this.physicalAddress,
+    this.phoneCountryCode,
+    this.phone,
+    this.creditLimit,
+    this.lastPayDate,
+    this.lastPayAmount,
+    this.balance,
+    this.totalPurchases,
+    this.pinNo,
+    this.vatNo,
+    this.useLocalCurrency,
+    this.currency,
+    this.company,
+  });
+
   String id;
-  List<SupplierContacts> supplierContacts;
-  String createdAt;
-  String modifiedAt;
+  List<SupplierContact> supplierContacts;
+  PostingCategory postingCategory;
+  DateTime createdAt;
+  DateTime modifiedAt;
   bool isActive;
   bool isDeleted;
-  Null deletedAt;
+  dynamic deletedAt;
   String code;
   String name;
-  Null logo;
+  dynamic logo;
   String description;
   String email;
   String physicalAddress;
   String phoneCountryCode;
   String phone;
-  dynamic creditLimit;
-  Null lastPayDate;
-  dynamic lastPayAmount;
-  dynamic balance;
-  dynamic totalPurchases;
+  double creditLimit;
+  dynamic lastPayDate;
+  double lastPayAmount;
+  double balance;
+  double totalPurchases;
   String pinNo;
   String vatNo;
   bool useLocalCurrency;
   String currency;
-  String postingCategory;
   String company;
 
-  Results(
-      {this.id,
-        this.supplierContacts,
-        this.createdAt,
-        this.modifiedAt,
-        this.isActive,
-        this.isDeleted,
-        this.deletedAt,
-        this.code,
-        this.name,
-        this.logo,
-        this.description,
-        this.email,
-        this.physicalAddress,
-        this.phoneCountryCode,
-        this.phone,
-        this.creditLimit,
-        this.lastPayDate,
-        this.lastPayAmount,
-        this.balance,
-        this.totalPurchases,
-        this.pinNo,
-        this.vatNo,
-        this.useLocalCurrency,
-        this.currency,
-        this.postingCategory,
-        this.company});
-
-  Results.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    if (json['supplier_contacts'] != null) {
-      supplierContacts = new List<SupplierContacts>();
-      json['supplier_contacts'].forEach((v) {
-        supplierContacts.add(new SupplierContacts.fromJson(v));
-      });
-    }
-    createdAt = json['created_at'];
-    modifiedAt = json['modified_at'];
-    isActive = json['is_active'];
-    isDeleted = json['is_deleted'];
-    deletedAt = json['deleted_at'];
-    code = json['code'];
-    name = json['name'];
-    logo = json['logo'];
-    description = json['description'];
-    email = json['email'];
-    physicalAddress = json['physical_address'];
-    phoneCountryCode = json['phone_country_code'];
-    phone = json['phone'];
-    creditLimit = json['credit_limit'];
-    lastPayDate = json['last_pay_date'];
-    lastPayAmount = json['last_pay_amount'];
-    balance = json['balance'];
-    totalPurchases = json['total_purchases'];
-    pinNo = json['pin_no'];
-    vatNo = json['vat_no'];
-    useLocalCurrency = json['use_local_currency'];
-    currency = json['currency'];
-    postingCategory = json['posting_category'];
-    company = json['company'];
+  factory Results.fromJson(Map<String, dynamic> json){
+    var list = json['supplier_contacts'] as List;
+    List<SupplierContact> supplierList = list.map((i) => SupplierContact.fromJson(i)).toList();
+    return  Results(
+      id: json["id"],
+      supplierContacts: supplierList,
+      postingCategory: PostingCategory.fromJson(json["posting_category"]),
+      createdAt: DateTime.parse(json["created_at"]),
+      modifiedAt: DateTime.parse(json["modified_at"]),
+      isActive: json["is_active"],
+      isDeleted: json["is_deleted"],
+      deletedAt: json["deleted_at"],
+      code: json["code"],
+      name: json["name"],
+      logo: json["logo"],
+      description: json["description"],
+      email: json["email"],
+      physicalAddress: json["physical_address"],
+      phoneCountryCode: json["phone_country_code"],
+      phone: json["phone"],
+      creditLimit: json["credit_limit"],
+      lastPayDate: json["last_pay_date"],
+      lastPayAmount: json["last_pay_amount"],
+      balance: json["balance"],
+      totalPurchases: json["total_purchases"],
+      pinNo: json["pin_no"],
+      vatNo: json["vat_no"],
+      useLocalCurrency: json["use_local_currency"],
+      currency: json["currency"],
+      company: json["company"],
+    );
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    if (this.supplierContacts != null) {
-      data['supplier_contacts'] =
-          this.supplierContacts.map((v) => v.toJson()).toList();
-    }
-    data['created_at'] = this.createdAt;
-    data['modified_at'] = this.modifiedAt;
-    data['is_active'] = this.isActive;
-    data['is_deleted'] = this.isDeleted;
-    data['deleted_at'] = this.deletedAt;
-    data['code'] = this.code;
-    data['name'] = this.name;
-    data['logo'] = this.logo;
-    data['description'] = this.description;
-    data['email'] = this.email;
-    data['physical_address'] = this.physicalAddress;
-    data['phone_country_code'] = this.phoneCountryCode;
-    data['phone'] = this.phone;
-    data['credit_limit'] = this.creditLimit;
-    data['last_pay_date'] = this.lastPayDate;
-    data['last_pay_amount'] = this.lastPayAmount;
-    data['balance'] = this.balance;
-    data['total_purchases'] = this.totalPurchases;
-    data['pin_no'] = this.pinNo;
-    data['vat_no'] = this.vatNo;
-    data['use_local_currency'] = this.useLocalCurrency;
-    data['currency'] = this.currency;
-    data['posting_category'] = this.postingCategory;
-    data['company'] = this.company;
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "supplier_contacts": List<dynamic>.from(supplierContacts.map((x) => x.toJson())),
+    "posting_category": postingCategory.toJson(),
+    "created_at": createdAt.toIso8601String(),
+    "modified_at": modifiedAt.toIso8601String(),
+    "is_active": isActive,
+    "is_deleted": isDeleted,
+    "deleted_at": deletedAt,
+    "code": code,
+    "name": name,
+    "logo": logo,
+    "description": description,
+    "email": email,
+    "physical_address": physicalAddress,
+    "phone_country_code": phoneCountryCode,
+    "phone": phone,
+    "credit_limit": creditLimit,
+    "last_pay_date": lastPayDate,
+    "last_pay_amount": lastPayAmount,
+    "balance": balance,
+    "total_purchases": totalPurchases,
+    "pin_no": pinNo,
+    "vat_no": vatNo,
+    "use_local_currency": useLocalCurrency,
+    "currency": currency,
+    "company": company,
+  };
 }
 
-class SupplierContacts {
+class PostingCategory {
+  PostingCategory({
+    this.id,
+    this.createdAt,
+    this.modifiedAt,
+    this.isActive,
+    this.isDeleted,
+    this.deletedAt,
+    this.code,
+    this.name,
+    this.account,
+    this.company,
+  });
+
   String id;
-  String supplier;
-  String createdAt;
-  String modifiedAt;
+  DateTime createdAt;
+  DateTime modifiedAt;
   bool isActive;
   bool isDeleted;
-  Null deletedAt;
+  dynamic deletedAt;
+  String code;
+  String name;
+  String account;
+  String company;
+
+  factory PostingCategory.fromJson(Map<String, dynamic> json) => PostingCategory(
+    id: json["id"],
+    createdAt: DateTime.parse(json["created_at"]),
+    modifiedAt: DateTime.parse(json["modified_at"]),
+    isActive: json["is_active"],
+    isDeleted: json["is_deleted"],
+    deletedAt: json["deleted_at"],
+    code: json["code"],
+    name: json["name"],
+    account: json["account"],
+    company: json["company"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "created_at": createdAt.toIso8601String(),
+    "modified_at": modifiedAt.toIso8601String(),
+    "is_active": isActive,
+    "is_deleted": isDeleted,
+    "deleted_at": deletedAt,
+    "code": code,
+    "name": name,
+    "account": account,
+    "company": company,
+  };
+}
+
+class SupplierContact {
+  SupplierContact({
+    this.id,
+    this.supplier,
+    this.createdAt,
+    this.modifiedAt,
+    this.isActive,
+    this.isDeleted,
+    this.deletedAt,
+    this.name,
+    this.physicalAddress,
+    this.email,
+    this.phone,
+    this.company,
+  });
+
+  String id;
+  String supplier;
+  DateTime createdAt;
+  DateTime modifiedAt;
+  bool isActive;
+  bool isDeleted;
+  dynamic deletedAt;
   String name;
   String physicalAddress;
   String email;
   String phone;
   String company;
 
-  SupplierContacts(
-      {this.id,
-        this.supplier,
-        this.createdAt,
-        this.modifiedAt,
-        this.isActive,
-        this.isDeleted,
-        this.deletedAt,
-        this.name,
-        this.physicalAddress,
-        this.email,
-        this.phone,
-        this.company});
+  factory SupplierContact.fromJson(Map<String, dynamic> json) => SupplierContact(
+    id: json["id"],
+    supplier: json["supplier"],
+    createdAt: DateTime.parse(json["created_at"]),
+    modifiedAt: DateTime.parse(json["modified_at"]),
+    isActive: json["is_active"],
+    isDeleted: json["is_deleted"],
+    deletedAt: json["deleted_at"],
+    name: json["name"],
+    physicalAddress: json["physical_address"],
+    email: json["email"],
+    phone: json["phone"],
+    company: json["company"],
+  );
 
-  SupplierContacts.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    supplier = json['supplier'];
-    createdAt = json['created_at'];
-    modifiedAt = json['modified_at'];
-    isActive = json['is_active'];
-    isDeleted = json['is_deleted'];
-    deletedAt = json['deleted_at'];
-    name = json['name'];
-    physicalAddress = json['physical_address'];
-    email = json['email'];
-    phone = json['phone'];
-    company = json['company'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['supplier'] = this.supplier;
-    data['created_at'] = this.createdAt;
-    data['modified_at'] = this.modifiedAt;
-    data['is_active'] = this.isActive;
-    data['is_deleted'] = this.isDeleted;
-    data['deleted_at'] = this.deletedAt;
-    data['name'] = this.name;
-    data['physical_address'] = this.physicalAddress;
-    data['email'] = this.email;
-    data['phone'] = this.phone;
-    data['company'] = this.company;
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "supplier": supplier,
+    "created_at": createdAt.toIso8601String(),
+    "modified_at": modifiedAt.toIso8601String(),
+    "is_active": isActive,
+    "is_deleted": isDeleted,
+    "deleted_at": deletedAt,
+    "name": name,
+    "physical_address": physicalAddress,
+    "email": email,
+    "phone": phone,
+    "company": company,
+  };
 }

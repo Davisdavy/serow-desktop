@@ -3,7 +3,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:serow/models/inventory/shelves.dart';
-import 'package:serow/respository/shelves_repository.dart';
+import 'package:serow/repository/shelves_repository.dart';
 
 class ShelvesController{
   final ShelvesRepository _repository;

@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:serow/models/inventory/forms.dart';
-import 'package:serow/respository/forms_repository.dart';
+import 'package:serow/repository/forms_repository.dart';
 
 class FormsController{
   final FormsRepository _repository;

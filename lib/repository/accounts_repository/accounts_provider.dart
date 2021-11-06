@@ -5,8 +5,8 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:provider/provider.dart';
 import 'package:serow/models/accounts/accounts.dart';
 import 'package:serow/models/auth/auth.dart';
-import 'package:serow/respository/accounts_repository.dart';
-import 'package:serow/respository/auth_provider.dart';
+import 'package:serow/repository/accounts_repository.dart';
+import 'package:serow/repository/auth_provider.dart';
 import 'package:serow/services/services.dart';
 
 class AccountsProvider implements AccountsRepository {

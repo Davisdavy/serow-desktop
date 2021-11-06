@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:serow/models/entities/branches.dart';
-import 'package:serow/respository/branches_repository.dart';
+import 'package:serow/repository/branches_repository.dart';
 
 class BranchesController{
   final BranchesRepository _repository;

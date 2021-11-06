@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:serow/models/inventory/items.dart';
-import 'package:serow/respository/items_repository.dart';
+import 'package:serow/repository/items_repository.dart';
 
 class ItemsController{
   final ItemsRepository _repository;

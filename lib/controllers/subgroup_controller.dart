@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:serow/models/inventory/subgroups.dart';
-import 'package:serow/respository/subgroup_repository.dart';
+import 'package:serow/repository/subgroup_repository.dart';
 
 class SubgroupController{
   final SubgroupRepository _repository;

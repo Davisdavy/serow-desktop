@@ -10,9 +10,9 @@ import 'package:serow/layout.dart';
 import 'package:serow/models/auth/auth.dart';
 import 'package:serow/pages/authentication/authentication_page.dart';
 import 'package:serow/pages/inventory/items/items.dart';
-import 'package:serow/respository/auth_provider.dart';
-import 'package:serow/respository/inventory_repository/authentication_provider.dart';
-import 'package:serow/respository/user_provider.dart';
+import 'package:serow/repository/auth_provider.dart';
+import 'package:serow/repository/inventory_repository/authentication_provider.dart';
+import 'package:serow/repository/user_provider.dart';
 import 'package:serow/services/preferences.dart';
 import 'package:window_size/window_size.dart';
 

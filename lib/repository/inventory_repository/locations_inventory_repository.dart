@@ -1,22 +1,22 @@
-
-
-import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:serow/models/auth/auth.dart';
-import 'package:serow/models/entities/branches.dart';
-import 'package:serow/respository/auth_provider.dart';
-import 'package:serow/respository/branches_repository.dart';
+import 'package:serow/models/inventory/locations.dart';
+import 'package:serow/repository/auth_provider.dart';
+import 'package:serow/repository/locations_repository.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:serow/services/services.dart';
 
-class BranchesEntitiesRepository implements BranchesRepository {
+class LocationsInventoryRepository implements LocationsRepository{
+
+  //Subgroups
   @override
-  Future<String> deletedBranch(String id, BuildContext context) async{
+  Future<String> deletedLocation(String id, BuildContext context) async {
     Auth user = Provider.of<AuthProvider>(context, listen: false).auth;
     final http.Response response =
-        await http.delete(Uri.parse('${AppUrl.branches}$id/'), headers: {
+    await http.delete(Uri.parse('${AppUrl.locations}$id/'), headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
       "Authorization": "Bearer ${user.accessToken.toString()}",
@@ -26,37 +26,39 @@ class BranchesEntitiesRepository implements BranchesRepository {
   }
 
   @override
-  Future<List<Results>> getBranchList(BuildContext context) async{
-    //https://serow.herrings.co.ke/api/v1/inventory/branches/
-    //ToDo: Pass ?all=True to get un-paginated data
-    List<Results> resultList = [];
+  Future<List<Results>> getLocationList(BuildContext context) async {
+    //https://serow.herrings.co.ke/api/v1/inventory/brands/
+    List<Results> subgroupList = [];
     context.watch<AuthProvider>();
     Auth user = Provider.of<AuthProvider>(context).auth;
-    var response = await http.get(Uri.parse('${AppUrl.branches}'), headers: {
+    var response = await http.get(Uri.parse('${AppUrl.locations}'), headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
-      "Authorization": "Bearer ${user.accessToken.toString()}"
+      "Authorization":
+      "Bearer ${user.accessToken.toString()}"
     }, );
-    print('Get branch status code: ${response.statusCode}');
+    print('Get subgroups status code: ${response.statusCode}');
     var body = json.decode(response.body);//convert
     //parse
     print('Result body: ${body['results']}');
     for (Map<String, dynamic> i in body["results"]) {
-      resultList.add(Results.fromJson(i));
+      subgroupList.add(Results.fromJson(i));
     }
 
-    return resultList;
+    return subgroupList;
   }
 
   @override
-  Future<String> patchBranch(Results result) async {
+  Future<String> patchLocation(Results results) async {
+
     //call back
     String responseData = '';
-    await http.patch(Uri.parse('${AppUrl.branches}${result.id}'), headers: {
+    await http.patch(Uri.parse('${AppUrl.locations}${results.id}'), headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
       "Authorization": "Bearer "
-    }, body:{'name': result.name.toString(), 'short_name': result.location.toString(), 'country': result.company.toString()}
+    },
+        body:{'name': results.name.toString(), 'slug': results.code.toString(), 'priority': results.branch.id.toString()}
     ).then((response) {
       //screen -> Data
       Map<String, dynamic> result = json.decode(response.body);
@@ -64,36 +66,35 @@ class BranchesEntitiesRepository implements BranchesRepository {
       return responseData = result['name'];
     });
     return responseData;
-
   }
 
   @override
-  Future<Branches> postBranch(String name, String location, String phone, BuildContext context) async{
+  Future<Locations> postLocation(String name, String code, String branchId, BuildContext context) async {
     Auth user = Provider.of<AuthProvider>(context,listen: false).auth;
-    var response = await http.post(Uri.parse('${AppUrl.branches}'),headers: {
+    var response = await http.post(Uri.parse('${AppUrl.locations}'),headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
       "Authorization":  "Bearer ${user.accessToken.toString()}"
     }, body: jsonEncode(<dynamic, String>{
       'name': name,
-      'location': location,
-      'phone': phone
+      'code': code,
+      'branch': branchId
     }),);
     print('Post status code: ${response.statusCode}');
     print('Post body: ${response.body}');
     // print('Post toJSON: ${br}');
-    return branchesFromJson(response.body);
+    return locationsFromJson(response.body);
   }
 
   @override
-  Future<String> putBranch(Results result)async {
+  Future<String> putLocation(Results results) async {
     //call back
     String responseData = '';
-    await http.put(Uri.parse('${AppUrl.branches}${result.id}'), headers: {
+    await http.put(Uri.parse('${AppUrl.locations}${results.id}'), headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
       "Authorization": "Bearer "
-    }, body:{'name': result.name.toString(), 'short_name': result.location.toString(), 'country': result.phone.toString()}
+    }, body:{'name': results.name.toString(), 'slug': results.code.toString(), 'country': results.branch.id.toString()}
     ).then((response) {
       //screen -> Data
       Map<String, dynamic> result = json.decode(response.body);
@@ -102,5 +103,4 @@ class BranchesEntitiesRepository implements BranchesRepository {
     });
     return responseData;
   }
-  
 }

@@ -2,8 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:serow/models/auth/auth.dart';
 import 'package:serow/models/inventory/forms.dart';
-import 'package:serow/respository/auth_provider.dart';
-import 'package:serow/respository/forms_repository.dart';
+import 'package:serow/repository/auth_provider.dart';
+import 'package:serow/repository/forms_repository.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 

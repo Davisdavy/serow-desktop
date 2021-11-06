@@ -7,9 +7,9 @@ import 'package:serow/controllers/branches_controller.dart';
 import 'package:serow/controllers/controller.dart';
 import 'package:serow/controllers/supliers_controller.dart';
 import 'package:serow/controllers/supplier_invoices_controller.dart';
-import 'package:serow/respository/entities_repository/branches_entities_repository.dart';
-import 'package:serow/respository/suppliers_repository/supplier_invoices_suppliers_repository.dart';
-import 'package:serow/respository/suppliers_repository/suppliers_provider.dart';
+import 'package:serow/repository/entities_repository/branches_entities_repository.dart';
+import 'package:serow/repository/suppliers_repository/supplier_invoices_suppliers_repository.dart';
+import 'package:serow/repository/suppliers_repository/suppliers_provider.dart';
 import 'package:serow/services/suppier_invoices_data_source.dart';
 import 'package:serow/widgets/custom_text.dart';
 

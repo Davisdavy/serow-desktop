@@ -3,7 +3,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:serow/models/suppliers/posting_categories.dart';
-import 'package:serow/respository/posting_categories_repository.dart';
+import 'package:serow/repository/posting_categories_repository.dart';
 
 
 class PostingCategoriesController{

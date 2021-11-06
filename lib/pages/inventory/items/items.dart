@@ -5,15 +5,21 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:serow/constants.dart';
 import 'package:serow/controllers/brands_controller.dart';
+import 'package:serow/controllers/categories_controller.dart';
 import 'package:serow/controllers/controller.dart';
+import 'package:serow/controllers/forms_controller.dart';
 import 'package:serow/controllers/groups_controller.dart';
 import 'package:serow/controllers/items_controller.dart';
+import 'package:serow/controllers/strengths_controller.dart';
 import 'package:serow/controllers/subgroup_controller.dart';
 import 'package:serow/models/inventory/items.dart';
-import 'package:serow/respository/inventory_repository/brands_inventory_repository.dart';
-import 'package:serow/respository/inventory_repository/groups_inventory_repository.dart';
-import 'package:serow/respository/inventory_repository/items_inventory_repository.dart';
-import 'package:serow/respository/inventory_repository/subgroups_inventory_repository.dart';
+import 'package:serow/repository/inventory_repository/brands_inventory_repository.dart';
+import 'package:serow/repository/inventory_repository/categories_inventory_repository.dart';
+import 'package:serow/repository/inventory_repository/forms_inventory_repository.dart';
+import 'package:serow/repository/inventory_repository/groups_inventory_repository.dart';
+import 'package:serow/repository/inventory_repository/items_inventory_repository.dart';
+import 'package:serow/repository/inventory_repository/strengths_inventory_repository.dart';
+import 'package:serow/repository/inventory_repository/subgroups_inventory_repository.dart';
 import 'package:serow/services/items_data_source.dart';
 import 'package:serow/widgets/custom_text.dart';
 import 'package:serow/widgets/step_progress.dart';
@@ -34,7 +40,17 @@ class _ItemsPageState extends State<ItemsPage> {
   String groupId;
 String subgroupId;
 String brandId;
+String sellingOptionsId;
+String priorityId;
+String categoryId;
+String itemFormId;
+String strengthId;
+String availabilityId;
   PageController controller = PageController();
+  String priorityValue = '2';
+  var priorityList =  ['1','2','3','4'];
+  String availabilityValue = 'in stock';
+  var availabilityList = ['in stock', 'out of stock'];
 
   final _stepsText = ["Details", "Pricing", "Finish"];
 
@@ -64,6 +80,7 @@ String brandId;
 
 
   final TextEditingController _nameController = TextEditingController();
+
   bool _validate = false;
 
   void updateUI(){
@@ -106,6 +123,9 @@ String brandId;
     var groupsController = GroupsController(GroupsInventoryRepository());
     var subgroupsController = SubgroupController(SubgroupInventoryRepository());
     var brandsController = BrandsController(BrandsInventoryRepository());
+    var categoryController = CategoriesController(CategoriesInventoryRepository());
+    var formsController = FormsController(FormsInventoryRepository());
+    var strengthController = StrengthsController(StrengthInventoryRepository());
     return Container(
         color: Colors.blueGrey.shade100.withOpacity(0.1),
         child: Column(
@@ -137,7 +157,10 @@ String brandId;
                     itemsController.fetchItemList(context),
                     groupsController.fetchGroupsList(context),
                     subgroupsController.fetchSubgroupsList(context),
-                    brandsController.fetchBrandList(context)
+                    brandsController.fetchBrandList(context),
+                    categoryController.fetchCategoryList(context),
+                    formsController.fetchFormsList(context),
+                    strengthController.fetchStrengthsList(context)
                   ]),
                   builder: (context, snapshot){
                     if(snapshot.connectionState == ConnectionState.waiting){
@@ -889,7 +912,7 @@ String brandId;
                                                                                         left: 12.0),
                                                                                     child: Material(
                                                                                         child: Text(
-                                                                                          "Select Subgroup",
+                                                                                          "Select Item Form",
                                                                                           style: TextStyle(
                                                                                               color: bgColor,
                                                                                               fontSize: 12,
@@ -924,11 +947,11 @@ String brandId;
                                                                                                   child: DropdownButton<String>(
                                                                                                     hint: Padding(
                                                                                                       padding: const EdgeInsets.all(8.0),
-                                                                                                      child: Text("Subgroup", style: TextStyle(fontSize:
+                                                                                                      child: Text("Item Form", style: TextStyle(fontSize:
                                                                                                       12),),
                                                                                                     ),
-                                                                                                    value: subgroupId,
-                                                                                                    items: snapshot.data[2].map<DropdownMenuItem<String>>((item){
+                                                                                                    value: itemFormId,
+                                                                                                    items: snapshot.data[5].map<DropdownMenuItem<String>>((item){
                                                                                                       return new DropdownMenuItem<String>(child: Padding(
                                                                                                         padding: const EdgeInsets.all(8.0),
                                                                                                         child: Text(
@@ -942,7 +965,7 @@ String brandId;
                                                                                                     }).toList(),
                                                                                                     onChanged: (String groupValue){
                                                                                                       setState(() {
-                                                                                                        subgroupId = groupValue;
+                                                                                                        itemFormId = groupValue;
 
                                                                                                       });
                                                                                                     },
@@ -969,7 +992,7 @@ String brandId;
                                                                                         left: 12.0),
                                                                                     child: Material(
                                                                                         child: Text(
-                                                                                          "Select Brand",
+                                                                                          "Select Strength",
                                                                                           style: TextStyle(
                                                                                               color: bgColor,
                                                                                               fontSize: 12,
@@ -1004,10 +1027,10 @@ String brandId;
                                                                                                   child: DropdownButton<String>(
                                                                                                     hint: Padding(
                                                                                                       padding: const EdgeInsets.all(8.0),
-                                                                                                      child: Text("Brand", style: TextStyle(fontSize:
+                                                                                                      child: Text("Strength", style: TextStyle(fontSize:
                                                                                                       12),),
                                                                                                     ),
-                                                                                                    value: brandId,
+                                                                                                    value: strengthId,
                                                                                                     items: snapshot.data[3].map<DropdownMenuItem<String>>((item){
                                                                                                       return new DropdownMenuItem<String>(child: Padding(
                                                                                                         padding: const EdgeInsets.all(8.0),
@@ -1022,7 +1045,7 @@ String brandId;
                                                                                                     }).toList(),
                                                                                                     onChanged: (String groupValue){
                                                                                                       setState(() {
-                                                                                                        brandId = groupValue;
+                                                                                                        strengthId = groupValue;
 
                                                                                                       });
                                                                                                     },
@@ -1058,7 +1081,7 @@ String brandId;
                                                                                         left: 12.0),
                                                                                     child: Material(
                                                                                         child: Text(
-                                                                                          "Select Subgroup",
+                                                                                          "Select Category",
                                                                                           style: TextStyle(
                                                                                               color: bgColor,
                                                                                               fontSize: 12,
@@ -1093,10 +1116,10 @@ String brandId;
                                                                                                   child: DropdownButton<String>(
                                                                                                     hint: Padding(
                                                                                                       padding: const EdgeInsets.all(8.0),
-                                                                                                      child: Text("Subgroup", style: TextStyle(fontSize:
+                                                                                                      child: Text("Category", style: TextStyle(fontSize:
                                                                                                       12),),
                                                                                                     ),
-                                                                                                    value: subgroupId,
+                                                                                                    value: categoryId,
                                                                                                     items: snapshot.data[2].map<DropdownMenuItem<String>>((item){
                                                                                                       return new DropdownMenuItem<String>(child: Padding(
                                                                                                         padding: const EdgeInsets.all(8.0),
@@ -1111,7 +1134,7 @@ String brandId;
                                                                                                     }).toList(),
                                                                                                     onChanged: (String groupValue){
                                                                                                       setState(() {
-                                                                                                        subgroupId = groupValue;
+                                                                                                        categoryId = groupValue;
 
                                                                                                       });
                                                                                                     },
@@ -1138,7 +1161,7 @@ String brandId;
                                                                                         left: 12.0),
                                                                                     child: Material(
                                                                                         child: Text(
-                                                                                          "Select Brand",
+                                                                                          "Select Priority",
                                                                                           style: TextStyle(
                                                                                               color: bgColor,
                                                                                               fontSize: 12,
@@ -1173,10 +1196,10 @@ String brandId;
                                                                                                   child: DropdownButton<String>(
                                                                                                     hint: Padding(
                                                                                                       padding: const EdgeInsets.all(8.0),
-                                                                                                      child: Text("Brand", style: TextStyle(fontSize:
+                                                                                                      child: Text("Priority", style: TextStyle(fontSize:
                                                                                                       12),),
                                                                                                     ),
-                                                                                                    value: brandId,
+                                                                                                    value: priorityId,
                                                                                                     items: snapshot.data[3].map<DropdownMenuItem<String>>((item){
                                                                                                       return new DropdownMenuItem<String>(child: Padding(
                                                                                                         padding: const EdgeInsets.all(8.0),
@@ -1191,7 +1214,7 @@ String brandId;
                                                                                                     }).toList(),
                                                                                                     onChanged: (String groupValue){
                                                                                                       setState(() {
-                                                                                                        brandId = groupValue;
+                                                                                                        priorityId = groupValue;
 
                                                                                                       });
                                                                                                     },
@@ -1209,7 +1232,175 @@ String brandId;
                                                                             ),
                                                                           ],
                                                                         ),
+                                                                        SizedBox(
+                                                                          height: 15.0,
+                                                                        ),
+                                                                        Row(
+                                                                          mainAxisAlignment:
+                                                                          MainAxisAlignment.start,
+                                                                          children: [
+                                                                            Flexible(
+                                                                              child: Column(
+                                                                                crossAxisAlignment:
+                                                                                CrossAxisAlignment.start,
+                                                                                children: [
+                                                                                  Padding(
+                                                                                    padding:
+                                                                                    const EdgeInsets.only(
+                                                                                        left: 12.0),
+                                                                                    child: Material(
+                                                                                        child: Text(
+                                                                                          "Select Selling Options",
+                                                                                          style: TextStyle(
+                                                                                              color: bgColor,
+                                                                                              fontSize: 12,
+                                                                                              fontWeight:
+                                                                                              FontWeight
+                                                                                                  .bold),
+                                                                                        )),
+                                                                                  ),
+                                                                                  SizedBox(
+                                                                                    height: 5,
+                                                                                  ),
+                                                                                  Material(
+                                                                                    child: Padding(
+                                                                                      padding:
+                                                                                      const EdgeInsets.only(
+                                                                                          left: 12.0),
+                                                                                      child: Container(
+                                                                                        width: 240,
+                                                                                        height: 40,
+                                                                                        child: Flexible(
+                                                                                          child: StatefulBuilder(
+                                                                                            builder: (BuildContext context, StateSetter setState){
+                                                                                              return DecoratedBox(
 
+                                                                                                decoration: ShapeDecoration(
+                                                                                                    shape: RoundedRectangleBorder(
+                                                                                                      side: BorderSide(width: 0.4, style: BorderStyle.solid, color: Colors.grey),
+                                                                                                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                                                                                    )
+                                                                                                ),
+                                                                                                child: DropdownButtonHideUnderline(
+                                                                                                  child: DropdownButton<String>(
+                                                                                                    hint: Padding(
+                                                                                                      padding: const EdgeInsets.all(8.0),
+                                                                                                      child: Text("Category", style: TextStyle(fontSize:
+                                                                                                      12),),
+                                                                                                    ),
+                                                                                                    value: sellingOptionsId,
+                                                                                                    items: snapshot.data[2].map<DropdownMenuItem<String>>((item){
+                                                                                                      return new DropdownMenuItem<String>(child: Padding(
+                                                                                                        padding: const EdgeInsets.all(8.0),
+                                                                                                        child: Text(
+                                                                                                          item.name,
+                                                                                                          style: TextStyle(fontSize:
+                                                                                                          12,),
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                          value: item.id.toString()
+                                                                                                      );
+                                                                                                    }).toList(),
+                                                                                                    onChanged: (String groupValue){
+                                                                                                      setState(() {
+                                                                                                        sellingOptionsId = groupValue;
+
+                                                                                                      });
+                                                                                                    },
+                                                                                                  ),
+                                                                                                ),
+                                                                                              );
+                                                                                            },
+                                                                                          ),
+                                                                                        ),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                            ),
+                                                                            Flexible(
+                                                                              child: Column(
+                                                                                crossAxisAlignment:
+                                                                                CrossAxisAlignment.start,
+                                                                                children: [
+                                                                                  Padding(
+                                                                                    padding:
+                                                                                    const EdgeInsets.only(
+                                                                                        left: 12.0),
+                                                                                    child: Material(
+                                                                                        child: Text(
+                                                                                          "Select Availability",
+                                                                                          style: TextStyle(
+                                                                                              color: bgColor,
+                                                                                              fontSize: 12,
+                                                                                              fontWeight:
+                                                                                              FontWeight
+                                                                                                  .bold),
+                                                                                        )),
+                                                                                  ),
+                                                                                  SizedBox(
+                                                                                    height: 5,
+                                                                                  ),
+                                                                                  Material(
+                                                                                    child: Padding(
+                                                                                      padding:
+                                                                                      const EdgeInsets.only(
+                                                                                          left: 12.0),
+                                                                                      child: Container(
+                                                                                        width: 240,
+                                                                                        height: 40,
+                                                                                        child: Flexible(
+                                                                                          child: StatefulBuilder(
+                                                                                            builder: (BuildContext context, StateSetter setState){
+                                                                                              return DecoratedBox(
+
+                                                                                                decoration: ShapeDecoration(
+                                                                                                    shape: RoundedRectangleBorder(
+                                                                                                      side: BorderSide(width: 0.4, style: BorderStyle.solid, color: Colors.grey),
+                                                                                                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                                                                                    )
+                                                                                                ),
+                                                                                                child: DropdownButtonHideUnderline(
+                                                                                                  child: DropdownButton<String>(
+                                                                                                    hint: Padding(
+                                                                                                      padding: const EdgeInsets.all(8.0),
+                                                                                                      child: Text("Availability", style: TextStyle(fontSize:
+                                                                                                      12),),
+                                                                                                    ),
+                                                                                                    value: availabilityId,
+                                                                                                    items: snapshot.data[3].map<DropdownMenuItem<String>>((item){
+                                                                                                      return new DropdownMenuItem<String>(child: Padding(
+                                                                                                        padding: const EdgeInsets.all(8.0),
+                                                                                                        child: Text(
+                                                                                                          item.name,
+                                                                                                          style: TextStyle(fontSize:
+                                                                                                          12,),
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                          value: item.id.toString()
+                                                                                                      );
+                                                                                                    }).toList(),
+                                                                                                    onChanged: (String groupValue){
+                                                                                                      setState(() {
+                                                                                                        availabilityId = groupValue;
+
+                                                                                                      });
+                                                                                                    },
+                                                                                                  ),
+                                                                                                ),
+                                                                                              );
+                                                                                            },
+                                                                                          ),
+                                                                                        ),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                        ),
                                                                       ],
                                                                     ),
                                                                     Column(

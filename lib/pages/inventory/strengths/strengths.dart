@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -8,7 +7,7 @@ import 'package:serow/constants.dart';
 import 'package:serow/controllers/controller.dart';
 import 'package:serow/controllers/strengths_controller.dart';
 import 'package:serow/models/inventory/strengths.dart';
-import 'package:serow/respository/inventory_repository/strengths_inventory_repository.dart';
+import 'package:serow/repository/inventory_repository/strengths_inventory_repository.dart';
 import 'package:serow/services/strengths_data_source.dart';
 import 'package:serow/widgets/custom_text.dart';
 
@@ -27,8 +26,6 @@ class _StrengthsPageState extends State<StrengthsPage> {
   var loading = false;
   double pageCount = 0;
   bool showLoadingIndicator = false;
-  bool valuefirst = false;
-  bool valuesecond = false;
 
   Future<Results> _futureResult;
 

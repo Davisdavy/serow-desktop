@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:serow/models/suppliers/supplier_invoices.dart';
-import 'package:serow/respository/supplier_invoices_repository.dart';
+import 'package:serow/repository/supplier_invoices_repository.dart';
 
 class SupplierInvoicesController {
   final SupplierInvoicesRepository _repository;

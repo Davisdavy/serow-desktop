@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:serow/models/inventory/groups.dart';
-import 'package:serow/respository/group_repository.dart';
+import 'package:serow/repository/group_repository.dart';
 
 class GroupsController{
   final GroupsRepository _repository;

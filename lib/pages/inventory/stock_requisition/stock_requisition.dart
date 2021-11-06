@@ -1,13 +1,11 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:serow/constants.dart';
 import 'package:serow/controllers/controller.dart';
 import 'package:serow/models/inventory/brands.dart';
-import 'package:serow/services/brands_data_source.dart';
 import 'package:serow/services/items_data_source.dart';
 import 'package:serow/widgets/custom_text.dart';
 import 'package:http/http.dart' as http;
@@ -1022,97 +1020,97 @@ class _StockRequisitionPageState extends State<StockRequisitionPage> {
               ),
             ),
 
-            SingleChildScrollView(
-              child: ListView(
-                padding: const EdgeInsets.all(16),
-                shrinkWrap: true,
-                children: [
-                  Theme(
-
-                    data: Theme.of(context).copyWith(dividerColor: Colors.blueGrey.shade100.withOpacity(0.4),
-                    ),
-                    child: PaginatedDataTable(
-                      rowsPerPage: listResult.length,
-                      showCheckboxColumn: true,
-                      dataRowHeight: 60,
-                      columns: [
-                        DataColumn(label:Text(
-                          "Name",
-                          style: TextStyle(
-                              fontSize: 13.5,
-                              color: secondaryColor.withOpacity(0.4)),
-                        ),),
-                        DataColumn(label: Text(
-                          "Country",
-                          style: TextStyle(
-                              fontSize: 13.5,
-                              color: secondaryColor.withOpacity(0.4)),
-                        ),),
-                        DataColumn(label: Text(
-                          "Status",
-                          style: TextStyle(
-                              fontSize: 13.5,
-                              color: secondaryColor.withOpacity(0.4)),
-                        ),),
-                        DataColumn(label: PopupMenuButton(
-                          elevation: 20.0,
-                          icon: Icon(
-                            Icons.more_horiz,
-                            color: secondaryColor.withOpacity(0.5),
-                          ),
-                          itemBuilder: (context) =>[
-                            PopupMenuItem(
-                              child: Row(
-                                children: [
-                                  SvgPicture.asset("assets/icons/view.svg", height: 18.0,color: Colors.blueGrey, ),
-                                  SizedBox(width:10.0),
-                                  Text("View Details", style: TextStyle(color: Colors.blueGrey, fontSize: 13.0),)
-                                ],
-                              ),
-                              value: 1,
-                            ),
-                            PopupMenuItem(
-                              child: Row(
-                                children: [
-                                  SvgPicture.asset("assets/icons/repeat.svg", height: 18.0,color: Colors.blueGrey, ),
-                                  SizedBox(width:10.0),
-                                  Text("Orders", style: TextStyle(color: Colors.blueGrey, fontSize: 13.0),)
-                                ],
-                              ),
-                              value: 2,
-                            ),
-                            PopupMenuItem(
-                              child: Row(
-                                children: [
-                                  SvgPicture.asset("assets/icons/activities.svg", height: 18.0,color: Colors.blueGrey, ),
-                                  SizedBox(width:10.0),
-                                  Text("Activities", style: TextStyle(color: Colors.blueGrey, fontSize: 13.0),)
-                                ],
-                              ),
-                              value: 3,
-                            ),
-                            PopupMenuItem(
-                              child: Row(
-                                children: [
-                                  SvgPicture.asset("assets/icons/garbage.svg", height: 18.0,color: Colors.blueGrey, ),
-                                  SizedBox(width:10.0),
-                                  Text("Delete", style: TextStyle(color: Colors.blueGrey, fontSize: 13.0),)
-                                ],
-                              ),
-                              value: 4,
-                            ),
-                          ],
-                        )),
-                      ],
-                      source: ItemsDataSource(
-                        onRowSelect: (index) =>(){},
-                       // resultData: listResult,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            // SingleChildScrollView(
+            //   child: ListView(
+            //     padding: const EdgeInsets.all(16),
+            //     shrinkWrap: true,
+            //     children: [
+            //       Theme(
+            //
+            //         data: Theme.of(context).copyWith(dividerColor: Colors.blueGrey.shade100.withOpacity(0.4),
+            //         ),
+            //         child: PaginatedDataTable(
+            //           rowsPerPage: listResult.length,
+            //           showCheckboxColumn: true,
+            //           dataRowHeight: 60,
+            //           columns: [
+            //             DataColumn(label:Text(
+            //               "Name",
+            //               style: TextStyle(
+            //                   fontSize: 13.5,
+            //                   color: secondaryColor.withOpacity(0.4)),
+            //             ),),
+            //             DataColumn(label: Text(
+            //               "Country",
+            //               style: TextStyle(
+            //                   fontSize: 13.5,
+            //                   color: secondaryColor.withOpacity(0.4)),
+            //             ),),
+            //             DataColumn(label: Text(
+            //               "Status",
+            //               style: TextStyle(
+            //                   fontSize: 13.5,
+            //                   color: secondaryColor.withOpacity(0.4)),
+            //             ),),
+            //             DataColumn(label: PopupMenuButton(
+            //               elevation: 20.0,
+            //               icon: Icon(
+            //                 Icons.more_horiz,
+            //                 color: secondaryColor.withOpacity(0.5),
+            //               ),
+            //               itemBuilder: (context) =>[
+            //                 PopupMenuItem(
+            //                   child: Row(
+            //                     children: [
+            //                       SvgPicture.asset("assets/icons/view.svg", height: 18.0,color: Colors.blueGrey, ),
+            //                       SizedBox(width:10.0),
+            //                       Text("View Details", style: TextStyle(color: Colors.blueGrey, fontSize: 13.0),)
+            //                     ],
+            //                   ),
+            //                   value: 1,
+            //                 ),
+            //                 PopupMenuItem(
+            //                   child: Row(
+            //                     children: [
+            //                       SvgPicture.asset("assets/icons/repeat.svg", height: 18.0,color: Colors.blueGrey, ),
+            //                       SizedBox(width:10.0),
+            //                       Text("Orders", style: TextStyle(color: Colors.blueGrey, fontSize: 13.0),)
+            //                     ],
+            //                   ),
+            //                   value: 2,
+            //                 ),
+            //                 PopupMenuItem(
+            //                   child: Row(
+            //                     children: [
+            //                       SvgPicture.asset("assets/icons/activities.svg", height: 18.0,color: Colors.blueGrey, ),
+            //                       SizedBox(width:10.0),
+            //                       Text("Activities", style: TextStyle(color: Colors.blueGrey, fontSize: 13.0),)
+            //                     ],
+            //                   ),
+            //                   value: 3,
+            //                 ),
+            //                 PopupMenuItem(
+            //                   child: Row(
+            //                     children: [
+            //                       SvgPicture.asset("assets/icons/garbage.svg", height: 18.0,color: Colors.blueGrey, ),
+            //                       SizedBox(width:10.0),
+            //                       Text("Delete", style: TextStyle(color: Colors.blueGrey, fontSize: 13.0),)
+            //                     ],
+            //                   ),
+            //                   value: 4,
+            //                 ),
+            //               ],
+            //             )),
+            //           ],
+            //           source: ItemsDataSource(
+            //             onRowSelect: (index) =>(){},
+            //            resultData: listResult,
+            //           ),
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ),
           ],)
     );
   }

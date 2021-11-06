@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import 'package:serow/constants.dart';
 import 'package:serow/controllers/controller.dart';
 import 'package:serow/controllers/locations_controller.dart';
-import 'package:serow/respository/inventory_repository/locations_inventory_repository.dart';
+import 'package:serow/repository/inventory_repository/locations_inventory_repository.dart';
 import 'package:serow/services/locations_data_source.dart';
 import 'package:serow/widgets/custom_text.dart';
 

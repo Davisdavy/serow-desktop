@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:serow/constants.dart';
 import 'package:serow/models/auth/auth.dart';
-import 'package:serow/respository/auth_provider.dart';
-import 'package:serow/respository/user_provider.dart';
+import 'package:serow/repository/auth_provider.dart';
+import 'package:serow/repository/user_provider.dart';
 
 AppBar topNavigationBar(
     BuildContext context, GlobalKey<ScaffoldState> key) =>

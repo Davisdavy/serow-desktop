@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:serow/models/accounts/cost_centers.dart';
-import 'package:serow/respository/cost_centers_repository.dart';
+import 'package:serow/repository/cost_centers_repository.dart';
 
 class CostCentersController{
   final CostCentersRepository _repository;

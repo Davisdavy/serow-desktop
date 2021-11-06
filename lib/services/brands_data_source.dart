@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:serow/constants.dart';
 import 'package:serow/controllers/brands_controller.dart';
 import 'package:serow/models/inventory/brands.dart';
-import 'package:serow/respository/inventory_repository/brands_inventory_repository.dart';
+import 'package:serow/repository/inventory_repository/brands_inventory_repository.dart';
 
 typedef OnRowSelect = void Function(int index);
 

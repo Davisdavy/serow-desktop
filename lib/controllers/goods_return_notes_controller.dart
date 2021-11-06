@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:serow/models/suppliers/goods_return_notes.dart';
-import 'package:serow/respository/goosd_return_notes_repository.dart';
+import 'package:serow/repository/goosd_return_notes_repository.dart';
 
 class GoodsReturnNotesController {
   final GoodsReturnNotesRepository _repository;

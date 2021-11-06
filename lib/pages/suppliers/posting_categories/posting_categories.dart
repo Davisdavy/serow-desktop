@@ -5,8 +5,8 @@ import 'package:serow/constants.dart';
 import 'package:serow/controllers/accounts_controller.dart';
 import 'package:serow/controllers/controller.dart';
 import 'package:serow/controllers/posting_categories_controller.dart';
-import 'package:serow/respository/accounts_repository/accounts_provider.dart';
-import 'package:serow/respository/suppliers_repository/posting_categories_suppliers_repository.dart';
+import 'package:serow/repository/accounts_repository/accounts_provider.dart';
+import 'package:serow/repository/suppliers_repository/posting_categories_suppliers_repository.dart';
 import 'package:serow/services/posting_categories_data_source.dart';
 import 'package:serow/widgets/custom_text.dart';
 

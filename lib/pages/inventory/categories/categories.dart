@@ -7,9 +7,9 @@ import 'package:serow/controllers/categories_controller.dart';
 import 'package:serow/controllers/controller.dart';
 import 'package:serow/controllers/groups_controller.dart';
 import 'package:serow/controllers/subgroup_controller.dart';
-import 'package:serow/respository/inventory_repository/categories_inventory_repository.dart';
-import 'package:serow/respository/inventory_repository/groups_inventory_repository.dart';
-import 'package:serow/respository/inventory_repository/subgroups_inventory_repository.dart';
+import 'package:serow/repository/inventory_repository/categories_inventory_repository.dart';
+import 'package:serow/repository/inventory_repository/groups_inventory_repository.dart';
+import 'package:serow/repository/inventory_repository/subgroups_inventory_repository.dart';
 import 'package:serow/services/categories_data_source.dart';
 import 'package:serow/widgets/custom_text.dart';
 
