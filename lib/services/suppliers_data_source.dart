@@ -38,15 +38,14 @@ class SuppliersDataSource extends  DataTableSource{
       index: index, // DONT MISS THIS
       cells: <DataCell>[
         DataCell(Text('${_result.name}',style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.w600, color: secondaryColor))),
-        DataCell(Text('${_result.email}',style: TextStyle(fontSize: 13.0, color: secondaryColor))),
-        DataCell(Text('${_result.phone}',style: TextStyle(fontSize: 13.0, color: secondaryColor))),
+        DataCell(Text('${_result.supplierContacts[0].name}',style: TextStyle(fontSize: 13.0, color: secondaryColor))),
+        DataCell(Text('${_result.supplierContacts[0].phone}',style: TextStyle(fontSize: 13.0, color: secondaryColor))),
         DataCell(Text('${_result.isActive.toString() == "true" ? "Active" : "Inactive"}',style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.w500, color: primaryColor),)),
 
         DataCell(
             Builder(
                 builder: (newContext) {
                   return FutureBuilder<List<Results>>(
-                    future: suppliersController.fetchSupplierList(newContext),
                     builder: (context, snapshot){
                       return PopupMenuButton(
                         elevation: 20.0,
@@ -103,6 +102,7 @@ class SuppliersDataSource extends  DataTableSource{
                         ],
                       );
                     },
+                    future: suppliersController.fetchSupplierList(newContext),
                   );
                 }
             )

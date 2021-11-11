@@ -9,7 +9,10 @@ abstract class GoodsReturnNotesRepository {
   Future<String> patchGoodsReturnNote(Results result);
   Future<String> putGoodsReturnNote(Results result);
   Future<String> deletedGoodsReturnNote(String id, BuildContext context);
-  Future<GoodsReturnNotes> postGoodsReturnNote(String supplier, String branch,List<String>goods_return_note_items, BuildContext context);
+  Future<GoodsReturnNotes> postGoodsReturnNote(String supplier, String branch,
+      String item, int quantity, int detailQuantity, String detailLocation, double discountAmount,
+      String batchNo, String expDate, double totalAmount, double totalCost,
+      BuildContext context);
 
 
 }

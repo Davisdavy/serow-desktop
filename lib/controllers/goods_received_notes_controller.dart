@@ -27,7 +27,14 @@ class GoodsReceivedNotesController{
   }
 
   //delete
-  Future<GoodsReceivedNotes>postGoodsReceivedNote(String supplier, String branch, List<dynamic> grn_items, BuildContext context) async{
-    return _repository.postGoodsReceivedNote(supplier, branch, grn_items,context);
+  Future<GoodsReceivedNotes>postGoodsReceivedNote(String supplier,
+      String branch,String grnItemId,
+      int grnQuantity,double grnDiscountAmount,
+      double grnTotalCost, double grnDiscountPercentage,
+      double totalAmount, double discountAmount,  BuildContext context) async{
+    return _repository.postGoodsReceivedNote(supplier, branch,
+        grnItemId, grnQuantity, grnDiscountAmount,grnTotalCost,
+        grnDiscountPercentage, totalAmount, discountAmount,
+        context);
   }
 }

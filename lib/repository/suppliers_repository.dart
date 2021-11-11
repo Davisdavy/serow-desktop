@@ -9,7 +9,7 @@ abstract class SuppliersRepository {
   Future<String> patchSupplier(Results result);
   Future<String> putSupplier(Results result);
   Future<String> deletedSupplier(String id, BuildContext context);
-  Future<Suppliers> postSupplier(String name, String postingCategory,List<String>supplier_contacts, BuildContext context);
+  Future<Suppliers> postSupplier(String name, String postingCategory, String sName, String email, String physicalAddress, String phone, BuildContext context);
 
 
 }

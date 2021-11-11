@@ -25,7 +25,6 @@ void main()  {
     setWindowTitle("Serow");
     setWindowMinSize(const Size(1280, 760));
     setWindowMaxSize(Size.infinite);
-
   }
   runApp(MyApp());
 }

@@ -38,6 +38,7 @@ dependencies:
   intl:
   steps_indicator:
   desktop_window:
+  file_picker:
   shared_preferences: ^0.5.12+4
   window_size:
     git:

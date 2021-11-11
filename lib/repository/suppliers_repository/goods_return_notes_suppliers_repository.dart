@@ -53,20 +53,39 @@ class GoodsReturnNotesSupplierRepository implements GoodsReturnNotesRepository {
   }
 
   @override
-  Future<GoodsReturnNotes> postGoodsReturnNote(String supplier, String branch, List<dynamic> goods_return_note_items, BuildContext context) async {
-    List grnItemList = [];
-    goods_return_note_items.map((item) => grnItemList.add(item.toJson)).toList();
+  Future<GoodsReturnNotes> postGoodsReturnNote(String supplier, String branch,
+      String item, int quantity, int detailQuantity, String detailLocation, double discountAmount,
+      String batchNo, String expDate,double totalAmount, double totalCost,
+      BuildContext context) async {
+    List<Map<String, dynamic>> grnItemsDetailList = [
 
+      {'location':detailLocation,
+        'quantity': detailQuantity,
+        'batch_number':batchNo,
+        'expiry_date': expDate
+      }
+    ];
+    List<Map<String, dynamic>> grnItemsList = [
+      {'item':item,
+        'quantity': quantity,
+        'goods_return_note_item_details':grnItemsDetailList,
+        }
+    ];
+
+    var body={
+      'supplier': supplier,
+      'branch': branch,
+      'discount_amount': discountAmount,
+      'total_amount':totalAmount,
+      "goods_return_note_items":   grnItemsList,
+    };
+    print("GRN Body: $body");
     Auth user = Provider.of<AuthProvider>(context,listen: false).auth;
-    var response = await http.post(Uri.parse('${AppUrl.suppliers}'),headers: {
+    var response = await http.post(Uri.parse('${AppUrl.goods_return_notes}'),headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
       "Authorization":  "Bearer ${user.accessToken.toString()}"
-    }, body: jsonEncode(<dynamic, dynamic>{
-      'supplier': supplier,
-      "branch": branch,
-      'grn_items': grnItemList
-    }),);
+    }, body: jsonEncode(body),);
     print('Post status code: ${response.statusCode}');
     print('Post body: ${response.body}');
     // print('Post toJSON: ${br}');

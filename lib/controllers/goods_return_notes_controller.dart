@@ -27,8 +27,13 @@ class GoodsReturnNotesController {
 
   //delete
   Future<GoodsReturnNotes> postGoodsReturnNote(String supplier, String branch,
-      List<dynamic> grn_items, BuildContext context) async {
+      String item, int quantity, int detailQuantity, String detailLocation, double discountAmount,
+      String batchNo, String expDate,double totalAmount, double totalCost,
+      BuildContext context) async {
     return _repository.postGoodsReturnNote(
-        supplier, branch, grn_items, context);
+        supplier, branch, item, quantity, detailQuantity,
+        detailLocation,discountAmount, batchNo, expDate,
+        totalAmount, totalCost,
+        context);
   }
 }

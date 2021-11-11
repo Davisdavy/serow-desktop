@@ -1,4 +1,3 @@
-
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
@@ -12,10 +11,10 @@ import 'package:serow/services/services.dart';
 
 class ItemsInventoryRepository implements ItemsRepository {
   @override
-  Future<String> deletedItem(String id, BuildContext context) async{
+  Future<String> deletedItem(String id, BuildContext context) async {
     Auth user = Provider.of<AuthProvider>(context, listen: false).auth;
-
-    final http.Response response = await http.delete(Uri.parse('${AppUrl.items}$id/'), headers: {
+    final http.Response response =
+        await http.delete(Uri.parse('${AppUrl.items}$id/'), headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
       "Authorization": "Bearer ${user.accessToken.toString()}",
@@ -25,7 +24,7 @@ class ItemsInventoryRepository implements ItemsRepository {
   }
 
   @override
-  Future<List<Results>> getItemList(BuildContext context)async {
+  Future<List<Results>> getItemList(BuildContext context) async {
     //https://serow.herrings.co.ke/api/v1/inventory/forms/
     List<Results> itemList = [];
     context.watch<AuthProvider>();
@@ -56,8 +55,33 @@ class ItemsInventoryRepository implements ItemsRepository {
   }
 
   @override
-  Future<Items> postItem(String name, String brandId, String groupId, String subgroupId, BuildContext context)async {
-    Auth user = Provider.of<AuthProvider>(context,listen: false).auth;
+  Future<Items> postItem(
+      String name,
+      String brandId,
+      String groupId,
+      String subgroupId,
+      String description,
+      double costPrice,
+      double avgPrice,
+      double tradePrice,
+      double retailPrice,
+      double minimumPrice,
+      double maximumPrice,
+      double wholesalePrice,
+      double minWholesalePrice,
+      double maxWholesalePrice,
+      double supplierPrice,
+      double vatPercentage,
+      double specialPrice,
+      String packSize,
+      String availability,
+      int priority,
+      String sellingOptions,
+      double balance,
+      double totalRevenue,
+      double totalPurchases,
+      BuildContext context) async {
+    Auth user = Provider.of<AuthProvider>(context, listen: false).auth;
     var response = await http.post(
       Uri.parse('${AppUrl.items}'),
       headers: {
@@ -65,11 +89,31 @@ class ItemsInventoryRepository implements ItemsRepository {
         'Accept': 'application/json',
         "Authorization": "Bearer ${user.accessToken.toString()}"
       },
-      body: jsonEncode(<dynamic, String>{
+      body: jsonEncode(<dynamic, dynamic>{
         'name': name,
         'brand': brandId,
         'group': groupId,
-        'subgroup':subgroupId
+        'subgroup': subgroupId,
+        'description':description,
+        'costPrice':costPrice,
+        'avgPrice':avgPrice,
+        'tradePrice':tradePrice,
+        'retailPrice':retailPrice,
+        'minimumPrice':minimumPrice,
+        'maximumPrice':maximumPrice,
+        'wholesalePrice':wholesalePrice,
+        'minWholesalePrice':minWholesalePrice,
+        'maxWholesalePrice':maxWholesalePrice,
+        'supplierPrice':supplierPrice,
+        'vatPercentage':vatPercentage,
+        'specialPrice':specialPrice,
+        'packSize':packSize,
+        'availability':availability,
+        'priority': priority,
+        'selling_options':sellingOptions,
+        'balance':balance,
+        'totalRevenue':totalRevenue,
+        'totalPurchases':totalPurchases,
       }),
     );
     print('Post status code: ${response.statusCode}');

@@ -66,23 +66,50 @@ class PurchaseOrdersSupplierRepository implements PurchaseOrdersRepository {
   }
 
   @override
-  Future<PurchaseOrders> postPurchaseOrder(String supplier, String branch, List<dynamic> purchase_order_items, BuildContext context) async{
-    List grnItemList = [];
-    purchase_order_items.map((item) => grnItemList.add(item.toJson())).toList();
-
-    Auth user = Provider.of<AuthProvider>(context,listen: false).auth;
-    var response = await http.post(Uri.parse('${AppUrl.suppliers}'),headers: {
-      'Content-type': 'application/json',
-      'Accept': 'application/json',
-      "Authorization":  "Bearer ${user.accessToken.toString()}"
-    }, body: jsonEncode(<dynamic, dynamic>{
+  Future<PurchaseOrders> postPurchaseOrder(String supplier, String branch,
+      String item, int itemQuantity, double itemUnitCost,
+      double itemBonus, double itemDiscountPercentage,
+      double itemDiscountAmount, double itemNetAmount,
+      double itemTaxPercentage, double itemTaxAmount,
+      double itemTotalCost, double totalAmount, double discountAmount,
+      BuildContext context) async{
+    List<Map<String, dynamic>> purchaseOrderItemList = [
+      {
+        "item": item,
+        "quantity": itemQuantity,
+        "unit_cost": itemUnitCost,
+        "bonus": itemBonus,
+        "total_quantity": itemQuantity,
+        "discount_percentage": itemDiscountPercentage,
+        "discount_amount": itemDiscountAmount,
+        "net_amount": itemNetAmount,
+        "tax_percentage": itemTaxPercentage,
+        "tax_amount": itemTaxAmount,
+        "total_cost": itemTotalCost
+      }
+    ];
+    var body={
       'supplier': supplier,
-      "branch": branch,
-      'grn_items': grnItemList
-    }),);
+      'branch': branch,
+      "total_amount":   totalAmount,
+      "discount_amount":discountAmount,
+      "purchase_order_items":purchaseOrderItemList
+    };
+
+    print("Body: $body");
+    Auth user = Provider.of<AuthProvider>(context, listen: false).auth;
+    var response = await http.post(
+      Uri.parse('${AppUrl.suppliers}'),
+      headers: {
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+        'Charset': 'utf-8',
+        "Authorization": "Bearer ${user.accessToken.toString()}"
+      },
+      body: jsonEncode(body),
+    );
     print('Post status code: ${response.statusCode}');
     print('Post body: ${response.body}');
-    // print('Post toJSON: ${br}');
     return purchaseOrdersFromJson(response.body);
   }
 

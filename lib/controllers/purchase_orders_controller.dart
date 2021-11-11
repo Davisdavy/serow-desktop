@@ -28,8 +28,19 @@ class PurchaseOrdersController {
 
   //delete
   Future<PurchaseOrders> postPurchaseOrder(String supplier, String branch,
-      List<dynamic> purchase_order_items, BuildContext context) async {
+      String item, int itemQuantity, double itemUnitCost,
+      double itemBonus, double itemDiscountPercentage,
+      double itemDiscountAmount, double itemNetAmount,
+      double itemTaxPercentage, double itemTaxAmount,
+      double itemTotalCost, double totalAmount, double discountAmount,
+      BuildContext context) async {
     return _repository.postPurchaseOrder(
-        supplier, branch, purchase_order_items, context);
+         supplier,  branch,
+         item,  itemQuantity,  itemUnitCost,
+         itemBonus,  itemDiscountPercentage,
+         itemDiscountAmount,  itemNetAmount,
+         itemTaxPercentage,  itemTaxAmount,
+         itemTotalCost,  totalAmount,  discountAmount,
+         context);
   }
 }

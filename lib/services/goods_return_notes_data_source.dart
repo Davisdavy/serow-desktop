@@ -36,9 +36,9 @@ class GoodsReturnNotesDataSource extends  DataTableSource{
 
       index: index, // DON'T MISS THIS
       cells: <DataCell>[
-        DataCell(Text('${_result.supplier}',style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.w600, color: secondaryColor))),
-        DataCell(Text('${_result.branch}',style: TextStyle(fontSize: 13.0, color: secondaryColor))),
-        DataCell(Text('${_result.company}',style: TextStyle(fontSize: 13.0, color: secondaryColor))),
+        DataCell(Text('${_result.supplier.name}',style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.w600, color: secondaryColor))),
+        DataCell(Text('${_result.branch.name}',style: TextStyle(fontSize: 13.0, color: secondaryColor))),
+        DataCell(Text('${_result.totalAmount}',style: TextStyle(fontSize: 13.0, color: secondaryColor))),
         DataCell(Text('${_result.isActive.toString() == "true" ? "Active" : "Inactive"}',style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.w500, color: primaryColor),)),
 
         DataCell(

@@ -37,7 +37,7 @@ class PostingCategoriesDataSource extends  DataTableSource{
       cells: <DataCell>[
         DataCell(Text('${_result.name}',style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.w600, color: secondaryColor))),
         DataCell(Text('${_result.code}',style: TextStyle(fontSize: 13.0, color: secondaryColor))),
-        DataCell(Text('${_result.account}',style: TextStyle(fontSize: 13.0, color: secondaryColor))),
+        DataCell(Text('${_result.account.name}',style: TextStyle(fontSize: 13.0, color: secondaryColor))),
         DataCell(Text('${_result.isActive.toString() == "true" ? "Active" : "Inactive"}',style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.w500, color: primaryColor),)),
 
         DataCell(

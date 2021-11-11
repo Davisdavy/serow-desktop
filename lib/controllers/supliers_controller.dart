@@ -28,7 +28,7 @@ class SupplierController{
   }
 
   //delete
-  Future<Suppliers>postSupplier(String name, String posting_category, List<String> supplierContacts, BuildContext context) async{
-    return _repository.postSupplier(name, posting_category, supplierContacts,context);
+  Future<Suppliers>postSupplier(String name, String posting_category, String sName, String email, String physicalAddress, String phone, BuildContext context) async{
+    return _repository.postSupplier(name, posting_category, sName, email, physicalAddress, phone,context);
   }
 }

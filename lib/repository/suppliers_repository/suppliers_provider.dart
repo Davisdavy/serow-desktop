@@ -12,6 +12,7 @@ import 'package:http/http.dart' as http;
 class SuppliersProvider implements SuppliersRepository {
   @override
   Future<String> deletedSupplier(String id, BuildContext context) async {
+    context.watch<AuthProvider>();
     Auth user = Provider.of<AuthProvider>(context, listen: false).auth;
     final http.Response response =
         await http.delete(Uri.parse('${AppUrl.suppliers}$id/'), headers: {
@@ -71,30 +72,35 @@ class SuppliersProvider implements SuppliersRepository {
 
   @override
   Future<Suppliers> postSupplier(String name, String postingCategory,
-      List<dynamic> supplier_contacts, BuildContext context) async {
-    List supplierContactsList = [];
-    supplier_contacts
-        .map((item) => supplierContactsList.add(item.toJson()))
-        .toList();
+      String sName, String email, String physicalAddress, String phone, BuildContext context) async {
+    List<Map<String, dynamic>> supplierContactsList = [
+      {'name':sName,
+        'email': email,
+        'physical_address':physicalAddress,
+        'phone': phone}
+    ];
+   var body={
+      'name': name,
+      'posting_category': postingCategory,
+      "supplier_contacts":   supplierContactsList,
+    };
 
+    print("Body: $body");
     Auth user = Provider.of<AuthProvider>(context, listen: false).auth;
     var response = await http.post(
       Uri.parse('${AppUrl.suppliers}'),
       headers: {
         'Content-type': 'application/json',
         'Accept': 'application/json',
+          'Charset': 'utf-8',
         "Authorization": "Bearer ${user.accessToken.toString()}"
       },
-      body: jsonEncode(<dynamic, dynamic>{
-        'name': name,
-        "supplier_contacts": supplierContactsList,
-        'posting_category': postingCategory
-      }),
+      body: jsonEncode(body),
     );
     print('Post status code: ${response.statusCode}');
     print('Post body: ${response.body}');
     // print('Post toJSON: ${br}');
-    // return Suppliers.fromJson(response.body);
+     return suppliersFromJson(response.body);
   }
 
   @override

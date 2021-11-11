@@ -255,7 +255,7 @@ class _LocationsPageState extends State<LocationsPage> {
                                   left: 60.0,
                                 ),
                                 child: CustomText(
-                                  text: "You have a total of 5 locations.",
+                                  text: "You have a total of ${snapshot.data.length} locations.",
                                   //ToDo: Read from count method
                                   size: 12,
                                   color: Colors.blueGrey,
@@ -594,7 +594,7 @@ class _LocationsPageState extends State<LocationsPage> {
                                                                                       12),),
                                                                                     ),
                                                                                     value: branchId,
-                                                                                    items: snapshot.data[1].map<DropdownMenuItem<String>>((item){
+                                                                                    items: snapshot.data[0].map<DropdownMenuItem<String>>((item){
                                                                                       return new DropdownMenuItem<String>(child: Padding(
                                                                                         padding: const EdgeInsets.all(8.0),
                                                                                         child: Text(
@@ -896,7 +896,7 @@ class _LocationsPageState extends State<LocationsPage> {
                                 dividerColor: Colors.blueGrey.shade100.withOpacity(0.4),
                               ),
                               child: PaginatedDataTable(
-                                rowsPerPage: snapshot.data.length ?? 1,
+                                rowsPerPage: 5,
                                 showCheckboxColumn: true,
                                 dataRowHeight: 60,
                                 columns: [

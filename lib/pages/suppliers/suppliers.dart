@@ -23,7 +23,8 @@ class _SuppliersPageState extends State<SuppliersPage> {
 
   double pageCount = 0;
   String posting_category_id;
-  List<String> supplierContact = [];
+  Map<String, dynamic> supplierContact = {};
+  List<dynamic> supplierContactList = [];
 
   @override
   void initState() {
@@ -880,7 +881,7 @@ class _SuppliersPageState extends State<SuppliersPage> {
                                                                         left: 12.0),
                                                                     child: Material(
                                                                         child: Text(
-                                                                          "Supplier Phone",
+                                                                          "Physical Address",
                                                                           style: TextStyle(
                                                                               color: bgColor,
                                                                               fontSize: 12,
@@ -1047,13 +1048,8 @@ class _SuppliersPageState extends State<SuppliersPage> {
                                                                         _validate = true
                                                                             : _validate =
                                                                         false;
-                                                                        // _shortNameController.text.isEmpty ? _validate = true : _validate = false;
-                                                                        print("Posting..${_nameController.text}, $posting_category_id, ${_supplierNameController.text},${_supplierPhoneController.text}, ${_supplierEmailController.text}, ${_supplierPhysicalAddressController}");
-                                                                        supplierContact.add(_supplierNameController.text);
-                                                                        supplierContact.add(_supplierPhysicalAddressController.text);
-                                                                        supplierContact.add(_supplierEmailController.text);
-                                                                        supplierContact.add(_supplierPhoneController.text);
-                                                                        supplierController.postSupplier(_nameController.text, posting_category_id,supplierContact, context);
+
+                                                                        supplierController.postSupplier(_nameController.text, posting_category_id,_supplierNameController.text,_supplierEmailController.text,_supplierPhysicalAddressController.text,_supplierPhoneController.text , context);
                                                                         Navigator.of(context, rootNavigator: true).pop();
 
                                                                       });
@@ -1156,13 +1152,13 @@ class _SuppliersPageState extends State<SuppliersPage> {
                                 dataRowHeight: 60,
                                 columns: [
                                   DataColumn(label: Text(
-                                    "Name",
+                                    "Supplier",
                                     style: TextStyle(
                                         fontSize: 13.5,
                                         color: secondaryColor.withOpacity(0.4)),
                                   ),),
                                   DataColumn(label: Text(
-                                    "Email",
+                                    "Name",
                                     style: TextStyle(
                                         fontSize: 13.5,
                                         color: secondaryColor.withOpacity(0.4)),

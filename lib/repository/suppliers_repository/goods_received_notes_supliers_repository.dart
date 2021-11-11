@@ -54,23 +54,40 @@ class GoodsReceivedNotesSupplierRepository implements GoodsReceivedNotesReposito
   }
 
   @override
-  Future<GoodsReceivedNotes> postGoodsReceivedNote(String supplier, String branch, List<dynamic> grn_items, BuildContext context)async {
-    List grnItemList = [];
-    grn_items.map((item) => grnItemList.add(item.toJson())).toList();
-
-    Auth user = Provider.of<AuthProvider>(context,listen: false).auth;
-    var response = await http.post(Uri.parse('${AppUrl.suppliers}'),headers: {
-      'Content-type': 'application/json',
-      'Accept': 'application/json',
-      "Authorization":  "Bearer ${user.accessToken.toString()}"
-    }, body: jsonEncode(<dynamic, dynamic>{
+  Future<GoodsReceivedNotes> postGoodsReceivedNote(String supplier,
+      String branch,String grnItemId,
+      int qrnQuantity,double grnDiscountAmount,
+      double grnTotalCost, double grnDiscountPercentage,
+      double totalAmount, double discountAmount,
+      BuildContext context)async {
+    List<Map<String, dynamic>> grnItemList = [
+      {'item':grnItemId,
+        'quantity': qrnQuantity,
+        'discount_amount':grnDiscountAmount,
+        'total_cost': grnTotalCost,
+        'discount_percentage': grnDiscountPercentage}
+    ];
+    var body={
       'supplier': supplier,
-      "branch": branch,
-      'grn_items': grnItemList
-    }),);
+      'branch': branch,
+      "total_amount":   totalAmount,
+      "discount_amount":discountAmount,
+    };
+
+    print("Body: $body");
+    Auth user = Provider.of<AuthProvider>(context, listen: false).auth;
+    var response = await http.post(
+      Uri.parse('${AppUrl.suppliers}'),
+      headers: {
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+        'Charset': 'utf-8',
+        "Authorization": "Bearer ${user.accessToken.toString()}"
+      },
+      body: jsonEncode(body),
+    );
     print('Post status code: ${response.statusCode}');
     print('Post body: ${response.body}');
-    // print('Post toJSON: ${br}');
     return goodsReceivedNotesFromJson(response.body);
   }
 
