@@ -477,7 +477,7 @@ class _GoodsReceivedNotePageState extends State<GoodsReceivedNotePage> {
                                                                             .only(
                                                                             left: 18.0),
                                                                         child: CustomText(
-                                                                          text: "Add Item",
+                                                                          text: "Add Note",
                                                                           size: 22,
                                                                           color: Colors.blueGrey,
                                                                           weight: FontWeight.w500,
@@ -602,7 +602,7 @@ class _GoodsReceivedNotePageState extends State<GoodsReceivedNotePage> {
                                                                                                         return new DropdownMenuItem<String>(child: Padding(
                                                                                                           padding: const EdgeInsets.all(8.0),
                                                                                                           child: Text(
-                                                                                                            item.name,
+                                                                                                            item.quantity,
                                                                                                             style: TextStyle(fontSize:
                                                                                                             12,),
                                                                                                           ),
@@ -682,7 +682,7 @@ class _GoodsReceivedNotePageState extends State<GoodsReceivedNotePage> {
                                                                                                         return new DropdownMenuItem<String>(child: Padding(
                                                                                                           padding: const EdgeInsets.all(8.0),
                                                                                                           child: Text(
-                                                                                                            item.name,
+                                                                                                            item.quantity,
                                                                                                             style: TextStyle(fontSize:
                                                                                                             12,),
                                                                                                           ),
@@ -1461,7 +1461,7 @@ class _GoodsReceivedNotePageState extends State<GoodsReceivedNotePage> {
                                               width: 8.0,
                                             ),
                                             Text(
-                                              "Add Item",
+                                              "Add Note",
                                               style: TextStyle(
                                                   color: Colors.white,
                                                   fontWeight: FontWeight.w400),

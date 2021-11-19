@@ -13,12 +13,12 @@ class BranchesDataSource extends  DataTableSource{
   //Dependency injection
   var branchesController = BranchesController(BranchesEntitiesRepository());
   BranchesDataSource({
-    @required List<Results> resultData,
+    @required List<Branches> resultData,
     @required this.onRowSelect,
   })  : _resultData = resultData,
         assert(resultData != null);
 
-  final List<Results> _resultData;
+  final List<Branches> _resultData;
   final OnRowSelect onRowSelect;
 
 
@@ -44,7 +44,7 @@ class BranchesDataSource extends  DataTableSource{
         DataCell(
             Builder(
                 builder: (newContext) {
-                  return FutureBuilder<List<Results>>(
+                  return FutureBuilder<List<Branches>>(
                     builder: (context, snapshot){
                       return PopupMenuButton(
                         elevation: 20.0,

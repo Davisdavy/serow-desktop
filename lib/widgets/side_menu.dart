@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:serow/constants.dart';
 import 'package:serow/controllers/controller.dart';
 import 'package:serow/pages/authentication/authentication_page.dart';
-import 'package:serow/responsive.dart';
 import 'package:serow/routes/routes.dart';
 import 'package:serow/widgets/side_menu_item.dart';
 

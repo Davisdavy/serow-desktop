@@ -627,7 +627,7 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                                                                                                           return new DropdownMenuItem<String>(child: Padding(
                                                                                                             padding: const EdgeInsets.all(8.0),
                                                                                                             child: Text(
-                                                                                                              item.name,
+                                                                                                              item.quantity,
                                                                                                               style: TextStyle(fontSize:
                                                                                                               12,),
                                                                                                             ),
@@ -707,7 +707,7 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                                                                                                           return new DropdownMenuItem<String>(child: Padding(
                                                                                                             padding: const EdgeInsets.all(8.0),
                                                                                                             child: Text(
-                                                                                                              item.name,
+                                                                                                              item.quantity,
                                                                                                               style: TextStyle(fontSize:
                                                                                                               12,),
                                                                                                             ),
@@ -976,769 +976,2324 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                                                                       SingleChildScrollView(
                                                                         child:Column(
                                                                           children: [
-                                                                            Row(
-                                                                              mainAxisAlignment:
-                                                                              MainAxisAlignment.start,
-                                                                              children: [
-                                                                                Flexible(
-                                                                                  child: Column(
-                                                                                    crossAxisAlignment:
-                                                                                    CrossAxisAlignment.start,
+                                                                            Material(
+                                                                              child: ExpansionTile(
+                                                                                title: Text("Add Item"),
+                                                                                children: [
+                                                                                  Column(
                                                                                     children: [
-                                                                                      Padding(
-                                                                                        padding:
-                                                                                        const EdgeInsets.only(
-                                                                                            left: 12.0),
-                                                                                        child: Material(
-                                                                                            child: Text(
-                                                                                              "Select Item",
-                                                                                              style: TextStyle(
-                                                                                                  color: bgColor,
-                                                                                                  fontSize: 12,
-                                                                                                  fontWeight:
-                                                                                                  FontWeight
-                                                                                                      .bold),
-                                                                                            )),
-                                                                                      ),
-                                                                                      SizedBox(
-                                                                                        height: 5,
-                                                                                      ),
-                                                                                      Material(
-                                                                                        child: Padding(
-                                                                                          padding:
-                                                                                          const EdgeInsets.only(
-                                                                                              left: 12.0),
-                                                                                          child: Container(
-                                                                                            width: 240,
-                                                                                            height: 40,
-                                                                                            child: Flexible(
-                                                                                              child: StatefulBuilder(
-                                                                                                builder: (BuildContext context, StateSetter setState){
-                                                                                                  return DecoratedBox(
+                                                                                      Row(
+                                                                                        mainAxisAlignment:
+                                                                                        MainAxisAlignment.start,
+                                                                                        children: [
+                                                                                          Flexible(
+                                                                                            child: Column(
+                                                                                              crossAxisAlignment:
+                                                                                              CrossAxisAlignment.start,
+                                                                                              children: [
+                                                                                                Padding(
+                                                                                                  padding:
+                                                                                                  const EdgeInsets.only(
+                                                                                                      left: 12.0),
+                                                                                                  child: Material(
+                                                                                                      child: Text(
+                                                                                                        "Select Item",
+                                                                                                        style: TextStyle(
+                                                                                                            color: bgColor,
+                                                                                                            fontSize: 12,
+                                                                                                            fontWeight:
+                                                                                                            FontWeight
+                                                                                                                .bold),
+                                                                                                      )),
+                                                                                                ),
+                                                                                                SizedBox(
+                                                                                                  height: 5,
+                                                                                                ),
+                                                                                                Material(
+                                                                                                  child: Padding(
+                                                                                                    padding:
+                                                                                                    const EdgeInsets.only(
+                                                                                                        left: 12.0),
+                                                                                                    child: Container(
+                                                                                                      width: 240,
+                                                                                                      height: 40,
+                                                                                                      child: Flexible(
+                                                                                                        child: StatefulBuilder(
+                                                                                                          builder: (BuildContext context, StateSetter setState){
+                                                                                                            return DecoratedBox(
 
-                                                                                                    decoration: ShapeDecoration(
-                                                                                                        shape: RoundedRectangleBorder(
-                                                                                                          side: BorderSide(width: 0.4, style: BorderStyle.solid, color: Colors.grey),
-                                                                                                          borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                                                                                                        )
-                                                                                                    ),
-                                                                                                    child: DropdownButtonHideUnderline(
-                                                                                                      child: DropdownButton<String>(
-                                                                                                        hint: Padding(
-                                                                                                          padding: const EdgeInsets.all(8.0),
-                                                                                                          child: Text("Item", style: TextStyle(fontSize:
-                                                                                                          12),),
+                                                                                                              decoration: ShapeDecoration(
+                                                                                                                  shape: RoundedRectangleBorder(
+                                                                                                                    side: BorderSide(width: 0.4, style: BorderStyle.solid, color: Colors.grey),
+                                                                                                                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                                                                                                  )
+                                                                                                              ),
+                                                                                                              child: DropdownButtonHideUnderline(
+                                                                                                                child: DropdownButton<String>(
+                                                                                                                  hint: Padding(
+                                                                                                                    padding: const EdgeInsets.all(8.0),
+                                                                                                                    child: Text("Item", style: TextStyle(fontSize:
+                                                                                                                    12),),
+                                                                                                                  ),
+                                                                                                                  value: itemId,
+                                                                                                                  items: snapshot.data[3].map<DropdownMenuItem<String>>(( item){
+                                                                                                                    return new DropdownMenuItem<String>(child: Padding(
+                                                                                                                      padding: const EdgeInsets.all(8.0),
+                                                                                                                      child: Text(
+                                                                                                                        item.quantity,
+                                                                                                                        style: TextStyle(fontSize:
+                                                                                                                        12,),
+                                                                                                                      ),
+                                                                                                                    ),
+                                                                                                                        value: item.id.toString()
+                                                                                                                    );
+                                                                                                                  }).toList(),
+                                                                                                                  onChanged: (String groupValue){
+                                                                                                                    setState(() {
+                                                                                                                      itemId = groupValue;
+
+                                                                                                                    });
+                                                                                                                  },
+                                                                                                                ),
+                                                                                                              ),
+                                                                                                            );
+                                                                                                          },
                                                                                                         ),
-                                                                                                        value: itemId,
-                                                                                                        items: snapshot.data[3].map<DropdownMenuItem<String>>(( item){
-                                                                                                          return new DropdownMenuItem<String>(child: Padding(
-                                                                                                            padding: const EdgeInsets.all(8.0),
-                                                                                                            child: Text(
-                                                                                                              item.name,
-                                                                                                              style: TextStyle(fontSize:
-                                                                                                              12,),
-                                                                                                            ),
-                                                                                                          ),
-                                                                                                              value: item.id.toString()
-                                                                                                          );
-                                                                                                        }).toList(),
-                                                                                                        onChanged: (String groupValue){
-                                                                                                          setState(() {
-                                                                                                            itemId = groupValue;
-
-                                                                                                          });
-                                                                                                        },
                                                                                                       ),
                                                                                                     ),
-                                                                                                  );
-                                                                                                },
-                                                                                              ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ],
                                                                                             ),
                                                                                           ),
-                                                                                        ),
-                                                                                      ),
-                                                                                    ],
-                                                                                  ),
-                                                                                ),
-                                                                                Flexible(
-                                                                                  child: Column(
-                                                                                    crossAxisAlignment:
-                                                                                    CrossAxisAlignment.start,
-                                                                                    children: [
-                                                                                      Padding(
-                                                                                        padding:
-                                                                                        const EdgeInsets.only(
-                                                                                            left: 12.0),
-                                                                                        child: Material(
-                                                                                            child: Text(
-                                                                                              "Item Quantity",
-                                                                                              style: TextStyle(
-                                                                                                  color: bgColor,
-                                                                                                  fontSize: 12,
-                                                                                                  fontWeight:
-                                                                                                  FontWeight
-                                                                                                      .bold),
-                                                                                            )),
+                                                                                          Flexible(
+                                                                                            child: Column(
+                                                                                              crossAxisAlignment:
+                                                                                              CrossAxisAlignment.start,
+                                                                                              children: [
+                                                                                                Padding(
+                                                                                                  padding:
+                                                                                                  const EdgeInsets.only(
+                                                                                                      left: 12.0),
+                                                                                                  child: Material(
+                                                                                                      child: Text(
+                                                                                                        "Item Quantity",
+                                                                                                        style: TextStyle(
+                                                                                                            color: bgColor,
+                                                                                                            fontSize: 12,
+                                                                                                            fontWeight:
+                                                                                                            FontWeight
+                                                                                                                .bold),
+                                                                                                      )),
+                                                                                                ),
+                                                                                                SizedBox(
+                                                                                                  height: 5,
+                                                                                                ),
+                                                                                                Material(
+                                                                                                  child: Padding(
+                                                                                                    padding:
+                                                                                                    const EdgeInsets.only(
+                                                                                                        left: 12.0),
+                                                                                                    child: Container(
+                                                                                                      width: 240,
+                                                                                                      height: 40,
+                                                                                                      child: Flexible(
+                                                                                                        child: TextField(
+                                                                                                          controller: _itemQuantityController,
+                                                                                                          decoration:
+                                                                                                          InputDecoration(
+                                                                                                              errorText: _validate
+                                                                                                                  ? 'quantity Can\'t Be Empty'
+                                                                                                                  : null,
+                                                                                                              hintText:
+                                                                                                              "Quantity",
+                                                                                                              hintStyle: TextStyle(
+                                                                                                                  fontSize:
+                                                                                                                  12),
+                                                                                                              focusedBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color:
+                                                                                                                      primaryColor,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius: BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5)),
+                                                                                                              enabledBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color: Colors
+                                                                                                                          .grey,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius:
+                                                                                                                  BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5))),
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ],
+                                                                                            ),
+                                                                                          ),
+                                                                                        ],
                                                                                       ),
                                                                                       SizedBox(
-                                                                                        height: 5,
+                                                                                        height: 15.0,
                                                                                       ),
-                                                                                      Material(
-                                                                                        child: Padding(
-                                                                                          padding:
-                                                                                          const EdgeInsets.only(
-                                                                                              left: 12.0),
-                                                                                          child: Container(
-                                                                                            width: 240,
-                                                                                            height: 40,
-                                                                                            child: Flexible(
-                                                                                              child: TextField(
-                                                                                                controller: _itemQuantityController,
-                                                                                                decoration:
-                                                                                                InputDecoration(
-                                                                                                    errorText: _validate
-                                                                                                        ? 'quantity Can\'t Be Empty'
-                                                                                                        : null,
-                                                                                                    hintText:
-                                                                                                    "Quantity",
-                                                                                                    hintStyle: TextStyle(
-                                                                                                        fontSize:
-                                                                                                        12),
-                                                                                                    focusedBorder: OutlineInputBorder(
-                                                                                                        borderSide: const BorderSide(
-                                                                                                            color:
-                                                                                                            primaryColor,
-                                                                                                            width:
-                                                                                                            0.4),
-                                                                                                        borderRadius: BorderRadius
-                                                                                                            .circular(
-                                                                                                            5)),
-                                                                                                    enabledBorder: OutlineInputBorder(
-                                                                                                        borderSide: const BorderSide(
-                                                                                                            color: Colors
-                                                                                                                .grey,
-                                                                                                            width:
-                                                                                                            0.4),
-                                                                                                        borderRadius:
-                                                                                                        BorderRadius
-                                                                                                            .circular(
-                                                                                                            5))),
-                                                                                              ),
+                                                                                      Row(
+                                                                                        mainAxisAlignment:
+                                                                                        MainAxisAlignment.start,
+                                                                                        children: [
+                                                                                          Flexible(
+                                                                                            child: Column(
+                                                                                              crossAxisAlignment:
+                                                                                              CrossAxisAlignment.start,
+                                                                                              children: [
+                                                                                                Padding(
+                                                                                                  padding:
+                                                                                                  const EdgeInsets.only(
+                                                                                                      left: 12.0),
+                                                                                                  child: Material(
+                                                                                                      child: Text(
+                                                                                                        "Item Unit Cost",
+                                                                                                        style: TextStyle(
+                                                                                                            color: bgColor,
+                                                                                                            fontSize: 12,
+                                                                                                            fontWeight:
+                                                                                                            FontWeight
+                                                                                                                .bold),
+                                                                                                      )),
+                                                                                                ),
+                                                                                                SizedBox(
+                                                                                                  height: 5,
+                                                                                                ),
+                                                                                                Material(
+                                                                                                  child: Padding(
+                                                                                                    padding:
+                                                                                                    const EdgeInsets.only(
+                                                                                                        left: 12.0),
+                                                                                                    child: Container(
+                                                                                                      width: 240,
+                                                                                                      height: 40,
+                                                                                                      child:  Flexible(
+                                                                                                        child: TextField(
+                                                                                                          controller: _itemUnitCostController,
+                                                                                                          decoration:
+                                                                                                          InputDecoration(
+                                                                                                              errorText: _validate
+                                                                                                                  ? 'unit cost Can\'t Be Empty'
+                                                                                                                  : null,
+                                                                                                              hintText:
+                                                                                                              "Unit Cost",
+                                                                                                              hintStyle: TextStyle(
+                                                                                                                  fontSize:
+                                                                                                                  12),
+                                                                                                              focusedBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color:
+                                                                                                                      primaryColor,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius: BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5)),
+                                                                                                              enabledBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color: Colors
+                                                                                                                          .grey,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius:
+                                                                                                                  BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5))),
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ],
                                                                                             ),
                                                                                           ),
-                                                                                        ),
+                                                                                          Flexible(
+                                                                                            child: Column(
+                                                                                              crossAxisAlignment:
+                                                                                              CrossAxisAlignment.start,
+                                                                                              children: [
+                                                                                                Padding(
+                                                                                                  padding:
+                                                                                                  const EdgeInsets.only(
+                                                                                                      left: 12.0),
+                                                                                                  child: Material(
+                                                                                                      child: Text(
+                                                                                                        "Item Bonus",
+                                                                                                        style: TextStyle(
+                                                                                                            color: bgColor,
+                                                                                                            fontSize: 12,
+                                                                                                            fontWeight:
+                                                                                                            FontWeight
+                                                                                                                .bold),
+                                                                                                      )),
+                                                                                                ),
+                                                                                                SizedBox(
+                                                                                                  height: 5,
+                                                                                                ),
+                                                                                                Material(
+                                                                                                  child: Padding(
+                                                                                                    padding:
+                                                                                                    const EdgeInsets.only(
+                                                                                                        left: 12.0),
+                                                                                                    child: Container(
+                                                                                                      width: 240,
+                                                                                                      height: 40,
+                                                                                                      child: Flexible(
+                                                                                                        child: TextField(
+                                                                                                          controller: _itemBonusController,
+                                                                                                          decoration:
+                                                                                                          InputDecoration(
+                                                                                                              errorText: _validate
+                                                                                                                  ? 'bonus Can\'t Be Empty'
+                                                                                                                  : null,
+                                                                                                              hintText:
+                                                                                                              "Bonus",
+                                                                                                              hintStyle: TextStyle(
+                                                                                                                  fontSize:
+                                                                                                                  12),
+                                                                                                              focusedBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color:
+                                                                                                                      primaryColor,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius: BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5)),
+                                                                                                              enabledBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color: Colors
+                                                                                                                          .grey,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius:
+                                                                                                                  BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5))),
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ],
+                                                                                            ),
+                                                                                          ),
+                                                                                        ],
+                                                                                      ),
+                                                                                      SizedBox(
+                                                                                        height: 15.0,
+                                                                                      ),
+                                                                                      Row(
+                                                                                        mainAxisAlignment:
+                                                                                        MainAxisAlignment.start,
+                                                                                        children: [
+                                                                                          Flexible(
+                                                                                            child: Column(
+                                                                                              crossAxisAlignment:
+                                                                                              CrossAxisAlignment.start,
+                                                                                              children: [
+                                                                                                Padding(
+                                                                                                  padding:
+                                                                                                  const EdgeInsets.only(
+                                                                                                      left: 12.0),
+                                                                                                  child: Material(
+                                                                                                      child: Text(
+                                                                                                        "Item Discount Percentage",
+                                                                                                        style: TextStyle(
+                                                                                                            color: bgColor,
+                                                                                                            fontSize: 12,
+                                                                                                            fontWeight:
+                                                                                                            FontWeight
+                                                                                                                .bold),
+                                                                                                      )),
+                                                                                                ),
+                                                                                                SizedBox(
+                                                                                                  height: 5,
+                                                                                                ),
+                                                                                                Material(
+                                                                                                  child: Padding(
+                                                                                                    padding:
+                                                                                                    const EdgeInsets.only(
+                                                                                                        left: 12.0),
+                                                                                                    child: Container(
+                                                                                                      width: 240,
+                                                                                                      height: 40,
+                                                                                                      child: Flexible(
+                                                                                                        child: TextField(
+                                                                                                          controller: _itemDiscountPercentageController,
+                                                                                                          decoration:
+                                                                                                          InputDecoration(
+                                                                                                              errorText: _validate
+                                                                                                                  ? 'discount percentage Can\'t Be Empty'
+                                                                                                                  : null,
+                                                                                                              hintText:
+                                                                                                              "Discount Percentage",
+                                                                                                              hintStyle: TextStyle(
+                                                                                                                  fontSize:
+                                                                                                                  12),
+                                                                                                              focusedBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color:
+                                                                                                                      primaryColor,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius: BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5)),
+                                                                                                              enabledBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color: Colors
+                                                                                                                          .grey,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius:
+                                                                                                                  BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5))),
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ],
+                                                                                            ),
+                                                                                          ),
+                                                                                          Flexible(
+                                                                                            child: Column(
+                                                                                              crossAxisAlignment:
+                                                                                              CrossAxisAlignment.start,
+                                                                                              children: [
+                                                                                                Padding(
+                                                                                                  padding:
+                                                                                                  const EdgeInsets.only(
+                                                                                                      left: 12.0),
+                                                                                                  child: Material(
+                                                                                                      child: Text(
+                                                                                                        "Item Discount Amount",
+                                                                                                        style: TextStyle(
+                                                                                                            color: bgColor,
+                                                                                                            fontSize: 12,
+                                                                                                            fontWeight:
+                                                                                                            FontWeight
+                                                                                                                .bold),
+                                                                                                      )),
+                                                                                                ),
+                                                                                                SizedBox(
+                                                                                                  height: 5,
+                                                                                                ),
+                                                                                                Material(
+                                                                                                  child: Padding(
+                                                                                                    padding:
+                                                                                                    const EdgeInsets.only(
+                                                                                                        left: 12.0),
+                                                                                                    child: Container(
+                                                                                                      width: 240,
+                                                                                                      height: 40,
+                                                                                                      child: Flexible(
+                                                                                                        child: TextField(
+                                                                                                          controller: _itemDiscountAmountController,
+                                                                                                          decoration:
+                                                                                                          InputDecoration(
+                                                                                                              errorText: _validate
+                                                                                                                  ? 'discount amount Can\'t Be Empty'
+                                                                                                                  : null,
+                                                                                                              hintText:
+                                                                                                              "Discount Amount",
+                                                                                                              hintStyle: TextStyle(
+                                                                                                                  fontSize:
+                                                                                                                  12),
+                                                                                                              focusedBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color:
+                                                                                                                      primaryColor,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius: BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5)),
+                                                                                                              enabledBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color: Colors
+                                                                                                                          .grey,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius:
+                                                                                                                  BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5))),
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ],
+                                                                                            ),
+                                                                                          ),
+                                                                                        ],
+                                                                                      ),
+                                                                                      SizedBox(
+                                                                                        height: 15.0,
+                                                                                      ),
+                                                                                      Row(
+                                                                                        mainAxisAlignment:
+                                                                                        MainAxisAlignment.start,
+                                                                                        children: [
+                                                                                          Flexible(
+                                                                                            child: Column(
+                                                                                              crossAxisAlignment:
+                                                                                              CrossAxisAlignment.start,
+                                                                                              children: [
+                                                                                                Padding(
+                                                                                                  padding:
+                                                                                                  const EdgeInsets.only(
+                                                                                                      left: 12.0),
+                                                                                                  child: Material(
+                                                                                                      child: Text(
+                                                                                                        "Item Net Amount",
+                                                                                                        style: TextStyle(
+                                                                                                            color: bgColor,
+                                                                                                            fontSize: 12,
+                                                                                                            fontWeight:
+                                                                                                            FontWeight
+                                                                                                                .bold),
+                                                                                                      )),
+                                                                                                ),
+                                                                                                SizedBox(
+                                                                                                  height: 5,
+                                                                                                ),
+                                                                                                Material(
+                                                                                                  child: Padding(
+                                                                                                    padding:
+                                                                                                    const EdgeInsets.only(
+                                                                                                        left: 12.0),
+                                                                                                    child: Container(
+                                                                                                      width: 240,
+                                                                                                      height: 40,
+                                                                                                      child: Flexible(
+                                                                                                        child: TextField(
+                                                                                                          controller: _itemNetAmountController,
+                                                                                                          decoration:
+                                                                                                          InputDecoration(
+                                                                                                              errorText: _validate
+                                                                                                                  ? 'net percentage Can\'t Be Empty'
+                                                                                                                  : null,
+                                                                                                              hintText:
+                                                                                                              "Net",
+                                                                                                              hintStyle: TextStyle(
+                                                                                                                  fontSize:
+                                                                                                                  12),
+                                                                                                              focusedBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color:
+                                                                                                                      primaryColor,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius: BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5)),
+                                                                                                              enabledBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color: Colors
+                                                                                                                          .grey,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius:
+                                                                                                                  BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5))),
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ],
+                                                                                            ),
+                                                                                          ),
+                                                                                          Flexible(
+                                                                                            child: Column(
+                                                                                              crossAxisAlignment:
+                                                                                              CrossAxisAlignment.start,
+                                                                                              children: [
+                                                                                                Padding(
+                                                                                                  padding:
+                                                                                                  const EdgeInsets.only(
+                                                                                                      left: 12.0),
+                                                                                                  child: Material(
+                                                                                                      child: Text(
+                                                                                                        "Item Tax Percentage",
+                                                                                                        style: TextStyle(
+                                                                                                            color: bgColor,
+                                                                                                            fontSize: 12,
+                                                                                                            fontWeight:
+                                                                                                            FontWeight
+                                                                                                                .bold),
+                                                                                                      )),
+                                                                                                ),
+                                                                                                SizedBox(
+                                                                                                  height: 5,
+                                                                                                ),
+                                                                                                Material(
+                                                                                                  child: Padding(
+                                                                                                    padding:
+                                                                                                    const EdgeInsets.only(
+                                                                                                        left: 12.0),
+                                                                                                    child: Container(
+                                                                                                      width: 240,
+                                                                                                      height: 40,
+                                                                                                      child: Flexible(
+                                                                                                        child: TextField(
+                                                                                                          controller: _itemTaxPercentageController,
+                                                                                                          decoration:
+                                                                                                          InputDecoration(
+                                                                                                              errorText: _validate
+                                                                                                                  ? 'tax percentage amount Can\'t Be Empty'
+                                                                                                                  : null,
+                                                                                                              hintText:
+                                                                                                              "Item Tax Percentage",
+                                                                                                              hintStyle: TextStyle(
+                                                                                                                  fontSize:
+                                                                                                                  12),
+                                                                                                              focusedBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color:
+                                                                                                                      primaryColor,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius: BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5)),
+                                                                                                              enabledBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color: Colors
+                                                                                                                          .grey,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius:
+                                                                                                                  BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5))),
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ],
+                                                                                            ),
+                                                                                          ),
+                                                                                        ],
+                                                                                      ),
+                                                                                      SizedBox(
+                                                                                        height: 15.0,
+                                                                                      ),
+                                                                                      Row(
+                                                                                        mainAxisAlignment:
+                                                                                        MainAxisAlignment.start,
+                                                                                        children: [
+                                                                                          Flexible(
+                                                                                            child: Column(
+                                                                                              crossAxisAlignment:
+                                                                                              CrossAxisAlignment.start,
+                                                                                              children: [
+                                                                                                Padding(
+                                                                                                  padding:
+                                                                                                  const EdgeInsets.only(
+                                                                                                      left: 12.0),
+                                                                                                  child: Material(
+                                                                                                      child: Text(
+                                                                                                        "Item Tax Amount",
+                                                                                                        style: TextStyle(
+                                                                                                            color: bgColor,
+                                                                                                            fontSize: 12,
+                                                                                                            fontWeight:
+                                                                                                            FontWeight
+                                                                                                                .bold),
+                                                                                                      )),
+                                                                                                ),
+                                                                                                SizedBox(
+                                                                                                  height: 5,
+                                                                                                ),
+                                                                                                Material(
+                                                                                                  child: Padding(
+                                                                                                    padding:
+                                                                                                    const EdgeInsets.only(
+                                                                                                        left: 12.0),
+                                                                                                    child: Container(
+                                                                                                      width: 240,
+                                                                                                      height: 40,
+                                                                                                      child: Flexible(
+                                                                                                        child: TextField(
+                                                                                                          controller: _itemTaxAmountController,
+                                                                                                          decoration:
+                                                                                                          InputDecoration(
+                                                                                                              errorText: _validate
+                                                                                                                  ? 'tax Amount Can\'t Be Empty'
+                                                                                                                  : null,
+                                                                                                              hintText:
+                                                                                                              "Tax Amount",
+                                                                                                              hintStyle: TextStyle(
+                                                                                                                  fontSize:
+                                                                                                                  12),
+                                                                                                              focusedBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color:
+                                                                                                                      primaryColor,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius: BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5)),
+                                                                                                              enabledBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color: Colors
+                                                                                                                          .grey,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius:
+                                                                                                                  BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5))),
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ],
+                                                                                            ),
+                                                                                          ),
+                                                                                          Flexible(
+                                                                                            child: Column(
+                                                                                              crossAxisAlignment:
+                                                                                              CrossAxisAlignment.start,
+                                                                                              children: [
+                                                                                                Padding(
+                                                                                                  padding:
+                                                                                                  const EdgeInsets.only(
+                                                                                                      left: 12.0),
+                                                                                                  child: Material(
+                                                                                                      child: Text(
+                                                                                                        "Item Total Cost",
+                                                                                                        style: TextStyle(
+                                                                                                            color: bgColor,
+                                                                                                            fontSize: 12,
+                                                                                                            fontWeight:
+                                                                                                            FontWeight
+                                                                                                                .bold),
+                                                                                                      )),
+                                                                                                ),
+                                                                                                SizedBox(
+                                                                                                  height: 5,
+                                                                                                ),
+                                                                                                Material(
+                                                                                                  child: Padding(
+                                                                                                    padding:
+                                                                                                    const EdgeInsets.only(
+                                                                                                        left: 12.0),
+                                                                                                    child: Container(
+                                                                                                      width: 240,
+                                                                                                      height: 40,
+                                                                                                      child: Flexible(
+                                                                                                        child: TextField(
+                                                                                                          controller: _itemTotalCostController,
+                                                                                                          decoration:
+                                                                                                          InputDecoration(
+                                                                                                              errorText: _validate
+                                                                                                                  ? 'Item Total Cost Can\'t Be Empty'
+                                                                                                                  : null,
+                                                                                                              hintText:
+                                                                                                              "Total Cost",
+                                                                                                              hintStyle: TextStyle(
+                                                                                                                  fontSize:
+                                                                                                                  12),
+                                                                                                              focusedBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color:
+                                                                                                                      primaryColor,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius: BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5)),
+                                                                                                              enabledBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color: Colors
+                                                                                                                          .grey,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius:
+                                                                                                                  BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5))),
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ],
+                                                                                            ),
+                                                                                          ),
+                                                                                        ],
                                                                                       ),
                                                                                     ],
                                                                                   ),
-                                                                                ),
-                                                                              ],
+                                                                                ],
+                                                                              ),
                                                                             ),
-                                                                            SizedBox(
-                                                                              height: 15.0,
+                                                                            Material(
+                                                                              child: ExpansionTile(
+                                                                                title: Text("Add Item"),
+                                                                                children: [
+                                                                                  Column(
+                                                                                    children: [
+                                                                                      Row(
+                                                                                        mainAxisAlignment:
+                                                                                        MainAxisAlignment.start,
+                                                                                        children: [
+                                                                                          Flexible(
+                                                                                            child: Column(
+                                                                                              crossAxisAlignment:
+                                                                                              CrossAxisAlignment.start,
+                                                                                              children: [
+                                                                                                Padding(
+                                                                                                  padding:
+                                                                                                  const EdgeInsets.only(
+                                                                                                      left: 12.0),
+                                                                                                  child: Material(
+                                                                                                      child: Text(
+                                                                                                        "Select Item",
+                                                                                                        style: TextStyle(
+                                                                                                            color: bgColor,
+                                                                                                            fontSize: 12,
+                                                                                                            fontWeight:
+                                                                                                            FontWeight
+                                                                                                                .bold),
+                                                                                                      )),
+                                                                                                ),
+                                                                                                SizedBox(
+                                                                                                  height: 5,
+                                                                                                ),
+                                                                                                Material(
+                                                                                                  child: Padding(
+                                                                                                    padding:
+                                                                                                    const EdgeInsets.only(
+                                                                                                        left: 12.0),
+                                                                                                    child: Container(
+                                                                                                      width: 240,
+                                                                                                      height: 40,
+                                                                                                      child: Flexible(
+                                                                                                        child: StatefulBuilder(
+                                                                                                          builder: (BuildContext context, StateSetter setState){
+                                                                                                            return DecoratedBox(
+
+                                                                                                              decoration: ShapeDecoration(
+                                                                                                                  shape: RoundedRectangleBorder(
+                                                                                                                    side: BorderSide(width: 0.4, style: BorderStyle.solid, color: Colors.grey),
+                                                                                                                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                                                                                                  )
+                                                                                                              ),
+                                                                                                              child: DropdownButtonHideUnderline(
+                                                                                                                child: DropdownButton<String>(
+                                                                                                                  hint: Padding(
+                                                                                                                    padding: const EdgeInsets.all(8.0),
+                                                                                                                    child: Text("Item", style: TextStyle(fontSize:
+                                                                                                                    12),),
+                                                                                                                  ),
+                                                                                                                  value: itemId,
+                                                                                                                  items: snapshot.data[3].map<DropdownMenuItem<String>>(( item){
+                                                                                                                    return new DropdownMenuItem<String>(child: Padding(
+                                                                                                                      padding: const EdgeInsets.all(8.0),
+                                                                                                                      child: Text(
+                                                                                                                        item.quantity,
+                                                                                                                        style: TextStyle(fontSize:
+                                                                                                                        12,),
+                                                                                                                      ),
+                                                                                                                    ),
+                                                                                                                        value: item.id.toString()
+                                                                                                                    );
+                                                                                                                  }).toList(),
+                                                                                                                  onChanged: (String groupValue){
+                                                                                                                    setState(() {
+                                                                                                                      itemId = groupValue;
+
+                                                                                                                    });
+                                                                                                                  },
+                                                                                                                ),
+                                                                                                              ),
+                                                                                                            );
+                                                                                                          },
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ],
+                                                                                            ),
+                                                                                          ),
+                                                                                          Flexible(
+                                                                                            child: Column(
+                                                                                              crossAxisAlignment:
+                                                                                              CrossAxisAlignment.start,
+                                                                                              children: [
+                                                                                                Padding(
+                                                                                                  padding:
+                                                                                                  const EdgeInsets.only(
+                                                                                                      left: 12.0),
+                                                                                                  child: Material(
+                                                                                                      child: Text(
+                                                                                                        "Item Quantity",
+                                                                                                        style: TextStyle(
+                                                                                                            color: bgColor,
+                                                                                                            fontSize: 12,
+                                                                                                            fontWeight:
+                                                                                                            FontWeight
+                                                                                                                .bold),
+                                                                                                      )),
+                                                                                                ),
+                                                                                                SizedBox(
+                                                                                                  height: 5,
+                                                                                                ),
+                                                                                                Material(
+                                                                                                  child: Padding(
+                                                                                                    padding:
+                                                                                                    const EdgeInsets.only(
+                                                                                                        left: 12.0),
+                                                                                                    child: Container(
+                                                                                                      width: 240,
+                                                                                                      height: 40,
+                                                                                                      child: Flexible(
+                                                                                                        child: TextField(
+                                                                                                          controller: _itemQuantityController,
+                                                                                                          decoration:
+                                                                                                          InputDecoration(
+                                                                                                              errorText: _validate
+                                                                                                                  ? 'quantity Can\'t Be Empty'
+                                                                                                                  : null,
+                                                                                                              hintText:
+                                                                                                              "Quantity",
+                                                                                                              hintStyle: TextStyle(
+                                                                                                                  fontSize:
+                                                                                                                  12),
+                                                                                                              focusedBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color:
+                                                                                                                      primaryColor,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius: BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5)),
+                                                                                                              enabledBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color: Colors
+                                                                                                                          .grey,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius:
+                                                                                                                  BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5))),
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ],
+                                                                                            ),
+                                                                                          ),
+                                                                                        ],
+                                                                                      ),
+                                                                                      SizedBox(
+                                                                                        height: 15.0,
+                                                                                      ),
+                                                                                      Row(
+                                                                                        mainAxisAlignment:
+                                                                                        MainAxisAlignment.start,
+                                                                                        children: [
+                                                                                          Flexible(
+                                                                                            child: Column(
+                                                                                              crossAxisAlignment:
+                                                                                              CrossAxisAlignment.start,
+                                                                                              children: [
+                                                                                                Padding(
+                                                                                                  padding:
+                                                                                                  const EdgeInsets.only(
+                                                                                                      left: 12.0),
+                                                                                                  child: Material(
+                                                                                                      child: Text(
+                                                                                                        "Item Unit Cost",
+                                                                                                        style: TextStyle(
+                                                                                                            color: bgColor,
+                                                                                                            fontSize: 12,
+                                                                                                            fontWeight:
+                                                                                                            FontWeight
+                                                                                                                .bold),
+                                                                                                      )),
+                                                                                                ),
+                                                                                                SizedBox(
+                                                                                                  height: 5,
+                                                                                                ),
+                                                                                                Material(
+                                                                                                  child: Padding(
+                                                                                                    padding:
+                                                                                                    const EdgeInsets.only(
+                                                                                                        left: 12.0),
+                                                                                                    child: Container(
+                                                                                                      width: 240,
+                                                                                                      height: 40,
+                                                                                                      child:  Flexible(
+                                                                                                        child: TextField(
+                                                                                                          controller: _itemUnitCostController,
+                                                                                                          decoration:
+                                                                                                          InputDecoration(
+                                                                                                              errorText: _validate
+                                                                                                                  ? 'unit cost Can\'t Be Empty'
+                                                                                                                  : null,
+                                                                                                              hintText:
+                                                                                                              "Unit Cost",
+                                                                                                              hintStyle: TextStyle(
+                                                                                                                  fontSize:
+                                                                                                                  12),
+                                                                                                              focusedBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color:
+                                                                                                                      primaryColor,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius: BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5)),
+                                                                                                              enabledBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color: Colors
+                                                                                                                          .grey,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius:
+                                                                                                                  BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5))),
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ],
+                                                                                            ),
+                                                                                          ),
+                                                                                          Flexible(
+                                                                                            child: Column(
+                                                                                              crossAxisAlignment:
+                                                                                              CrossAxisAlignment.start,
+                                                                                              children: [
+                                                                                                Padding(
+                                                                                                  padding:
+                                                                                                  const EdgeInsets.only(
+                                                                                                      left: 12.0),
+                                                                                                  child: Material(
+                                                                                                      child: Text(
+                                                                                                        "Item Bonus",
+                                                                                                        style: TextStyle(
+                                                                                                            color: bgColor,
+                                                                                                            fontSize: 12,
+                                                                                                            fontWeight:
+                                                                                                            FontWeight
+                                                                                                                .bold),
+                                                                                                      )),
+                                                                                                ),
+                                                                                                SizedBox(
+                                                                                                  height: 5,
+                                                                                                ),
+                                                                                                Material(
+                                                                                                  child: Padding(
+                                                                                                    padding:
+                                                                                                    const EdgeInsets.only(
+                                                                                                        left: 12.0),
+                                                                                                    child: Container(
+                                                                                                      width: 240,
+                                                                                                      height: 40,
+                                                                                                      child: Flexible(
+                                                                                                        child: TextField(
+                                                                                                          controller: _itemBonusController,
+                                                                                                          decoration:
+                                                                                                          InputDecoration(
+                                                                                                              errorText: _validate
+                                                                                                                  ? 'bonus Can\'t Be Empty'
+                                                                                                                  : null,
+                                                                                                              hintText:
+                                                                                                              "Bonus",
+                                                                                                              hintStyle: TextStyle(
+                                                                                                                  fontSize:
+                                                                                                                  12),
+                                                                                                              focusedBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color:
+                                                                                                                      primaryColor,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius: BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5)),
+                                                                                                              enabledBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color: Colors
+                                                                                                                          .grey,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius:
+                                                                                                                  BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5))),
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ],
+                                                                                            ),
+                                                                                          ),
+                                                                                        ],
+                                                                                      ),
+                                                                                      SizedBox(
+                                                                                        height: 15.0,
+                                                                                      ),
+                                                                                      Row(
+                                                                                        mainAxisAlignment:
+                                                                                        MainAxisAlignment.start,
+                                                                                        children: [
+                                                                                          Flexible(
+                                                                                            child: Column(
+                                                                                              crossAxisAlignment:
+                                                                                              CrossAxisAlignment.start,
+                                                                                              children: [
+                                                                                                Padding(
+                                                                                                  padding:
+                                                                                                  const EdgeInsets.only(
+                                                                                                      left: 12.0),
+                                                                                                  child: Material(
+                                                                                                      child: Text(
+                                                                                                        "Item Discount Percentage",
+                                                                                                        style: TextStyle(
+                                                                                                            color: bgColor,
+                                                                                                            fontSize: 12,
+                                                                                                            fontWeight:
+                                                                                                            FontWeight
+                                                                                                                .bold),
+                                                                                                      )),
+                                                                                                ),
+                                                                                                SizedBox(
+                                                                                                  height: 5,
+                                                                                                ),
+                                                                                                Material(
+                                                                                                  child: Padding(
+                                                                                                    padding:
+                                                                                                    const EdgeInsets.only(
+                                                                                                        left: 12.0),
+                                                                                                    child: Container(
+                                                                                                      width: 240,
+                                                                                                      height: 40,
+                                                                                                      child: Flexible(
+                                                                                                        child: TextField(
+                                                                                                          controller: _itemDiscountPercentageController,
+                                                                                                          decoration:
+                                                                                                          InputDecoration(
+                                                                                                              errorText: _validate
+                                                                                                                  ? 'discount percentage Can\'t Be Empty'
+                                                                                                                  : null,
+                                                                                                              hintText:
+                                                                                                              "Discount Percentage",
+                                                                                                              hintStyle: TextStyle(
+                                                                                                                  fontSize:
+                                                                                                                  12),
+                                                                                                              focusedBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color:
+                                                                                                                      primaryColor,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius: BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5)),
+                                                                                                              enabledBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color: Colors
+                                                                                                                          .grey,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius:
+                                                                                                                  BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5))),
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ],
+                                                                                            ),
+                                                                                          ),
+                                                                                          Flexible(
+                                                                                            child: Column(
+                                                                                              crossAxisAlignment:
+                                                                                              CrossAxisAlignment.start,
+                                                                                              children: [
+                                                                                                Padding(
+                                                                                                  padding:
+                                                                                                  const EdgeInsets.only(
+                                                                                                      left: 12.0),
+                                                                                                  child: Material(
+                                                                                                      child: Text(
+                                                                                                        "Item Discount Amount",
+                                                                                                        style: TextStyle(
+                                                                                                            color: bgColor,
+                                                                                                            fontSize: 12,
+                                                                                                            fontWeight:
+                                                                                                            FontWeight
+                                                                                                                .bold),
+                                                                                                      )),
+                                                                                                ),
+                                                                                                SizedBox(
+                                                                                                  height: 5,
+                                                                                                ),
+                                                                                                Material(
+                                                                                                  child: Padding(
+                                                                                                    padding:
+                                                                                                    const EdgeInsets.only(
+                                                                                                        left: 12.0),
+                                                                                                    child: Container(
+                                                                                                      width: 240,
+                                                                                                      height: 40,
+                                                                                                      child: Flexible(
+                                                                                                        child: TextField(
+                                                                                                          controller: _itemDiscountAmountController,
+                                                                                                          decoration:
+                                                                                                          InputDecoration(
+                                                                                                              errorText: _validate
+                                                                                                                  ? 'discount amount Can\'t Be Empty'
+                                                                                                                  : null,
+                                                                                                              hintText:
+                                                                                                              "Discount Amount",
+                                                                                                              hintStyle: TextStyle(
+                                                                                                                  fontSize:
+                                                                                                                  12),
+                                                                                                              focusedBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color:
+                                                                                                                      primaryColor,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius: BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5)),
+                                                                                                              enabledBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color: Colors
+                                                                                                                          .grey,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius:
+                                                                                                                  BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5))),
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ],
+                                                                                            ),
+                                                                                          ),
+                                                                                        ],
+                                                                                      ),
+                                                                                      SizedBox(
+                                                                                        height: 15.0,
+                                                                                      ),
+                                                                                      Row(
+                                                                                        mainAxisAlignment:
+                                                                                        MainAxisAlignment.start,
+                                                                                        children: [
+                                                                                          Flexible(
+                                                                                            child: Column(
+                                                                                              crossAxisAlignment:
+                                                                                              CrossAxisAlignment.start,
+                                                                                              children: [
+                                                                                                Padding(
+                                                                                                  padding:
+                                                                                                  const EdgeInsets.only(
+                                                                                                      left: 12.0),
+                                                                                                  child: Material(
+                                                                                                      child: Text(
+                                                                                                        "Item Net Amount",
+                                                                                                        style: TextStyle(
+                                                                                                            color: bgColor,
+                                                                                                            fontSize: 12,
+                                                                                                            fontWeight:
+                                                                                                            FontWeight
+                                                                                                                .bold),
+                                                                                                      )),
+                                                                                                ),
+                                                                                                SizedBox(
+                                                                                                  height: 5,
+                                                                                                ),
+                                                                                                Material(
+                                                                                                  child: Padding(
+                                                                                                    padding:
+                                                                                                    const EdgeInsets.only(
+                                                                                                        left: 12.0),
+                                                                                                    child: Container(
+                                                                                                      width: 240,
+                                                                                                      height: 40,
+                                                                                                      child: Flexible(
+                                                                                                        child: TextField(
+                                                                                                          controller: _itemNetAmountController,
+                                                                                                          decoration:
+                                                                                                          InputDecoration(
+                                                                                                              errorText: _validate
+                                                                                                                  ? 'net percentage Can\'t Be Empty'
+                                                                                                                  : null,
+                                                                                                              hintText:
+                                                                                                              "Net",
+                                                                                                              hintStyle: TextStyle(
+                                                                                                                  fontSize:
+                                                                                                                  12),
+                                                                                                              focusedBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color:
+                                                                                                                      primaryColor,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius: BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5)),
+                                                                                                              enabledBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color: Colors
+                                                                                                                          .grey,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius:
+                                                                                                                  BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5))),
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ],
+                                                                                            ),
+                                                                                          ),
+                                                                                          Flexible(
+                                                                                            child: Column(
+                                                                                              crossAxisAlignment:
+                                                                                              CrossAxisAlignment.start,
+                                                                                              children: [
+                                                                                                Padding(
+                                                                                                  padding:
+                                                                                                  const EdgeInsets.only(
+                                                                                                      left: 12.0),
+                                                                                                  child: Material(
+                                                                                                      child: Text(
+                                                                                                        "Item Tax Percentage",
+                                                                                                        style: TextStyle(
+                                                                                                            color: bgColor,
+                                                                                                            fontSize: 12,
+                                                                                                            fontWeight:
+                                                                                                            FontWeight
+                                                                                                                .bold),
+                                                                                                      )),
+                                                                                                ),
+                                                                                                SizedBox(
+                                                                                                  height: 5,
+                                                                                                ),
+                                                                                                Material(
+                                                                                                  child: Padding(
+                                                                                                    padding:
+                                                                                                    const EdgeInsets.only(
+                                                                                                        left: 12.0),
+                                                                                                    child: Container(
+                                                                                                      width: 240,
+                                                                                                      height: 40,
+                                                                                                      child: Flexible(
+                                                                                                        child: TextField(
+                                                                                                          controller: _itemTaxPercentageController,
+                                                                                                          decoration:
+                                                                                                          InputDecoration(
+                                                                                                              errorText: _validate
+                                                                                                                  ? 'tax percentage amount Can\'t Be Empty'
+                                                                                                                  : null,
+                                                                                                              hintText:
+                                                                                                              "Item Tax Percentage",
+                                                                                                              hintStyle: TextStyle(
+                                                                                                                  fontSize:
+                                                                                                                  12),
+                                                                                                              focusedBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color:
+                                                                                                                      primaryColor,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius: BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5)),
+                                                                                                              enabledBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color: Colors
+                                                                                                                          .grey,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius:
+                                                                                                                  BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5))),
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ],
+                                                                                            ),
+                                                                                          ),
+                                                                                        ],
+                                                                                      ),
+                                                                                      SizedBox(
+                                                                                        height: 15.0,
+                                                                                      ),
+                                                                                      Row(
+                                                                                        mainAxisAlignment:
+                                                                                        MainAxisAlignment.start,
+                                                                                        children: [
+                                                                                          Flexible(
+                                                                                            child: Column(
+                                                                                              crossAxisAlignment:
+                                                                                              CrossAxisAlignment.start,
+                                                                                              children: [
+                                                                                                Padding(
+                                                                                                  padding:
+                                                                                                  const EdgeInsets.only(
+                                                                                                      left: 12.0),
+                                                                                                  child: Material(
+                                                                                                      child: Text(
+                                                                                                        "Item Tax Amount",
+                                                                                                        style: TextStyle(
+                                                                                                            color: bgColor,
+                                                                                                            fontSize: 12,
+                                                                                                            fontWeight:
+                                                                                                            FontWeight
+                                                                                                                .bold),
+                                                                                                      )),
+                                                                                                ),
+                                                                                                SizedBox(
+                                                                                                  height: 5,
+                                                                                                ),
+                                                                                                Material(
+                                                                                                  child: Padding(
+                                                                                                    padding:
+                                                                                                    const EdgeInsets.only(
+                                                                                                        left: 12.0),
+                                                                                                    child: Container(
+                                                                                                      width: 240,
+                                                                                                      height: 40,
+                                                                                                      child: Flexible(
+                                                                                                        child: TextField(
+                                                                                                          controller: _itemTaxAmountController,
+                                                                                                          decoration:
+                                                                                                          InputDecoration(
+                                                                                                              errorText: _validate
+                                                                                                                  ? 'tax Amount Can\'t Be Empty'
+                                                                                                                  : null,
+                                                                                                              hintText:
+                                                                                                              "Tax Amount",
+                                                                                                              hintStyle: TextStyle(
+                                                                                                                  fontSize:
+                                                                                                                  12),
+                                                                                                              focusedBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color:
+                                                                                                                      primaryColor,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius: BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5)),
+                                                                                                              enabledBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color: Colors
+                                                                                                                          .grey,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius:
+                                                                                                                  BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5))),
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ],
+                                                                                            ),
+                                                                                          ),
+                                                                                          Flexible(
+                                                                                            child: Column(
+                                                                                              crossAxisAlignment:
+                                                                                              CrossAxisAlignment.start,
+                                                                                              children: [
+                                                                                                Padding(
+                                                                                                  padding:
+                                                                                                  const EdgeInsets.only(
+                                                                                                      left: 12.0),
+                                                                                                  child: Material(
+                                                                                                      child: Text(
+                                                                                                        "Item Total Cost",
+                                                                                                        style: TextStyle(
+                                                                                                            color: bgColor,
+                                                                                                            fontSize: 12,
+                                                                                                            fontWeight:
+                                                                                                            FontWeight
+                                                                                                                .bold),
+                                                                                                      )),
+                                                                                                ),
+                                                                                                SizedBox(
+                                                                                                  height: 5,
+                                                                                                ),
+                                                                                                Material(
+                                                                                                  child: Padding(
+                                                                                                    padding:
+                                                                                                    const EdgeInsets.only(
+                                                                                                        left: 12.0),
+                                                                                                    child: Container(
+                                                                                                      width: 240,
+                                                                                                      height: 40,
+                                                                                                      child: Flexible(
+                                                                                                        child: TextField(
+                                                                                                          controller: _itemTotalCostController,
+                                                                                                          decoration:
+                                                                                                          InputDecoration(
+                                                                                                              errorText: _validate
+                                                                                                                  ? 'Item Total Cost Can\'t Be Empty'
+                                                                                                                  : null,
+                                                                                                              hintText:
+                                                                                                              "Total Cost",
+                                                                                                              hintStyle: TextStyle(
+                                                                                                                  fontSize:
+                                                                                                                  12),
+                                                                                                              focusedBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color:
+                                                                                                                      primaryColor,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius: BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5)),
+                                                                                                              enabledBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color: Colors
+                                                                                                                          .grey,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius:
+                                                                                                                  BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5))),
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ],
+                                                                                            ),
+                                                                                          ),
+                                                                                        ],
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
+                                                                                ],
+                                                                              ),
                                                                             ),
-                                                                            Row(
-                                                                              mainAxisAlignment:
-                                                                              MainAxisAlignment.start,
-                                                                              children: [
-                                                                                Flexible(
-                                                                                  child: Column(
-                                                                                    crossAxisAlignment:
-                                                                                    CrossAxisAlignment.start,
+                                                                            Material(
+                                                                              child: ExpansionTile(
+                                                                                title: Text("Add Item"),
+                                                                                children: [
+                                                                                  Column(
                                                                                     children: [
-                                                                                      Padding(
-                                                                                        padding:
-                                                                                        const EdgeInsets.only(
-                                                                                            left: 12.0),
-                                                                                        child: Material(
-                                                                                            child: Text(
-                                                                                              "Item Unit Cost",
-                                                                                              style: TextStyle(
-                                                                                                  color: bgColor,
-                                                                                                  fontSize: 12,
-                                                                                                  fontWeight:
-                                                                                                  FontWeight
-                                                                                                      .bold),
-                                                                                            )),
-                                                                                      ),
-                                                                                      SizedBox(
-                                                                                        height: 5,
-                                                                                      ),
-                                                                                      Material(
-                                                                                        child: Padding(
-                                                                                          padding:
-                                                                                          const EdgeInsets.only(
-                                                                                              left: 12.0),
-                                                                                          child: Container(
-                                                                                            width: 240,
-                                                                                            height: 40,
-                                                                                            child:  Flexible(
-                                                                                              child: TextField(
-                                                                                                controller: _itemUnitCostController,
-                                                                                                decoration:
-                                                                                                InputDecoration(
-                                                                                                    errorText: _validate
-                                                                                                        ? 'unit cost Can\'t Be Empty'
-                                                                                                        : null,
-                                                                                                    hintText:
-                                                                                                    "Unit Cost",
-                                                                                                    hintStyle: TextStyle(
-                                                                                                        fontSize:
-                                                                                                        12),
-                                                                                                    focusedBorder: OutlineInputBorder(
-                                                                                                        borderSide: const BorderSide(
-                                                                                                            color:
-                                                                                                            primaryColor,
-                                                                                                            width:
-                                                                                                            0.4),
-                                                                                                        borderRadius: BorderRadius
-                                                                                                            .circular(
-                                                                                                            5)),
-                                                                                                    enabledBorder: OutlineInputBorder(
-                                                                                                        borderSide: const BorderSide(
-                                                                                                            color: Colors
-                                                                                                                .grey,
-                                                                                                            width:
-                                                                                                            0.4),
-                                                                                                        borderRadius:
-                                                                                                        BorderRadius
-                                                                                                            .circular(
-                                                                                                            5))),
-                                                                                              ),
+                                                                                      Row(
+                                                                                        mainAxisAlignment:
+                                                                                        MainAxisAlignment.start,
+                                                                                        children: [
+                                                                                          Flexible(
+                                                                                            child: Column(
+                                                                                              crossAxisAlignment:
+                                                                                              CrossAxisAlignment.start,
+                                                                                              children: [
+                                                                                                Padding(
+                                                                                                  padding:
+                                                                                                  const EdgeInsets.only(
+                                                                                                      left: 12.0),
+                                                                                                  child: Material(
+                                                                                                      child: Text(
+                                                                                                        "Select Item",
+                                                                                                        style: TextStyle(
+                                                                                                            color: bgColor,
+                                                                                                            fontSize: 12,
+                                                                                                            fontWeight:
+                                                                                                            FontWeight
+                                                                                                                .bold),
+                                                                                                      )),
+                                                                                                ),
+                                                                                                SizedBox(
+                                                                                                  height: 5,
+                                                                                                ),
+                                                                                                Material(
+                                                                                                  child: Padding(
+                                                                                                    padding:
+                                                                                                    const EdgeInsets.only(
+                                                                                                        left: 12.0),
+                                                                                                    child: Container(
+                                                                                                      width: 240,
+                                                                                                      height: 40,
+                                                                                                      child: Flexible(
+                                                                                                        child: StatefulBuilder(
+                                                                                                          builder: (BuildContext context, StateSetter setState){
+                                                                                                            return DecoratedBox(
+
+                                                                                                              decoration: ShapeDecoration(
+                                                                                                                  shape: RoundedRectangleBorder(
+                                                                                                                    side: BorderSide(width: 0.4, style: BorderStyle.solid, color: Colors.grey),
+                                                                                                                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                                                                                                  )
+                                                                                                              ),
+                                                                                                              child: DropdownButtonHideUnderline(
+                                                                                                                child: DropdownButton<String>(
+                                                                                                                  hint: Padding(
+                                                                                                                    padding: const EdgeInsets.all(8.0),
+                                                                                                                    child: Text("Item", style: TextStyle(fontSize:
+                                                                                                                    12),),
+                                                                                                                  ),
+                                                                                                                  value: itemId,
+                                                                                                                  items: snapshot.data[3].map<DropdownMenuItem<String>>(( item){
+                                                                                                                    return new DropdownMenuItem<String>(child: Padding(
+                                                                                                                      padding: const EdgeInsets.all(8.0),
+                                                                                                                      child: Text(
+                                                                                                                        item.quantity,
+                                                                                                                        style: TextStyle(fontSize:
+                                                                                                                        12,),
+                                                                                                                      ),
+                                                                                                                    ),
+                                                                                                                        value: item.id.toString()
+                                                                                                                    );
+                                                                                                                  }).toList(),
+                                                                                                                  onChanged: (String groupValue){
+                                                                                                                    setState(() {
+                                                                                                                      itemId = groupValue;
+
+                                                                                                                    });
+                                                                                                                  },
+                                                                                                                ),
+                                                                                                              ),
+                                                                                                            );
+                                                                                                          },
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ],
                                                                                             ),
                                                                                           ),
-                                                                                        ),
+                                                                                          Flexible(
+                                                                                            child: Column(
+                                                                                              crossAxisAlignment:
+                                                                                              CrossAxisAlignment.start,
+                                                                                              children: [
+                                                                                                Padding(
+                                                                                                  padding:
+                                                                                                  const EdgeInsets.only(
+                                                                                                      left: 12.0),
+                                                                                                  child: Material(
+                                                                                                      child: Text(
+                                                                                                        "Item Quantity",
+                                                                                                        style: TextStyle(
+                                                                                                            color: bgColor,
+                                                                                                            fontSize: 12,
+                                                                                                            fontWeight:
+                                                                                                            FontWeight
+                                                                                                                .bold),
+                                                                                                      )),
+                                                                                                ),
+                                                                                                SizedBox(
+                                                                                                  height: 5,
+                                                                                                ),
+                                                                                                Material(
+                                                                                                  child: Padding(
+                                                                                                    padding:
+                                                                                                    const EdgeInsets.only(
+                                                                                                        left: 12.0),
+                                                                                                    child: Container(
+                                                                                                      width: 240,
+                                                                                                      height: 40,
+                                                                                                      child: Flexible(
+                                                                                                        child: TextField(
+                                                                                                          controller: _itemQuantityController,
+                                                                                                          decoration:
+                                                                                                          InputDecoration(
+                                                                                                              errorText: _validate
+                                                                                                                  ? 'quantity Can\'t Be Empty'
+                                                                                                                  : null,
+                                                                                                              hintText:
+                                                                                                              "Quantity",
+                                                                                                              hintStyle: TextStyle(
+                                                                                                                  fontSize:
+                                                                                                                  12),
+                                                                                                              focusedBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color:
+                                                                                                                      primaryColor,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius: BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5)),
+                                                                                                              enabledBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color: Colors
+                                                                                                                          .grey,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius:
+                                                                                                                  BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5))),
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ],
+                                                                                            ),
+                                                                                          ),
+                                                                                        ],
+                                                                                      ),
+                                                                                      SizedBox(
+                                                                                        height: 15.0,
+                                                                                      ),
+                                                                                      Row(
+                                                                                        mainAxisAlignment:
+                                                                                        MainAxisAlignment.start,
+                                                                                        children: [
+                                                                                          Flexible(
+                                                                                            child: Column(
+                                                                                              crossAxisAlignment:
+                                                                                              CrossAxisAlignment.start,
+                                                                                              children: [
+                                                                                                Padding(
+                                                                                                  padding:
+                                                                                                  const EdgeInsets.only(
+                                                                                                      left: 12.0),
+                                                                                                  child: Material(
+                                                                                                      child: Text(
+                                                                                                        "Item Unit Cost",
+                                                                                                        style: TextStyle(
+                                                                                                            color: bgColor,
+                                                                                                            fontSize: 12,
+                                                                                                            fontWeight:
+                                                                                                            FontWeight
+                                                                                                                .bold),
+                                                                                                      )),
+                                                                                                ),
+                                                                                                SizedBox(
+                                                                                                  height: 5,
+                                                                                                ),
+                                                                                                Material(
+                                                                                                  child: Padding(
+                                                                                                    padding:
+                                                                                                    const EdgeInsets.only(
+                                                                                                        left: 12.0),
+                                                                                                    child: Container(
+                                                                                                      width: 240,
+                                                                                                      height: 40,
+                                                                                                      child:  Flexible(
+                                                                                                        child: TextField(
+                                                                                                          controller: _itemUnitCostController,
+                                                                                                          decoration:
+                                                                                                          InputDecoration(
+                                                                                                              errorText: _validate
+                                                                                                                  ? 'unit cost Can\'t Be Empty'
+                                                                                                                  : null,
+                                                                                                              hintText:
+                                                                                                              "Unit Cost",
+                                                                                                              hintStyle: TextStyle(
+                                                                                                                  fontSize:
+                                                                                                                  12),
+                                                                                                              focusedBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color:
+                                                                                                                      primaryColor,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius: BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5)),
+                                                                                                              enabledBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color: Colors
+                                                                                                                          .grey,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius:
+                                                                                                                  BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5))),
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ],
+                                                                                            ),
+                                                                                          ),
+                                                                                          Flexible(
+                                                                                            child: Column(
+                                                                                              crossAxisAlignment:
+                                                                                              CrossAxisAlignment.start,
+                                                                                              children: [
+                                                                                                Padding(
+                                                                                                  padding:
+                                                                                                  const EdgeInsets.only(
+                                                                                                      left: 12.0),
+                                                                                                  child: Material(
+                                                                                                      child: Text(
+                                                                                                        "Item Bonus",
+                                                                                                        style: TextStyle(
+                                                                                                            color: bgColor,
+                                                                                                            fontSize: 12,
+                                                                                                            fontWeight:
+                                                                                                            FontWeight
+                                                                                                                .bold),
+                                                                                                      )),
+                                                                                                ),
+                                                                                                SizedBox(
+                                                                                                  height: 5,
+                                                                                                ),
+                                                                                                Material(
+                                                                                                  child: Padding(
+                                                                                                    padding:
+                                                                                                    const EdgeInsets.only(
+                                                                                                        left: 12.0),
+                                                                                                    child: Container(
+                                                                                                      width: 240,
+                                                                                                      height: 40,
+                                                                                                      child: Flexible(
+                                                                                                        child: TextField(
+                                                                                                          controller: _itemBonusController,
+                                                                                                          decoration:
+                                                                                                          InputDecoration(
+                                                                                                              errorText: _validate
+                                                                                                                  ? 'bonus Can\'t Be Empty'
+                                                                                                                  : null,
+                                                                                                              hintText:
+                                                                                                              "Bonus",
+                                                                                                              hintStyle: TextStyle(
+                                                                                                                  fontSize:
+                                                                                                                  12),
+                                                                                                              focusedBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color:
+                                                                                                                      primaryColor,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius: BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5)),
+                                                                                                              enabledBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color: Colors
+                                                                                                                          .grey,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius:
+                                                                                                                  BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5))),
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ],
+                                                                                            ),
+                                                                                          ),
+                                                                                        ],
+                                                                                      ),
+                                                                                      SizedBox(
+                                                                                        height: 15.0,
+                                                                                      ),
+                                                                                      Row(
+                                                                                        mainAxisAlignment:
+                                                                                        MainAxisAlignment.start,
+                                                                                        children: [
+                                                                                          Flexible(
+                                                                                            child: Column(
+                                                                                              crossAxisAlignment:
+                                                                                              CrossAxisAlignment.start,
+                                                                                              children: [
+                                                                                                Padding(
+                                                                                                  padding:
+                                                                                                  const EdgeInsets.only(
+                                                                                                      left: 12.0),
+                                                                                                  child: Material(
+                                                                                                      child: Text(
+                                                                                                        "Item Discount Percentage",
+                                                                                                        style: TextStyle(
+                                                                                                            color: bgColor,
+                                                                                                            fontSize: 12,
+                                                                                                            fontWeight:
+                                                                                                            FontWeight
+                                                                                                                .bold),
+                                                                                                      )),
+                                                                                                ),
+                                                                                                SizedBox(
+                                                                                                  height: 5,
+                                                                                                ),
+                                                                                                Material(
+                                                                                                  child: Padding(
+                                                                                                    padding:
+                                                                                                    const EdgeInsets.only(
+                                                                                                        left: 12.0),
+                                                                                                    child: Container(
+                                                                                                      width: 240,
+                                                                                                      height: 40,
+                                                                                                      child: Flexible(
+                                                                                                        child: TextField(
+                                                                                                          controller: _itemDiscountPercentageController,
+                                                                                                          decoration:
+                                                                                                          InputDecoration(
+                                                                                                              errorText: _validate
+                                                                                                                  ? 'discount percentage Can\'t Be Empty'
+                                                                                                                  : null,
+                                                                                                              hintText:
+                                                                                                              "Discount Percentage",
+                                                                                                              hintStyle: TextStyle(
+                                                                                                                  fontSize:
+                                                                                                                  12),
+                                                                                                              focusedBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color:
+                                                                                                                      primaryColor,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius: BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5)),
+                                                                                                              enabledBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color: Colors
+                                                                                                                          .grey,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius:
+                                                                                                                  BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5))),
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ],
+                                                                                            ),
+                                                                                          ),
+                                                                                          Flexible(
+                                                                                            child: Column(
+                                                                                              crossAxisAlignment:
+                                                                                              CrossAxisAlignment.start,
+                                                                                              children: [
+                                                                                                Padding(
+                                                                                                  padding:
+                                                                                                  const EdgeInsets.only(
+                                                                                                      left: 12.0),
+                                                                                                  child: Material(
+                                                                                                      child: Text(
+                                                                                                        "Item Discount Amount",
+                                                                                                        style: TextStyle(
+                                                                                                            color: bgColor,
+                                                                                                            fontSize: 12,
+                                                                                                            fontWeight:
+                                                                                                            FontWeight
+                                                                                                                .bold),
+                                                                                                      )),
+                                                                                                ),
+                                                                                                SizedBox(
+                                                                                                  height: 5,
+                                                                                                ),
+                                                                                                Material(
+                                                                                                  child: Padding(
+                                                                                                    padding:
+                                                                                                    const EdgeInsets.only(
+                                                                                                        left: 12.0),
+                                                                                                    child: Container(
+                                                                                                      width: 240,
+                                                                                                      height: 40,
+                                                                                                      child: Flexible(
+                                                                                                        child: TextField(
+                                                                                                          controller: _itemDiscountAmountController,
+                                                                                                          decoration:
+                                                                                                          InputDecoration(
+                                                                                                              errorText: _validate
+                                                                                                                  ? 'discount amount Can\'t Be Empty'
+                                                                                                                  : null,
+                                                                                                              hintText:
+                                                                                                              "Discount Amount",
+                                                                                                              hintStyle: TextStyle(
+                                                                                                                  fontSize:
+                                                                                                                  12),
+                                                                                                              focusedBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color:
+                                                                                                                      primaryColor,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius: BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5)),
+                                                                                                              enabledBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color: Colors
+                                                                                                                          .grey,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius:
+                                                                                                                  BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5))),
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ],
+                                                                                            ),
+                                                                                          ),
+                                                                                        ],
+                                                                                      ),
+                                                                                      SizedBox(
+                                                                                        height: 15.0,
+                                                                                      ),
+                                                                                      Row(
+                                                                                        mainAxisAlignment:
+                                                                                        MainAxisAlignment.start,
+                                                                                        children: [
+                                                                                          Flexible(
+                                                                                            child: Column(
+                                                                                              crossAxisAlignment:
+                                                                                              CrossAxisAlignment.start,
+                                                                                              children: [
+                                                                                                Padding(
+                                                                                                  padding:
+                                                                                                  const EdgeInsets.only(
+                                                                                                      left: 12.0),
+                                                                                                  child: Material(
+                                                                                                      child: Text(
+                                                                                                        "Item Net Amount",
+                                                                                                        style: TextStyle(
+                                                                                                            color: bgColor,
+                                                                                                            fontSize: 12,
+                                                                                                            fontWeight:
+                                                                                                            FontWeight
+                                                                                                                .bold),
+                                                                                                      )),
+                                                                                                ),
+                                                                                                SizedBox(
+                                                                                                  height: 5,
+                                                                                                ),
+                                                                                                Material(
+                                                                                                  child: Padding(
+                                                                                                    padding:
+                                                                                                    const EdgeInsets.only(
+                                                                                                        left: 12.0),
+                                                                                                    child: Container(
+                                                                                                      width: 240,
+                                                                                                      height: 40,
+                                                                                                      child: Flexible(
+                                                                                                        child: TextField(
+                                                                                                          controller: _itemNetAmountController,
+                                                                                                          decoration:
+                                                                                                          InputDecoration(
+                                                                                                              errorText: _validate
+                                                                                                                  ? 'net percentage Can\'t Be Empty'
+                                                                                                                  : null,
+                                                                                                              hintText:
+                                                                                                              "Net",
+                                                                                                              hintStyle: TextStyle(
+                                                                                                                  fontSize:
+                                                                                                                  12),
+                                                                                                              focusedBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color:
+                                                                                                                      primaryColor,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius: BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5)),
+                                                                                                              enabledBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color: Colors
+                                                                                                                          .grey,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius:
+                                                                                                                  BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5))),
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ],
+                                                                                            ),
+                                                                                          ),
+                                                                                          Flexible(
+                                                                                            child: Column(
+                                                                                              crossAxisAlignment:
+                                                                                              CrossAxisAlignment.start,
+                                                                                              children: [
+                                                                                                Padding(
+                                                                                                  padding:
+                                                                                                  const EdgeInsets.only(
+                                                                                                      left: 12.0),
+                                                                                                  child: Material(
+                                                                                                      child: Text(
+                                                                                                        "Item Tax Percentage",
+                                                                                                        style: TextStyle(
+                                                                                                            color: bgColor,
+                                                                                                            fontSize: 12,
+                                                                                                            fontWeight:
+                                                                                                            FontWeight
+                                                                                                                .bold),
+                                                                                                      )),
+                                                                                                ),
+                                                                                                SizedBox(
+                                                                                                  height: 5,
+                                                                                                ),
+                                                                                                Material(
+                                                                                                  child: Padding(
+                                                                                                    padding:
+                                                                                                    const EdgeInsets.only(
+                                                                                                        left: 12.0),
+                                                                                                    child: Container(
+                                                                                                      width: 240,
+                                                                                                      height: 40,
+                                                                                                      child: Flexible(
+                                                                                                        child: TextField(
+                                                                                                          controller: _itemTaxPercentageController,
+                                                                                                          decoration:
+                                                                                                          InputDecoration(
+                                                                                                              errorText: _validate
+                                                                                                                  ? 'tax percentage amount Can\'t Be Empty'
+                                                                                                                  : null,
+                                                                                                              hintText:
+                                                                                                              "Item Tax Percentage",
+                                                                                                              hintStyle: TextStyle(
+                                                                                                                  fontSize:
+                                                                                                                  12),
+                                                                                                              focusedBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color:
+                                                                                                                      primaryColor,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius: BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5)),
+                                                                                                              enabledBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color: Colors
+                                                                                                                          .grey,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius:
+                                                                                                                  BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5))),
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ],
+                                                                                            ),
+                                                                                          ),
+                                                                                        ],
+                                                                                      ),
+                                                                                      SizedBox(
+                                                                                        height: 15.0,
+                                                                                      ),
+                                                                                      Row(
+                                                                                        mainAxisAlignment:
+                                                                                        MainAxisAlignment.start,
+                                                                                        children: [
+                                                                                          Flexible(
+                                                                                            child: Column(
+                                                                                              crossAxisAlignment:
+                                                                                              CrossAxisAlignment.start,
+                                                                                              children: [
+                                                                                                Padding(
+                                                                                                  padding:
+                                                                                                  const EdgeInsets.only(
+                                                                                                      left: 12.0),
+                                                                                                  child: Material(
+                                                                                                      child: Text(
+                                                                                                        "Item Tax Amount",
+                                                                                                        style: TextStyle(
+                                                                                                            color: bgColor,
+                                                                                                            fontSize: 12,
+                                                                                                            fontWeight:
+                                                                                                            FontWeight
+                                                                                                                .bold),
+                                                                                                      )),
+                                                                                                ),
+                                                                                                SizedBox(
+                                                                                                  height: 5,
+                                                                                                ),
+                                                                                                Material(
+                                                                                                  child: Padding(
+                                                                                                    padding:
+                                                                                                    const EdgeInsets.only(
+                                                                                                        left: 12.0),
+                                                                                                    child: Container(
+                                                                                                      width: 240,
+                                                                                                      height: 40,
+                                                                                                      child: Flexible(
+                                                                                                        child: TextField(
+                                                                                                          controller: _itemTaxAmountController,
+                                                                                                          decoration:
+                                                                                                          InputDecoration(
+                                                                                                              errorText: _validate
+                                                                                                                  ? 'tax Amount Can\'t Be Empty'
+                                                                                                                  : null,
+                                                                                                              hintText:
+                                                                                                              "Tax Amount",
+                                                                                                              hintStyle: TextStyle(
+                                                                                                                  fontSize:
+                                                                                                                  12),
+                                                                                                              focusedBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color:
+                                                                                                                      primaryColor,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius: BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5)),
+                                                                                                              enabledBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color: Colors
+                                                                                                                          .grey,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius:
+                                                                                                                  BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5))),
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ],
+                                                                                            ),
+                                                                                          ),
+                                                                                          Flexible(
+                                                                                            child: Column(
+                                                                                              crossAxisAlignment:
+                                                                                              CrossAxisAlignment.start,
+                                                                                              children: [
+                                                                                                Padding(
+                                                                                                  padding:
+                                                                                                  const EdgeInsets.only(
+                                                                                                      left: 12.0),
+                                                                                                  child: Material(
+                                                                                                      child: Text(
+                                                                                                        "Item Total Cost",
+                                                                                                        style: TextStyle(
+                                                                                                            color: bgColor,
+                                                                                                            fontSize: 12,
+                                                                                                            fontWeight:
+                                                                                                            FontWeight
+                                                                                                                .bold),
+                                                                                                      )),
+                                                                                                ),
+                                                                                                SizedBox(
+                                                                                                  height: 5,
+                                                                                                ),
+                                                                                                Material(
+                                                                                                  child: Padding(
+                                                                                                    padding:
+                                                                                                    const EdgeInsets.only(
+                                                                                                        left: 12.0),
+                                                                                                    child: Container(
+                                                                                                      width: 240,
+                                                                                                      height: 40,
+                                                                                                      child: Flexible(
+                                                                                                        child: TextField(
+                                                                                                          controller: _itemTotalCostController,
+                                                                                                          decoration:
+                                                                                                          InputDecoration(
+                                                                                                              errorText: _validate
+                                                                                                                  ? 'Item Total Cost Can\'t Be Empty'
+                                                                                                                  : null,
+                                                                                                              hintText:
+                                                                                                              "Total Cost",
+                                                                                                              hintStyle: TextStyle(
+                                                                                                                  fontSize:
+                                                                                                                  12),
+                                                                                                              focusedBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color:
+                                                                                                                      primaryColor,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius: BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5)),
+                                                                                                              enabledBorder: OutlineInputBorder(
+                                                                                                                  borderSide: const BorderSide(
+                                                                                                                      color: Colors
+                                                                                                                          .grey,
+                                                                                                                      width:
+                                                                                                                      0.4),
+                                                                                                                  borderRadius:
+                                                                                                                  BorderRadius
+                                                                                                                      .circular(
+                                                                                                                      5))),
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ],
+                                                                                            ),
+                                                                                          ),
+                                                                                        ],
                                                                                       ),
                                                                                     ],
                                                                                   ),
-                                                                                ),
-                                                                                Flexible(
-                                                                                  child: Column(
-                                                                                    crossAxisAlignment:
-                                                                                    CrossAxisAlignment.start,
-                                                                                    children: [
-                                                                                      Padding(
-                                                                                        padding:
-                                                                                        const EdgeInsets.only(
-                                                                                            left: 12.0),
-                                                                                        child: Material(
-                                                                                            child: Text(
-                                                                                              "Item Bonus",
-                                                                                              style: TextStyle(
-                                                                                                  color: bgColor,
-                                                                                                  fontSize: 12,
-                                                                                                  fontWeight:
-                                                                                                  FontWeight
-                                                                                                      .bold),
-                                                                                            )),
-                                                                                      ),
-                                                                                      SizedBox(
-                                                                                        height: 5,
-                                                                                      ),
-                                                                                      Material(
-                                                                                        child: Padding(
-                                                                                          padding:
-                                                                                          const EdgeInsets.only(
-                                                                                              left: 12.0),
-                                                                                          child: Container(
-                                                                                            width: 240,
-                                                                                            height: 40,
-                                                                                            child: Flexible(
-                                                                                              child: TextField(
-                                                                                                controller: _itemBonusController,
-                                                                                                decoration:
-                                                                                                InputDecoration(
-                                                                                                    errorText: _validate
-                                                                                                        ? 'bonus Can\'t Be Empty'
-                                                                                                        : null,
-                                                                                                    hintText:
-                                                                                                    "Bonus",
-                                                                                                    hintStyle: TextStyle(
-                                                                                                        fontSize:
-                                                                                                        12),
-                                                                                                    focusedBorder: OutlineInputBorder(
-                                                                                                        borderSide: const BorderSide(
-                                                                                                            color:
-                                                                                                            primaryColor,
-                                                                                                            width:
-                                                                                                            0.4),
-                                                                                                        borderRadius: BorderRadius
-                                                                                                            .circular(
-                                                                                                            5)),
-                                                                                                    enabledBorder: OutlineInputBorder(
-                                                                                                        borderSide: const BorderSide(
-                                                                                                            color: Colors
-                                                                                                                .grey,
-                                                                                                            width:
-                                                                                                            0.4),
-                                                                                                        borderRadius:
-                                                                                                        BorderRadius
-                                                                                                            .circular(
-                                                                                                            5))),
-                                                                                              ),
-                                                                                            ),
-                                                                                          ),
-                                                                                        ),
-                                                                                      ),
-                                                                                    ],
-                                                                                  ),
-                                                                                ),
-                                                                              ],
-                                                                            ),
-                                                                            SizedBox(
-                                                                              height: 15.0,
-                                                                            ),
-                                                                            Row(
-                                                                              mainAxisAlignment:
-                                                                              MainAxisAlignment.start,
-                                                                              children: [
-                                                                                Flexible(
-                                                                                  child: Column(
-                                                                                    crossAxisAlignment:
-                                                                                    CrossAxisAlignment.start,
-                                                                                    children: [
-                                                                                      Padding(
-                                                                                        padding:
-                                                                                        const EdgeInsets.only(
-                                                                                            left: 12.0),
-                                                                                        child: Material(
-                                                                                            child: Text(
-                                                                                              "Item Discount Percentage",
-                                                                                              style: TextStyle(
-                                                                                                  color: bgColor,
-                                                                                                  fontSize: 12,
-                                                                                                  fontWeight:
-                                                                                                  FontWeight
-                                                                                                      .bold),
-                                                                                            )),
-                                                                                      ),
-                                                                                      SizedBox(
-                                                                                        height: 5,
-                                                                                      ),
-                                                                                      Material(
-                                                                                        child: Padding(
-                                                                                          padding:
-                                                                                          const EdgeInsets.only(
-                                                                                              left: 12.0),
-                                                                                          child: Container(
-                                                                                            width: 240,
-                                                                                            height: 40,
-                                                                                            child: Flexible(
-                                                                                              child: TextField(
-                                                                                                controller: _itemDiscountPercentageController,
-                                                                                                decoration:
-                                                                                                InputDecoration(
-                                                                                                    errorText: _validate
-                                                                                                        ? 'discount percentage Can\'t Be Empty'
-                                                                                                        : null,
-                                                                                                    hintText:
-                                                                                                    "Discount Percentage",
-                                                                                                    hintStyle: TextStyle(
-                                                                                                        fontSize:
-                                                                                                        12),
-                                                                                                    focusedBorder: OutlineInputBorder(
-                                                                                                        borderSide: const BorderSide(
-                                                                                                            color:
-                                                                                                            primaryColor,
-                                                                                                            width:
-                                                                                                            0.4),
-                                                                                                        borderRadius: BorderRadius
-                                                                                                            .circular(
-                                                                                                            5)),
-                                                                                                    enabledBorder: OutlineInputBorder(
-                                                                                                        borderSide: const BorderSide(
-                                                                                                            color: Colors
-                                                                                                                .grey,
-                                                                                                            width:
-                                                                                                            0.4),
-                                                                                                        borderRadius:
-                                                                                                        BorderRadius
-                                                                                                            .circular(
-                                                                                                            5))),
-                                                                                              ),
-                                                                                            ),
-                                                                                          ),
-                                                                                        ),
-                                                                                      ),
-                                                                                    ],
-                                                                                  ),
-                                                                                ),
-                                                                                Flexible(
-                                                                                  child: Column(
-                                                                                    crossAxisAlignment:
-                                                                                    CrossAxisAlignment.start,
-                                                                                    children: [
-                                                                                      Padding(
-                                                                                        padding:
-                                                                                        const EdgeInsets.only(
-                                                                                            left: 12.0),
-                                                                                        child: Material(
-                                                                                            child: Text(
-                                                                                              "Item Discount Amount",
-                                                                                              style: TextStyle(
-                                                                                                  color: bgColor,
-                                                                                                  fontSize: 12,
-                                                                                                  fontWeight:
-                                                                                                  FontWeight
-                                                                                                      .bold),
-                                                                                            )),
-                                                                                      ),
-                                                                                      SizedBox(
-                                                                                        height: 5,
-                                                                                      ),
-                                                                                      Material(
-                                                                                        child: Padding(
-                                                                                          padding:
-                                                                                          const EdgeInsets.only(
-                                                                                              left: 12.0),
-                                                                                          child: Container(
-                                                                                            width: 240,
-                                                                                            height: 40,
-                                                                                            child: Flexible(
-                                                                                              child: TextField(
-                                                                                                controller: _itemDiscountAmountController,
-                                                                                                decoration:
-                                                                                                InputDecoration(
-                                                                                                    errorText: _validate
-                                                                                                        ? 'discount amount Can\'t Be Empty'
-                                                                                                        : null,
-                                                                                                    hintText:
-                                                                                                    "Discount Amount",
-                                                                                                    hintStyle: TextStyle(
-                                                                                                        fontSize:
-                                                                                                        12),
-                                                                                                    focusedBorder: OutlineInputBorder(
-                                                                                                        borderSide: const BorderSide(
-                                                                                                            color:
-                                                                                                            primaryColor,
-                                                                                                            width:
-                                                                                                            0.4),
-                                                                                                        borderRadius: BorderRadius
-                                                                                                            .circular(
-                                                                                                            5)),
-                                                                                                    enabledBorder: OutlineInputBorder(
-                                                                                                        borderSide: const BorderSide(
-                                                                                                            color: Colors
-                                                                                                                .grey,
-                                                                                                            width:
-                                                                                                            0.4),
-                                                                                                        borderRadius:
-                                                                                                        BorderRadius
-                                                                                                            .circular(
-                                                                                                            5))),
-                                                                                              ),
-                                                                                            ),
-                                                                                          ),
-                                                                                        ),
-                                                                                      ),
-                                                                                    ],
-                                                                                  ),
-                                                                                ),
-                                                                              ],
-                                                                            ),
-                                                                            SizedBox(
-                                                                              height: 15.0,
-                                                                            ),
-                                                                            Row(
-                                                                              mainAxisAlignment:
-                                                                              MainAxisAlignment.start,
-                                                                              children: [
-                                                                                Flexible(
-                                                                                  child: Column(
-                                                                                    crossAxisAlignment:
-                                                                                    CrossAxisAlignment.start,
-                                                                                    children: [
-                                                                                      Padding(
-                                                                                        padding:
-                                                                                        const EdgeInsets.only(
-                                                                                            left: 12.0),
-                                                                                        child: Material(
-                                                                                            child: Text(
-                                                                                              "Item Net Amount",
-                                                                                              style: TextStyle(
-                                                                                                  color: bgColor,
-                                                                                                  fontSize: 12,
-                                                                                                  fontWeight:
-                                                                                                  FontWeight
-                                                                                                      .bold),
-                                                                                            )),
-                                                                                      ),
-                                                                                      SizedBox(
-                                                                                        height: 5,
-                                                                                      ),
-                                                                                      Material(
-                                                                                        child: Padding(
-                                                                                          padding:
-                                                                                          const EdgeInsets.only(
-                                                                                              left: 12.0),
-                                                                                          child: Container(
-                                                                                            width: 240,
-                                                                                            height: 40,
-                                                                                            child: Flexible(
-                                                                                              child: TextField(
-                                                                                                controller: _itemNetAmountController,
-                                                                                                decoration:
-                                                                                                InputDecoration(
-                                                                                                    errorText: _validate
-                                                                                                        ? 'net percentage Can\'t Be Empty'
-                                                                                                        : null,
-                                                                                                    hintText:
-                                                                                                    "Net",
-                                                                                                    hintStyle: TextStyle(
-                                                                                                        fontSize:
-                                                                                                        12),
-                                                                                                    focusedBorder: OutlineInputBorder(
-                                                                                                        borderSide: const BorderSide(
-                                                                                                            color:
-                                                                                                            primaryColor,
-                                                                                                            width:
-                                                                                                            0.4),
-                                                                                                        borderRadius: BorderRadius
-                                                                                                            .circular(
-                                                                                                            5)),
-                                                                                                    enabledBorder: OutlineInputBorder(
-                                                                                                        borderSide: const BorderSide(
-                                                                                                            color: Colors
-                                                                                                                .grey,
-                                                                                                            width:
-                                                                                                            0.4),
-                                                                                                        borderRadius:
-                                                                                                        BorderRadius
-                                                                                                            .circular(
-                                                                                                            5))),
-                                                                                              ),
-                                                                                            ),
-                                                                                          ),
-                                                                                        ),
-                                                                                      ),
-                                                                                    ],
-                                                                                  ),
-                                                                                ),
-                                                                                Flexible(
-                                                                                  child: Column(
-                                                                                    crossAxisAlignment:
-                                                                                    CrossAxisAlignment.start,
-                                                                                    children: [
-                                                                                      Padding(
-                                                                                        padding:
-                                                                                        const EdgeInsets.only(
-                                                                                            left: 12.0),
-                                                                                        child: Material(
-                                                                                            child: Text(
-                                                                                              "Item Tax Percentage",
-                                                                                              style: TextStyle(
-                                                                                                  color: bgColor,
-                                                                                                  fontSize: 12,
-                                                                                                  fontWeight:
-                                                                                                  FontWeight
-                                                                                                      .bold),
-                                                                                            )),
-                                                                                      ),
-                                                                                      SizedBox(
-                                                                                        height: 5,
-                                                                                      ),
-                                                                                      Material(
-                                                                                        child: Padding(
-                                                                                          padding:
-                                                                                          const EdgeInsets.only(
-                                                                                              left: 12.0),
-                                                                                          child: Container(
-                                                                                            width: 240,
-                                                                                            height: 40,
-                                                                                            child: Flexible(
-                                                                                              child: TextField(
-                                                                                                controller: _itemTaxPercentageController,
-                                                                                                decoration:
-                                                                                                InputDecoration(
-                                                                                                    errorText: _validate
-                                                                                                        ? 'tax percentage amount Can\'t Be Empty'
-                                                                                                        : null,
-                                                                                                    hintText:
-                                                                                                    "Item Tax Percentage",
-                                                                                                    hintStyle: TextStyle(
-                                                                                                        fontSize:
-                                                                                                        12),
-                                                                                                    focusedBorder: OutlineInputBorder(
-                                                                                                        borderSide: const BorderSide(
-                                                                                                            color:
-                                                                                                            primaryColor,
-                                                                                                            width:
-                                                                                                            0.4),
-                                                                                                        borderRadius: BorderRadius
-                                                                                                            .circular(
-                                                                                                            5)),
-                                                                                                    enabledBorder: OutlineInputBorder(
-                                                                                                        borderSide: const BorderSide(
-                                                                                                            color: Colors
-                                                                                                                .grey,
-                                                                                                            width:
-                                                                                                            0.4),
-                                                                                                        borderRadius:
-                                                                                                        BorderRadius
-                                                                                                            .circular(
-                                                                                                            5))),
-                                                                                              ),
-                                                                                            ),
-                                                                                          ),
-                                                                                        ),
-                                                                                      ),
-                                                                                    ],
-                                                                                  ),
-                                                                                ),
-                                                                              ],
-                                                                            ),
-                                                                            SizedBox(
-                                                                              height: 15.0,
-                                                                            ),
-                                                                            Row(
-                                                                              mainAxisAlignment:
-                                                                              MainAxisAlignment.start,
-                                                                              children: [
-                                                                                Flexible(
-                                                                                  child: Column(
-                                                                                    crossAxisAlignment:
-                                                                                    CrossAxisAlignment.start,
-                                                                                    children: [
-                                                                                      Padding(
-                                                                                        padding:
-                                                                                        const EdgeInsets.only(
-                                                                                            left: 12.0),
-                                                                                        child: Material(
-                                                                                            child: Text(
-                                                                                              "Item Tax Amount",
-                                                                                              style: TextStyle(
-                                                                                                  color: bgColor,
-                                                                                                  fontSize: 12,
-                                                                                                  fontWeight:
-                                                                                                  FontWeight
-                                                                                                      .bold),
-                                                                                            )),
-                                                                                      ),
-                                                                                      SizedBox(
-                                                                                        height: 5,
-                                                                                      ),
-                                                                                      Material(
-                                                                                        child: Padding(
-                                                                                          padding:
-                                                                                          const EdgeInsets.only(
-                                                                                              left: 12.0),
-                                                                                          child: Container(
-                                                                                            width: 240,
-                                                                                            height: 40,
-                                                                                            child: Flexible(
-                                                                                              child: TextField(
-                                                                                                controller: _itemTaxAmountController,
-                                                                                                decoration:
-                                                                                                InputDecoration(
-                                                                                                    errorText: _validate
-                                                                                                        ? 'tax Amount Can\'t Be Empty'
-                                                                                                        : null,
-                                                                                                    hintText:
-                                                                                                    "Tax Amount",
-                                                                                                    hintStyle: TextStyle(
-                                                                                                        fontSize:
-                                                                                                        12),
-                                                                                                    focusedBorder: OutlineInputBorder(
-                                                                                                        borderSide: const BorderSide(
-                                                                                                            color:
-                                                                                                            primaryColor,
-                                                                                                            width:
-                                                                                                            0.4),
-                                                                                                        borderRadius: BorderRadius
-                                                                                                            .circular(
-                                                                                                            5)),
-                                                                                                    enabledBorder: OutlineInputBorder(
-                                                                                                        borderSide: const BorderSide(
-                                                                                                            color: Colors
-                                                                                                                .grey,
-                                                                                                            width:
-                                                                                                            0.4),
-                                                                                                        borderRadius:
-                                                                                                        BorderRadius
-                                                                                                            .circular(
-                                                                                                            5))),
-                                                                                              ),
-                                                                                            ),
-                                                                                          ),
-                                                                                        ),
-                                                                                      ),
-                                                                                    ],
-                                                                                  ),
-                                                                                ),
-                                                                                Flexible(
-                                                                                  child: Column(
-                                                                                    crossAxisAlignment:
-                                                                                    CrossAxisAlignment.start,
-                                                                                    children: [
-                                                                                      Padding(
-                                                                                        padding:
-                                                                                        const EdgeInsets.only(
-                                                                                            left: 12.0),
-                                                                                        child: Material(
-                                                                                            child: Text(
-                                                                                              "Item Total Cost",
-                                                                                              style: TextStyle(
-                                                                                                  color: bgColor,
-                                                                                                  fontSize: 12,
-                                                                                                  fontWeight:
-                                                                                                  FontWeight
-                                                                                                      .bold),
-                                                                                            )),
-                                                                                      ),
-                                                                                      SizedBox(
-                                                                                        height: 5,
-                                                                                      ),
-                                                                                      Material(
-                                                                                        child: Padding(
-                                                                                          padding:
-                                                                                          const EdgeInsets.only(
-                                                                                              left: 12.0),
-                                                                                          child: Container(
-                                                                                            width: 240,
-                                                                                            height: 40,
-                                                                                            child: Flexible(
-                                                                                              child: TextField(
-                                                                                                controller: _itemTotalCostController,
-                                                                                                decoration:
-                                                                                                InputDecoration(
-                                                                                                    errorText: _validate
-                                                                                                        ? 'Item Total Cost Can\'t Be Empty'
-                                                                                                        : null,
-                                                                                                    hintText:
-                                                                                                    "Total Cost",
-                                                                                                    hintStyle: TextStyle(
-                                                                                                        fontSize:
-                                                                                                        12),
-                                                                                                    focusedBorder: OutlineInputBorder(
-                                                                                                        borderSide: const BorderSide(
-                                                                                                            color:
-                                                                                                            primaryColor,
-                                                                                                            width:
-                                                                                                            0.4),
-                                                                                                        borderRadius: BorderRadius
-                                                                                                            .circular(
-                                                                                                            5)),
-                                                                                                    enabledBorder: OutlineInputBorder(
-                                                                                                        borderSide: const BorderSide(
-                                                                                                            color: Colors
-                                                                                                                .grey,
-                                                                                                            width:
-                                                                                                            0.4),
-                                                                                                        borderRadius:
-                                                                                                        BorderRadius
-                                                                                                            .circular(
-                                                                                                            5))),
-                                                                                              ),
-                                                                                            ),
-                                                                                          ),
-                                                                                        ),
-                                                                                      ),
-                                                                                    ],
-                                                                                  ),
-                                                                                ),
-                                                                              ],
+                                                                                ],
+                                                                              ),
                                                                             ),
                                                                           ],
-                                                                        ),
+                                                                        )
                                                                       ),
                                                                     ],
                                                                   ),

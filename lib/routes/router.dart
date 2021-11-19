@@ -23,6 +23,7 @@ import 'package:serow/pages/inventory/subgroups/subgroups.dart';
 import 'package:serow/pages/notifications/notifications.dart';
 import 'package:serow/pages/orders/orders.dart';
 import 'package:serow/pages/overview/overview.dart';
+import 'package:serow/pages/pos/pos.dart';
 import 'package:serow/pages/predictions/predictions.dart';
 import 'package:serow/pages/products/products.dart';
 import 'package:serow/pages/reports/reports.dart';
@@ -111,6 +112,8 @@ Route<dynamic> generateRoute(RouteSettings settings){
       return _getPageRoute(CostCentersPage());
     case OrdersPageRoute:
       return _getPageRoute(OrdersPage());
+    case POSPageRoute:
+     return _getPageRoute(POSPage());
     default:
       return _getPageRoute(OverviewPage());
 

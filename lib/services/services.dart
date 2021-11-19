@@ -3,6 +3,7 @@ class AppUrl {
   static const String baseURL = liveBaseURL;
   static const String login = baseURL + "/auth/login/";
   static const String brands = baseURL + "/inventory/brands/";
+  static const String customers = baseURL + "/customers/";
   static const String  categories= baseURL + "/inventory/categories/";
   static const String  forms= baseURL + "/inventory/forms/";
   static const String  groups= baseURL + "/inventory/groups/";
@@ -27,6 +28,8 @@ class AppUrl {
   static const String goods_return_notes = baseURL + "/suppliers/goods-return-note/";
   static const String purchase_orders = baseURL + "/suppliers/purchase-orders/";
   static const String supplier_invoices = baseURL + "/suppliers/supplier-invoices/";
+  static const String branch_stock = baseURL + "/inventory/branch/stock/";
+
 
 
 

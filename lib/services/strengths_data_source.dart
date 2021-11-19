@@ -19,7 +19,15 @@ class StrengthsDataSource extends  DataTableSource{
   final List<Results> _resultData;
   final OnRowSelect onRowSelect;
 
-
+  void sort<T>(Comparable<T> Function(Results d) getField, bool ascending){
+    _resultData.sort((a,b){
+      final aValue = getField(a);
+      final bValue = getField(b);
+      return ascending ? Comparable.compare(aValue, bValue)
+          :Comparable.compare(bValue, aValue);
+    });
+    notifyListeners();
+  }
 
   @override
   DataRow getRow(int index) {

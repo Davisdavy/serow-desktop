@@ -5,9 +5,9 @@ import 'package:serow/models/entities/branches.dart';
 
 abstract class BranchesRepository {
   //Brands
-  Future<List<Results>> getBranchList(BuildContext context);
-  Future<String> patchBranch(Results result);
-  Future<String> putBranch(Results result);
+  Future<List<Branches>> getBranchList(BuildContext context);
+  Future<String> patchBranch(Branches result);
+  Future<String> putBranch(Branches result);
   Future<String> deletedBranch(String id, BuildContext context);
   Future<Branches> postBranch(String name, String location, String phone, BuildContext context);
 }

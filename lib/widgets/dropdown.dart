@@ -21,7 +21,7 @@ class _DropDownSelectState extends State<DropDownSelect> {
           value: groupId,
           items: snap.data.map((item){
             return new DropdownMenuItem(child: Text(
-              item.name,
+              item.quantity,
             ),
                 value: item.id.toString()
             );

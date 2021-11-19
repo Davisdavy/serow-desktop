@@ -39,7 +39,7 @@ class Brands {
 
 class Results {
   String id;
-  Null country;
+  dynamic country;
   String createdAt;
   String modifiedAt;
   bool isActive;

@@ -650,7 +650,7 @@ class _PostingCategoriesPageState extends State<PostingCategoriesPage> {
                                                                                           return new DropdownMenuItem<String>(child: Padding(
                                                                                             padding: const EdgeInsets.all(8.0),
                                                                                             child: Text(
-                                                                                              item.name,
+                                                                                              item.quantity,
                                                                                               style: TextStyle(fontSize:
                                                                                               12,),
                                                                                             ),

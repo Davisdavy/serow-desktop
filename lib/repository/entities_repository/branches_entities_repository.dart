@@ -26,10 +26,10 @@ class BranchesEntitiesRepository implements BranchesRepository {
   }
 
   @override
-  Future<List<Results>> getBranchList(BuildContext context) async{
+  Future<List<Branches>> getBranchList(BuildContext context) async{
     //https://serow.herrings.co.ke/api/v1/inventory/branches/
     //ToDo: Pass ?all=True to get un-paginated data
-    List<Results> resultList = [];
+    List<Branches> resultList = [];
     context.watch<AuthProvider>();
     Auth user = Provider.of<AuthProvider>(context).auth;
     var response = await http.get(Uri.parse('${AppUrl.branches}'), headers: {
@@ -42,14 +42,14 @@ class BranchesEntitiesRepository implements BranchesRepository {
     //parse
     print('Result body: ${body['results']}');
     for (Map<String, dynamic> i in body["results"]) {
-      resultList.add(Results.fromJson(i));
+      resultList.add(Branches.fromJson(i));
     }
 
     return resultList;
   }
 
   @override
-  Future<String> patchBranch(Results result) async {
+  Future<String> patchBranch(Branches result) async {
     //call back
     String responseData = '';
     await http.patch(Uri.parse('${AppUrl.branches}${result.id}'), headers: {
@@ -86,7 +86,7 @@ class BranchesEntitiesRepository implements BranchesRepository {
   }
 
   @override
-  Future<String> putBranch(Results result)async {
+  Future<String> putBranch(Branches result)async {
     //call back
     String responseData = '';
     await http.put(Uri.parse('${AppUrl.branches}${result.id}'), headers: {

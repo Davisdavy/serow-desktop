@@ -134,7 +134,7 @@ class Results {
     subgroup = json['subgroup'] != null
         ? new Subgroup.fromJson(json['subgroup'])
         : null;
-    category = json['category'];
+    category = json['category'] != null ? Categories.fromJson(json['category']) : null;
     brand = json['brand'] != null ? new Brand.fromJson(json['brand']) : null;
     itemForm = json['item_form'];
     strength = json['strength'];

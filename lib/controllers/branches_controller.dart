@@ -8,17 +8,17 @@ class BranchesController{
   BranchesController(this._repository);
 
   //get
-  Future<List<Results> >fetchBranchList(BuildContext context){
+  Future<List<Branches> >fetchBranchList(BuildContext context){
     return _repository.getBranchList(context);
   }
 
   //patch
-  Future<String >updatePatchCompleted(Results result) async{
+  Future<String >updatePatchCompleted(Branches result) async{
     return _repository.patchBranch(result);
   }
 
   //put
-  Future<String >updatePutCompleted(Results result) async{
+  Future<String >updatePutCompleted(Branches result) async{
     return _repository.putBranch(result);
   }
 
