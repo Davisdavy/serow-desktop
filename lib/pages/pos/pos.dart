@@ -27,7 +27,6 @@ class TableSale {
   String totalAmount;
   String vatAmount;
   String vatPer;
-  String unitCost;
   String unitPrice;
   String netAmount;
 
@@ -38,7 +37,6 @@ class TableSale {
       this.totalQty,
       this.disc,
       this.discPer,
-      this.unitCost,
       this.unitPrice,
       this.vatAmount,
       this.vatPer,
@@ -51,7 +49,7 @@ class TableSale {
   }
 
   static addUsers(quantity, bonus, item, totalQty, totalCost, totalAmount, disc,
-      discPer, vatAmount, vatPer, unitCost, unitPrice, netAmount) {
+      discPer, vatAmount, vatPer, unitPrice, netAmount) {
     var tableSale = new TableSale();
     tableSale.quantity = quantity;
     tableSale.bonus = bonus;
@@ -63,7 +61,6 @@ class TableSale {
     tableSale.discPer = discPer;
     tableSale.vatAmount = vatAmount;
     tableSale.vatPer = vatPer;
-    tableSale.unitCost = unitCost;
     tableSale.unitPrice = unitPrice;
     tableSale.netAmount = netAmount;
     tablesSale.add(tableSale);
@@ -88,15 +85,13 @@ class _POSPageState extends State<POSPage> with TickerProviderStateMixin {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController controller = new TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
-  final TextEditingController _discAmountController = TextEditingController();
+   TextEditingController _discAmountController;
   final TextEditingController _discPercentageController =
       TextEditingController();
   final TextEditingController _netAmountController = TextEditingController();
-  final TextEditingController _unitCostController = TextEditingController();
   final TextEditingController _unitPriceController = TextEditingController();
   final TextEditingController _bonusController = TextEditingController();
-  final TextEditingController _totalQtyController = TextEditingController();
-  final TextEditingController _vatAmountController = TextEditingController();
+  TextEditingController _vatAmountController ;
   final TextEditingController _vatPercentageController =
       TextEditingController();
   TextEditingController _totalAmountController;
@@ -108,12 +103,18 @@ class _POSPageState extends State<POSPage> with TickerProviderStateMixin {
   bool _isQtyEditingText = false;
   String initialQtyText = "0.0";
 
+  bool _isNetEditingText = false;
+  String initialNetText = "0.0";
+
+  bool _isVATAmountEditingText = false;
+  String initialVATAmountText = "0.0";
+
+  String totalValue;
+
   GlobalKey<AutoCompleteTextFieldState<Customers>> key = new GlobalKey();
   GlobalKey<AutoCompleteTextFieldState<BranchStock>> itemKey = new GlobalKey();
   GlobalKey<AutoCompleteTextFieldState<Branches>> branchKey = new GlobalKey();
 
-  int _currentSortColumn = 0;
-  bool _isSortAsc = true;
   bool balanceValue = false;
   bool branchValue = false;
   bool itemValue = false;
@@ -122,10 +123,28 @@ class _POSPageState extends State<POSPage> with TickerProviderStateMixin {
   AutoCompleteTextField branchTextField;
 
   List rowsItem = [];
+  double qty = 0;
+  double bns = 0;
+  double vat = 0;
+  double netPrice=0;
+  double itemPrice=0;
+  double discAmount =0;
+  double unitPrice = 0;
+  double discPerc = 0;
+  double vatPerc = 0;
 
-  Future makeSales(BuildContext context) async {
-    Auth user = Provider.of<AuthProvider>(context).auth;
-  }
+  /*
+  Item price = unit price * quantity
+
+  Discount amount = discount percentage / 100 * item price
+
+  Net amount = item price - discount amount
+
+  VAT amount = VAT percentage / 100 * net amount
+
+  Total Amount =  VAT amount - discount amount + net amount
+
+   */
 
   @override
   void initState() {
@@ -134,8 +153,45 @@ class _POSPageState extends State<POSPage> with TickerProviderStateMixin {
     tablesSale = TableSale.getTableSale();
     _tabController = new TabController(length: 3, initialIndex: 1, vsync: this);
     _loadData();
+
+    _quantityController.addListener(() {
+      setState(() {
+        qty = double.parse(_quantityController.text);
+      });
+    });
+
+    _discPercentageController.addListener(() {
+      setState(() {
+        discPerc = double.parse(_discPercentageController.text);
+      });
+    });
+    _unitPriceController.addListener(() {
+      setState(() {
+        unitPrice = double.parse(_unitPriceController.text);
+      });
+    });
+    _bonusController.addListener(() {
+      setState(() {
+         bns = double.parse(_bonusController.text);
+      });
+    });
+
+    _vatPercentageController.addListener(() {
+      setState(() {
+        vatPerc = double.parse(_vatPercentageController.text);
+      });
+    });
+
+    _netAmountController.addListener(() {
+      setState(() {
+        netPrice = double.parse(_netAmountController.text);
+      });
+    });
+
     _totalAmountController = TextEditingController(text: initialText);
     _totalQuantityController = TextEditingController(text: initialQtyText);
+    _discAmountController = TextEditingController(text: "${discPerc / 100 * itemPrice}");
+    _vatAmountController = TextEditingController(text: "${ vatPerc / 100 * netPrice}");
     super.initState();
   }
 
@@ -178,18 +234,61 @@ class _POSPageState extends State<POSPage> with TickerProviderStateMixin {
     await BranchesViewModel.loadBranches(context);
   }
 
+
   Widget _editTitleTextField() {
     if (_isEditingText)
       return Center(
-        child: TextField(
-          onSubmitted: (newValue) {
-            setState(() {
-              initialText = newValue;
-              _isEditingText = false;
-            });
-          },
-          autofocus: true,
-          controller: _totalAmountController,
+        child:  Material(
+          child: Container(
+            width: 48,
+            height: 48,
+            child: TextField(
+              onSubmitted: (newValue){
+                setState((){
+                  initialText = newValue;
+                  _isEditingText = false;
+                });
+              },
+              autofocus: true,
+              controller:
+              _discAmountController
+              ,
+              keyboardType:
+              TextInputType.number,
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
+              ],
+              decoration:
+              InputDecoration(
+                //  labelText: "Email Address",
+                  hintText: "  0.0",
+                  hintStyle:
+                  TextStyle(
+                    fontSize: 12,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                      borderSide:
+                      const BorderSide(
+                          color:
+                          primaryColor,
+                          width:
+                          0.4),
+                      borderRadius:
+                      BorderRadius
+                          .circular(
+                          5)),
+                  enabledBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                          color: Colors
+                              .grey,
+                          width:
+                          0.4),
+                      borderRadius:
+                      BorderRadius
+                          .circular(
+                          5))),
+            ),
+          ),
         ),
       );
     return InkWell(
@@ -198,8 +297,156 @@ class _POSPageState extends State<POSPage> with TickerProviderStateMixin {
             _isEditingText = true;
           });
         },
-        child: Text(
-          initialText,
+        child: Text("${
+
+          discPerc / 100 * itemPrice
+        }",
+          style: TextStyle(
+            color: primaryColor,
+            fontSize: 18.0,
+          ),
+        ));
+  }
+
+  Widget _editNetTextField() {
+    if (_isNetEditingText)
+      return Center(
+        child:  Material(
+          child: Container(
+            width: 48,
+            height: 48,
+            child: TextField(
+              onSubmitted: (newValue){
+                setState((){
+                  initialNetText = newValue;
+                  _isNetEditingText = false;
+                });
+              },
+              autofocus: true,
+              controller:
+              _netAmountController
+              ,
+              keyboardType:
+              TextInputType.numberWithOptions(decimal: true),
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
+              ],
+              decoration:
+              InputDecoration(
+                //  labelText: "Email Address",
+                  hintText: "  0.0",
+                  hintStyle:
+                  TextStyle(
+                    fontSize: 12,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                      borderSide:
+                      const BorderSide(
+                          color:
+                          primaryColor,
+                          width:
+                          0.4),
+                      borderRadius:
+                      BorderRadius
+                          .circular(
+                          5)),
+                  enabledBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                          color: Colors
+                              .grey,
+                          width:
+                          0.4),
+                      borderRadius:
+                      BorderRadius
+                          .circular(
+                          5))),
+            ),
+          ),
+        ),
+      );
+    return InkWell(
+        onTap: () {
+          setState(() {
+            _isNetEditingText = true;
+          });
+        },
+        child: Text("${
+
+            itemPrice - discAmount
+        }",
+          style: TextStyle(
+            color: primaryColor,
+            fontSize: 18.0,
+          ),
+        ));
+  }
+
+  Widget _editVATAmountTextField() {
+    if (_isVATAmountEditingText)
+      return Center(
+        child:  Material(
+          child: Container(
+            width: 48,
+            height: 48,
+            child: TextField(
+              onSubmitted: (newValue){
+                setState((){
+                  initialVATAmountText = newValue;
+                  _isVATAmountEditingText = false;
+                });
+              },
+              autofocus: true,
+              controller:
+              _vatAmountController
+              ,
+              keyboardType:
+              TextInputType.numberWithOptions(decimal: true),
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
+              ],
+              decoration:
+              InputDecoration(
+                //  labelText: "Email Address",
+                  hintText: "  0.0",
+                  hintStyle:
+                  TextStyle(
+                    fontSize: 12,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                      borderSide:
+                      const BorderSide(
+                          color:
+                          primaryColor,
+                          width:
+                          0.4),
+                      borderRadius:
+                      BorderRadius
+                          .circular(
+                          5)),
+                  enabledBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                          color: Colors
+                              .grey,
+                          width:
+                          0.4),
+                      borderRadius:
+                      BorderRadius
+                          .circular(
+                          5))),
+            ),
+          ),
+        ),
+      );
+    return InkWell(
+        onTap: () {
+          setState(() {
+            _isVATAmountEditingText = true;
+          });
+        },
+        child: Text("${
+
+            vatPerc / 100 * netPrice
+        }",
           style: TextStyle(
             color: primaryColor,
             fontSize: 18.0,
@@ -218,7 +465,7 @@ class _POSPageState extends State<POSPage> with TickerProviderStateMixin {
             });
           },
           autofocus: true,
-          controller: _totalQtyController,
+          controller: _totalQuantityController,
         ),
       );
     return InkWell(
@@ -245,10 +492,9 @@ class _POSPageState extends State<POSPage> with TickerProviderStateMixin {
     _discAmountController.dispose();
     _discPercentageController.dispose();
     _netAmountController.dispose();
-    _unitCostController.dispose();
     _unitPriceController.dispose();
     _bonusController.dispose();
-    _totalQtyController.dispose();
+    _totalQuantityController.dispose();
     _vatAmountController.dispose();
     _vatPercentageController.dispose();
     _totalAmountController.dispose();
@@ -258,6 +504,14 @@ class _POSPageState extends State<POSPage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    itemPrice = unitPrice * qty;
+    discAmount = discPerc / 100 * itemPrice;
+    vat = vatPerc / 100 * netPrice;
+    netPrice = itemPrice - discAmount;
+
+    print("VAT: $vatPerc");
+    print("Disc: $discAmount");
+    print("Net: $netPrice");
     branchTextField = AutoCompleteTextField<Branches>(
       suggestions: BranchesViewModel.branches,
       itemBuilder: (context, item) {
@@ -965,72 +1219,7 @@ class _POSPageState extends State<POSPage> with TickerProviderStateMixin {
                                               ],
                                             ),
                                           ),
-                                          Flexible(
-                                            child: Column(
-                                              children: [
-                                                Material(
-                                                    child: Text(
-                                                  "Unit cost",
-                                                  style: TextStyle(
-                                                      color: bgColor,
-                                                      fontSize: 8,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                )),
-                                                SizedBox(
-                                                  height: 15,
-                                                ),
-                                                Material(
-                                                  child: Container(
-                                                    width: 48,
-                                                    height: 48,
-                                                    child: TextField(
-                                                      controller:
-                                                          _unitCostController,
-                                                      keyboardType:
-                                                          TextInputType.number,
-                                                      inputFormatters: [
-                                                        FilteringTextInputFormatter
-                                                            .digitsOnly,
-                                                      ],
-                                                      decoration:
-                                                          InputDecoration(
-                                                              //  labelText: "Email Address",
-                                                              hintText: "  0.0",
-                                                              hintStyle:
-                                                                  TextStyle(
-                                                                fontSize: 12,
-                                                              ),
-                                                              focusedBorder: OutlineInputBorder(
-                                                                  borderSide:
-                                                                      const BorderSide(
-                                                                          color:
-                                                                              primaryColor,
-                                                                          width:
-                                                                              0.4),
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              5)),
-                                                              enabledBorder: OutlineInputBorder(
-                                                                  borderSide: const BorderSide(
-                                                                      color: Colors
-                                                                          .grey,
-                                                                      width:
-                                                                          0.4),
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              5))),
-                                                    ),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                  height: 5,
-                                                ),
-                                              ],
-                                            ),
-                                          ),
+
                                           Flexible(
                                             child: Column(
                                               children: [
@@ -1183,7 +1372,14 @@ class _POSPageState extends State<POSPage> with TickerProviderStateMixin {
                                                   ),
                                                   Material(
                                                     child:
-                                                        _editQuantityTextField(),
+                                                    Text(
+                                                        "${qty+bns}",
+                                                      style: TextStyle(
+                                                        color: primaryColor,
+                                                        fontSize: 18.0,
+                                                      ),
+
+                                                    ),
                                                   ),
                                                   SizedBox(
                                                     height: 5,
@@ -1279,51 +1475,7 @@ class _POSPageState extends State<POSPage> with TickerProviderStateMixin {
                                                 SizedBox(
                                                   height: 15,
                                                 ),
-                                                Material(
-                                                  child: Container(
-                                                    width: 48,
-                                                    height: 48,
-                                                    child: TextField(
-                                                      controller:
-                                                          _discAmountController,
-                                                      keyboardType:
-                                                          TextInputType.number,
-                                                      inputFormatters: [
-                                                        FilteringTextInputFormatter
-                                                            .digitsOnly,
-                                                      ],
-                                                      decoration:
-                                                          InputDecoration(
-                                                              //  labelText: "Email Address",
-                                                              hintText: "  0.0",
-                                                              hintStyle:
-                                                                  TextStyle(
-                                                                fontSize: 12,
-                                                              ),
-                                                              focusedBorder: OutlineInputBorder(
-                                                                  borderSide:
-                                                                      const BorderSide(
-                                                                          color:
-                                                                              primaryColor,
-                                                                          width:
-                                                                              0.4),
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              5)),
-                                                              enabledBorder: OutlineInputBorder(
-                                                                  borderSide: const BorderSide(
-                                                                      color: Colors
-                                                                          .grey,
-                                                                      width:
-                                                                          0.4),
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              5))),
-                                                    ),
-                                                  ),
-                                                ),
+                                                _editTitleTextField(),
                                                 SizedBox(
                                                   height: 5,
                                                 ),
@@ -1345,51 +1497,7 @@ class _POSPageState extends State<POSPage> with TickerProviderStateMixin {
                                                 SizedBox(
                                                   height: 15,
                                                 ),
-                                                Material(
-                                                  child: Container(
-                                                    width: 48,
-                                                    height: 48,
-                                                    child: TextField(
-                                                      controller:
-                                                          _vatAmountController,
-                                                      keyboardType:
-                                                          TextInputType.number,
-                                                      inputFormatters: [
-                                                        FilteringTextInputFormatter
-                                                            .digitsOnly,
-                                                      ],
-                                                      decoration:
-                                                          InputDecoration(
-                                                              //  labelText: "Email Address",
-                                                              hintText: "  0.0",
-                                                              hintStyle:
-                                                                  TextStyle(
-                                                                fontSize: 12,
-                                                              ),
-                                                              focusedBorder: OutlineInputBorder(
-                                                                  borderSide:
-                                                                      const BorderSide(
-                                                                          color:
-                                                                              primaryColor,
-                                                                          width:
-                                                                              0.4),
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              5)),
-                                                              enabledBorder: OutlineInputBorder(
-                                                                  borderSide: const BorderSide(
-                                                                      color: Colors
-                                                                          .grey,
-                                                                      width:
-                                                                          0.4),
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              5))),
-                                                    ),
-                                                  ),
-                                                ),
+                                                _editVATAmountTextField(),
                                                 SizedBox(
                                                   height: 5,
                                                 ),
@@ -1418,11 +1526,9 @@ class _POSPageState extends State<POSPage> with TickerProviderStateMixin {
                                                     child: TextField(
                                                       controller:
                                                           _vatPercentageController,
-                                                      keyboardType:
-                                                          TextInputType.number,
+                                                      keyboardType: TextInputType.numberWithOptions(decimal: true),
                                                       inputFormatters: [
-                                                        FilteringTextInputFormatter
-                                                            .digitsOnly,
+                                                        FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
                                                       ],
                                                       decoration:
                                                           InputDecoration(
@@ -1477,50 +1583,7 @@ class _POSPageState extends State<POSPage> with TickerProviderStateMixin {
                                                 SizedBox(
                                                   height: 15,
                                                 ),
-                                                Material(
-                                                  child: Container(
-                                                    width: 48,
-                                                    height: 48,
-                                                    child: TextField(
-                                                      controller:
-                                                          _netAmountController,
-                                                      keyboardType:
-                                                          TextInputType.number,
-                                                      inputFormatters: [
-                                                        FilteringTextInputFormatter
-                                                            .digitsOnly,
-                                                      ],
-                                                      decoration:
-                                                          InputDecoration(
-                                                              hintText: "  0.0",
-                                                              hintStyle:
-                                                                  TextStyle(
-                                                                fontSize: 12,
-                                                              ),
-                                                              focusedBorder: OutlineInputBorder(
-                                                                  borderSide:
-                                                                      const BorderSide(
-                                                                          color:
-                                                                              primaryColor,
-                                                                          width:
-                                                                              0.4),
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              5)),
-                                                              enabledBorder: OutlineInputBorder(
-                                                                  borderSide: const BorderSide(
-                                                                      color: Colors
-                                                                          .grey,
-                                                                      width:
-                                                                          0.4),
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              5))),
-                                                    ),
-                                                  ),
-                                                ),
+                                                _editNetTextField(),
                                                 SizedBox(
                                                   height: 5,
                                                 ),
@@ -1547,7 +1610,15 @@ class _POSPageState extends State<POSPage> with TickerProviderStateMixin {
                                                   ),
                                                   Material(
                                                       child:
-                                                          _editTitleTextField()),
+                                                      Text(
+                                                        "${vat - discAmount + netPrice}",
+                                                        style: TextStyle(
+                                                          color: primaryColor,
+                                                          fontSize: 18.0,
+                                                        ),
+
+                                                      ),
+                                                  ),
                                                   SizedBox(
                                                     height: 5,
                                                   ),
@@ -1568,27 +1639,25 @@ class _POSPageState extends State<POSPage> with TickerProviderStateMixin {
                                                 tableSale.bonus =
                                                     _bonusController.text;
                                                 tableSale.totalQty =
-                                                    _totalQtyController.text;
+                                                "${qty+bns}";
                                                 tableSale.quantity =
                                                     _quantityController.text;
                                                 tableSale.netAmount =
                                                     _netAmountController.text;
                                                 tableSale.unitPrice =
                                                     _unitPriceController.text;
-                                                tableSale.unitCost =
-                                                    _unitCostController.text;
-                                                tableSale.vatAmount =
-                                                    _vatAmountController.text;
+                                                tableSale.vatAmount = "${vatPerc / 100 * netPrice}";
                                                 tableSale.vatPer =
                                                     _vatPercentageController
                                                         .text;
                                                 tableSale.disc =
-                                                    _discAmountController.text;
+                                                "${
+                                                    discPerc / 100 * itemPrice}";
                                                 tableSale.discPer =
                                                     _discPercentageController
                                                         .text;
                                                 tableSale.netAmount =
-                                                    _netAmountController.text;
+                                                    "${itemPrice - discAmount}";
                                                 tableSale.totalAmount =
                                                     _totalAmountController.text;
                                                 tablesSale.add(tableSale);
@@ -1616,13 +1685,12 @@ class _POSPageState extends State<POSPage> with TickerProviderStateMixin {
                                                   _discPercentageController
                                                       .clear();
                                                   _netAmountController.clear();
-                                                  _unitCostController.clear();
                                                   _unitPriceController.clear();
                                                   _bonusController.clear();
                                                   _vatPercentageController
                                                       .clear();
                                                   _vatAmountController.clear();
-                                                  _totalQtyController.clear();
+                                                  _totalQuantityController.clear();
                                                   _totalAmountController
                                                       .clear();
                                                   branchTextField
@@ -1718,6 +1786,14 @@ class _POSPageState extends State<POSPage> with TickerProviderStateMixin {
                                         )),
                                         DataColumn(
                                             label: Text(
+                                              "Total Qty",
+                                              style: TextStyle(
+                                                  color: bgColor,
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.bold),
+                                            )),
+                                        DataColumn(
+                                            label: Text(
                                           "Disc",
                                           style: TextStyle(
                                               color: bgColor,
@@ -1740,14 +1816,7 @@ class _POSPageState extends State<POSPage> with TickerProviderStateMixin {
                                               fontSize: 10,
                                               fontWeight: FontWeight.bold),
                                         )),
-                                        DataColumn(
-                                            label: Text(
-                                          "UC",
-                                          style: TextStyle(
-                                              color: bgColor,
-                                              fontSize: 10,
-                                              fontWeight: FontWeight.bold),
-                                        )),
+                                       
                                         DataColumn(
                                             label: Text(
                                           "Net",
@@ -1812,6 +1881,14 @@ class _POSPageState extends State<POSPage> with TickerProviderStateMixin {
                                                       fontWeight:
                                                           FontWeight.bold),
                                                 )),
+                                            DataCell(Text(
+                                              e.totalQty,
+                                              style: TextStyle(
+                                                  color: bgColor,
+                                                  fontSize: 10,
+                                                  fontWeight:
+                                                  FontWeight.bold),
+                                            )),
                                                 DataCell(Text(
                                                   e.disc,
                                                   style: TextStyle(
@@ -1836,14 +1913,7 @@ class _POSPageState extends State<POSPage> with TickerProviderStateMixin {
                                                       fontWeight:
                                                           FontWeight.bold),
                                                 )),
-                                                DataCell(Text(
-                                                  e.unitCost,
-                                                  style: TextStyle(
-                                                      color: bgColor,
-                                                      fontSize: 10,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                )),
+                                               
                                                 DataCell(Text(
                                                   e.netAmount,
                                                   style: TextStyle(
@@ -1877,6 +1947,1552 @@ class _POSPageState extends State<POSPage> with TickerProviderStateMixin {
                                                           FontWeight.bold),
                                                 )),
                                               ]))
+                                          .toList(),
+                                    ),
+                                  ),
+                                ),
+                              ),
+
+                            ],
+                          ),
+                        )),
+                    SizedBox(
+                      width: 15,
+                    ),
+                    Expanded(
+                        flex: 3,
+                        child: Padding(
+                          padding:
+                              const EdgeInsets.only(right: 15.0, left: 3.0),
+                          child: Container(
+                            height: MediaQuery.of(context).size.height,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8.0),
+                              color: Colors.white,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.blueGrey.withOpacity(0.6),
+                                  blurRadius: 4,
+                                  offset: Offset(4, 8), // Shadow position
+                                ),
+                              ],
+                            ),
+                              child: Padding(
+                                padding: const EdgeInsets.only(top:17.0, left:8.0, right: 8.0),
+                                child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children:[
+                                        Text("Subtotal", style: TextStyle(color:bgColor,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                            )),
+                                        Text("Ksh200.00", style: TextStyle(color:bgColor,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                        )),
+                                      ]
+                                    ),
+                                    SizedBox(height:15.0),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 8.0, right: 8.0),
+                                      child: Divider(),
+                                    ),
+                                    SizedBox(height:10.0),
+                                    Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children:[
+                                          Text("Discounts", style: TextStyle(color:bgColor,
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
+                                          )),
+                                          Text("Ksh10.00", style: TextStyle(color:bgColor,
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
+                                          )),
+                                        ]
+                                    ),
+                                    SizedBox(height:15.0),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 8.0, right: 8.0),
+                                      child: Divider(),
+                                    ),
+                                    SizedBox(height:10.0),
+                                    Column(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children:[
+                                              Text("Others", style: TextStyle(color:bgColor,
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.bold,
+                                              )),
+                                              Padding(
+                                                padding: const EdgeInsets.only(right:28.0),
+                                                child: Text("~", style: TextStyle(color:bgColor,
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.bold,
+                                                )),
+                                              ),
+                                            ]
+                                        ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children:[
+                                                Text("VAT", style: TextStyle(color:Colors.red,
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.bold,
+                                                )),
+                                                Text("--------------", style: TextStyle(color:Colors.grey,
+                                                  fontSize: 8,
+                                                  fontWeight: FontWeight.bold,
+                                                )),
+                                                Padding(
+                                                  padding: const EdgeInsets.only(right:28.0),
+                                                  child: Text("Ksh4.0", style: TextStyle(color:bgColor,
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.bold,
+                                                  )),
+                                                ),
+                                              ]
+                                        ),
+                                          ),
+
+                                      ],
+                                    ),
+                                    SizedBox(height:15.0),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 8.0, right: 8.0),
+                                      child: Divider(),
+                                    ),
+                                    SizedBox(height:10.0),
+                                    Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children:[
+                                          Text("TOTAL", style: TextStyle(color: Colors.red,
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
+                                          )),
+                                          Text("Ksh200.00", style: TextStyle(color:bgColor,
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                          )),
+                                        ]
+                                    ),
+                                    SizedBox(height:15.0),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 8.0, right: 8.0),
+                                      child: Divider(),
+                                    ),
+                                    SizedBox(height:10),
+                                    Container(
+                                        height:40.0,
+                                        width:MediaQuery.of(context).size.width,
+                                        decoration: BoxDecoration(
+                                          color: primaryColor,
+                                          borderRadius:  BorderRadius.circular(5.0),
+                                        ),
+                                        child: Center(child: Text("Complete Sale", style: TextStyle(color: Colors.white))),
+                                    ),
+                                    SizedBox(height:15),
+                                    Center(
+                                      child: Text("A receipt will be generated and other details saved",
+                                          style: TextStyle(color: Colors.blueGrey, fontSize: 10)
+                                      )
+                                    )
+                                  ]
+                                ),
+                              ),
+                          ),
+                        ))
+                  ],
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                        flex: 6,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8.0),
+                            color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.blueGrey.withOpacity(0.6),
+                                blurRadius: 2,
+                                offset: Offset(4, 8), // Shadow position
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            children: [
+                              Expanded(
+                                child: Container(
+                                    child: SingleChildScrollView(
+                                      child: Column(
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Flexible(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                                  children: [
+                                                    Material(
+                                                        child: Text(
+                                                          "Customer",
+                                                          style: TextStyle(
+                                                              color: bgColor,
+                                                              fontSize: 8,
+                                                              fontWeight:
+                                                              FontWeight.bold),
+                                                        )),
+                                                    SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                    Material(
+                                                      child: Container(
+                                                        width: 240,
+                                                        height: 40,
+                                                        child: searchTextField,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Flexible(
+                                                child: Column(
+                                                  children: [
+                                                    Material(
+                                                        child: Text(
+                                                          "Credit limit",
+                                                          style: TextStyle(
+                                                              color: bgColor,
+                                                              fontSize: 8,
+                                                              fontWeight:
+                                                              FontWeight.bold),
+                                                        )),
+                                                    SizedBox(
+                                                      height: 15,
+                                                    ),
+                                                    Material(
+                                                        child: balanceValue == true
+                                                            ? Text(
+                                                          "Ksh ${CustomersViewModel.customers[0].creditLimit}",
+                                                          style: TextStyle(
+                                                              color:
+                                                              Colors.red,
+                                                              fontSize: 8,
+                                                              fontWeight:
+                                                              FontWeight
+                                                                  .bold),
+                                                        )
+                                                            : Text(
+                                                          "Ksh 0.0",
+                                                          style: TextStyle(
+                                                              color:
+                                                              Colors.red,
+                                                              fontSize: 8,
+                                                              fontWeight:
+                                                              FontWeight
+                                                                  .bold),
+                                                        )),
+                                                    SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Flexible(
+                                                child: Padding(
+                                                  padding: const EdgeInsets.only(
+                                                      right: 15.0),
+                                                  child: Column(
+                                                    children: [
+                                                      Material(
+                                                          child: Text(
+                                                            "Balance",
+                                                            style: TextStyle(
+                                                                color: bgColor,
+                                                                fontSize: 8,
+                                                                fontWeight:
+                                                                FontWeight.bold),
+                                                          )),
+                                                      SizedBox(
+                                                        height: 15,
+                                                      ),
+                                                      Material(
+                                                          child: balanceValue ==
+                                                              true
+                                                              ? Text(
+                                                            "Ksh ${CustomersViewModel.customers[0].balance}",
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .red,
+                                                                fontSize: 8,
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                          )
+                                                              : Text(
+                                                            "Ksh 0.0",
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .red,
+                                                                fontSize: 8,
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                          )),
+                                                      SizedBox(
+                                                        height: 5,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(
+                                            height: 10.0,
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 12.0, right: 12.0),
+                                            child: Divider(),
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Flexible(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                                  children: [
+                                                    Material(
+                                                        child: Text(
+                                                          "Branch",
+                                                          style: TextStyle(
+                                                              color: bgColor,
+                                                              fontSize: 8,
+                                                              fontWeight:
+                                                              FontWeight.bold),
+                                                        )),
+                                                    SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                    Material(
+                                                      child: Container(
+                                                        width: 240,
+                                                        height: 48,
+                                                        child: branchTextField,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Flexible(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                                  children: [
+                                                    Material(
+                                                        child: Text(
+                                                          "Item",
+                                                          style: TextStyle(
+                                                              color: bgColor,
+                                                              fontSize: 8,
+                                                              fontWeight:
+                                                              FontWeight.bold),
+                                                        )),
+                                                    SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                    Material(
+                                                      child: Container(
+                                                        width: 240,
+                                                        height: 48,
+                                                        child: itemTextField,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Flexible(
+                                                child: Column(
+                                                  children: [
+                                                    Padding(
+                                                      padding:
+                                                      const EdgeInsets.only(
+                                                          left: 12.0),
+                                                      child: Material(
+                                                          child: Text(
+                                                            "Stock",
+                                                            style: TextStyle(
+                                                                color: bgColor,
+                                                                fontSize: 8,
+                                                                fontWeight:
+                                                                FontWeight.bold),
+                                                          )),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 15,
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                      const EdgeInsets.only(
+                                                          left: 12.0),
+                                                      child: Material(
+                                                          child: itemValue ==
+                                                              true &&
+                                                              ItemsViewModel
+                                                                  .items[0]
+                                                                  .branch ==
+                                                                  BranchesViewModel
+                                                                      .branches[
+                                                                  0]
+                                                                      .id
+                                                              ? Text(
+                                                            "${ItemsViewModel.items[0].item.balance.toString()}",
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .red,
+                                                                fontSize: 8,
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                          )
+                                                              : Text(
+                                                            "stock",
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .red,
+                                                                fontSize: 8,
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                          )),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Flexible(
+                                                child: Column(
+                                                  children: [
+                                                    Padding(
+                                                      padding:
+                                                      const EdgeInsets.only(
+                                                          left: 12.0),
+                                                      child: Material(
+                                                          child: Text(
+                                                            "Min price",
+                                                            style: TextStyle(
+                                                                color: bgColor,
+                                                                fontSize: 8,
+                                                                fontWeight:
+                                                                FontWeight.bold),
+                                                          )),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 15,
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                      const EdgeInsets.only(
+                                                          left: 12.0),
+                                                      child: Material(
+                                                          child: itemValue == true
+                                                              ? Text(
+                                                            "Ksh ${ItemsViewModel.items[0].item.minimumPrice}",
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .red,
+                                                                fontSize: 8,
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                          )
+                                                              : Text(
+                                                            "Ksh 0.0",
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .red,
+                                                                fontSize: 8,
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                          )),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Flexible(
+                                                child: Padding(
+                                                  padding: const EdgeInsets.only(
+                                                      right: 15.0),
+                                                  child: Column(
+                                                    children: [
+                                                      Padding(
+                                                        padding:
+                                                        const EdgeInsets.only(
+                                                          left: 12.0,
+                                                        ),
+                                                        child: Material(
+                                                            child: Text(
+                                                              "Max price",
+                                                              style: TextStyle(
+                                                                  color: bgColor,
+                                                                  fontSize: 8,
+                                                                  fontWeight:
+                                                                  FontWeight.bold),
+                                                            )),
+                                                      ),
+                                                      SizedBox(
+                                                        height: 15,
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                        const EdgeInsets.only(
+                                                            left: 12.0),
+                                                        child: Material(
+                                                            child: itemValue == true
+                                                                ? Text(
+                                                              "Ksh ${ItemsViewModel.items[0].item.maximumPrice}",
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .red,
+                                                                  fontSize: 8,
+                                                                  fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                            )
+                                                                : Text(
+                                                              "Ksh 0.0",
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .red,
+                                                                  fontSize: 8,
+                                                                  fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                            )),
+                                                      ),
+                                                      SizedBox(
+                                                        height: 5,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 12.0, right: 12.0),
+                                            child: Divider(),
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Flexible(
+                                                child: Column(
+                                                  children: [
+                                                    Padding(
+                                                      padding:
+                                                      const EdgeInsets.only(
+                                                          left: 12.0),
+                                                      child: Material(
+                                                          child: Text(
+                                                            "Sales item",
+                                                            style: TextStyle(
+                                                                color: bgColor,
+                                                                fontSize: 12,
+                                                                fontWeight:
+                                                                FontWeight.bold),
+                                                          )),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 15,
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                      const EdgeInsets.only(
+                                                          left: 12.0),
+                                                      child: Material(
+                                                          child: itemValue == true
+                                                              ? Text(
+                                                            "${ItemsViewModel.items[0].item.name}",
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .red,
+                                                                fontSize: 8,
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                          )
+                                                              : Text(
+                                                            "Item",
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .red,
+                                                                fontSize: 12,
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                          )),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Flexible(
+                                                child: Column(
+                                                  children: [
+                                                    Material(
+                                                        child: Text(
+                                                          "Quantity",
+                                                          style: TextStyle(
+                                                              color: bgColor,
+                                                              fontSize: 8,
+                                                              fontWeight:
+                                                              FontWeight.bold),
+                                                        )),
+                                                    SizedBox(
+                                                      height: 15,
+                                                    ),
+                                                    Material(
+                                                      child: Container(
+                                                        width: 48,
+                                                        height: 48,
+                                                        child: TextField(
+                                                          controller:
+                                                          _quantityController,
+                                                          keyboardType:
+                                                          TextInputType.number,
+                                                          inputFormatters: [
+                                                            FilteringTextInputFormatter
+                                                                .digitsOnly,
+                                                          ],
+                                                          decoration:
+                                                          InputDecoration(
+                                                            //  labelText: "Email Address",
+                                                              hintText: "  0",
+                                                              hintStyle:
+                                                              TextStyle(
+                                                                fontSize: 12,
+                                                              ),
+                                                              focusedBorder: OutlineInputBorder(
+                                                                  borderSide:
+                                                                  const BorderSide(
+                                                                      color:
+                                                                      primaryColor,
+                                                                      width:
+                                                                      0.4),
+                                                                  borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                      5)),
+                                                              enabledBorder: OutlineInputBorder(
+                                                                  borderSide: const BorderSide(
+                                                                      color: Colors
+                                                                          .grey,
+                                                                      width:
+                                                                      0.4),
+                                                                  borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                      5))),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+
+                                              Flexible(
+                                                child: Column(
+                                                  children: [
+                                                    Material(
+                                                        child: Text(
+                                                          "Unit price",
+                                                          style: TextStyle(
+                                                              color: bgColor,
+                                                              fontSize: 8,
+                                                              fontWeight:
+                                                              FontWeight.bold),
+                                                        )),
+                                                    SizedBox(
+                                                      height: 15,
+                                                    ),
+                                                    Material(
+                                                      child: Container(
+                                                        width: 48,
+                                                        height: 48,
+                                                        child: TextField(
+                                                          controller:
+                                                          _unitPriceController,
+                                                          keyboardType:
+                                                          TextInputType.number,
+                                                          inputFormatters: [
+                                                            FilteringTextInputFormatter
+                                                                .digitsOnly,
+                                                          ],
+                                                          decoration:
+                                                          InputDecoration(
+                                                            //  labelText: "Email Address",
+                                                              hintText: "  0.0",
+                                                              hintStyle:
+                                                              TextStyle(
+                                                                fontSize: 12,
+                                                              ),
+                                                              focusedBorder: OutlineInputBorder(
+                                                                  borderSide:
+                                                                  const BorderSide(
+                                                                      color:
+                                                                      primaryColor,
+                                                                      width:
+                                                                      0.4),
+                                                                  borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                      5)),
+                                                              enabledBorder: OutlineInputBorder(
+                                                                  borderSide: const BorderSide(
+                                                                      color: Colors
+                                                                          .grey,
+                                                                      width:
+                                                                      0.4),
+                                                                  borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                      5))),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Flexible(
+                                                child: Column(
+                                                  children: [
+                                                    Material(
+                                                        child: Text(
+                                                          "Bonus",
+                                                          style: TextStyle(
+                                                              color: bgColor,
+                                                              fontSize: 8,
+                                                              fontWeight:
+                                                              FontWeight.bold),
+                                                        )),
+                                                    SizedBox(
+                                                      height: 15,
+                                                    ),
+                                                    Material(
+                                                      child: Container(
+                                                        width: 48,
+                                                        height: 48,
+                                                        child: TextField(
+                                                          controller:
+                                                          _bonusController,
+                                                          keyboardType:
+                                                          TextInputType.number,
+                                                          inputFormatters: [
+                                                            FilteringTextInputFormatter
+                                                                .digitsOnly,
+                                                          ],
+                                                          decoration:
+                                                          InputDecoration(
+                                                            //  labelText: "Email Address",
+                                                              hintText: "  0",
+                                                              hintStyle:
+                                                              TextStyle(
+                                                                fontSize: 12,
+                                                              ),
+                                                              focusedBorder: OutlineInputBorder(
+                                                                  borderSide:
+                                                                  const BorderSide(
+                                                                      color:
+                                                                      primaryColor,
+                                                                      width:
+                                                                      0.4),
+                                                                  borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                      5)),
+                                                              enabledBorder: OutlineInputBorder(
+                                                                  borderSide: const BorderSide(
+                                                                      color: Colors
+                                                                          .grey,
+                                                                      width:
+                                                                      0.4),
+                                                                  borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                      5))),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Flexible(
+                                                child: Padding(
+                                                  padding: const EdgeInsets.only(
+                                                      right: 15.0),
+                                                  child: Column(
+                                                    children: [
+                                                      Material(
+                                                          child: Text(
+                                                            "Total Quantity",
+                                                            style: TextStyle(
+                                                                color: bgColor,
+                                                                fontSize: 8,
+                                                                fontWeight:
+                                                                FontWeight.bold),
+                                                          )),
+                                                      SizedBox(
+                                                        height: 30,
+                                                      ),
+                                                      Material(
+                                                        child:
+                                                        Text(
+                                                          "${qty+bns}",
+                                                          style: TextStyle(
+                                                            color: primaryColor,
+                                                            fontSize: 18.0,
+                                                          ),
+
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                        height: 5,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Flexible(
+                                                child: Column(
+                                                  children: [
+                                                    Material(
+                                                        child: Text(
+                                                          "Disc percentage",
+                                                          style: TextStyle(
+                                                              color: bgColor,
+                                                              fontSize: 8,
+                                                              fontWeight:
+                                                              FontWeight.bold),
+                                                        )),
+                                                    SizedBox(
+                                                      height: 15,
+                                                    ),
+                                                    Material(
+                                                      child: Container(
+                                                        width: 48,
+                                                        height: 48,
+                                                        child: TextField(
+                                                          controller:
+                                                          _discPercentageController,
+                                                          keyboardType:
+                                                          TextInputType.number,
+                                                          inputFormatters: [
+                                                            FilteringTextInputFormatter
+                                                                .digitsOnly,
+                                                          ],
+                                                          decoration:
+                                                          InputDecoration(
+                                                            //  labelText: "Email Address",
+                                                              hintText: "  0.0",
+                                                              hintStyle:
+                                                              TextStyle(
+                                                                fontSize: 12,
+                                                              ),
+                                                              focusedBorder: OutlineInputBorder(
+                                                                  borderSide:
+                                                                  const BorderSide(
+                                                                      color:
+                                                                      primaryColor,
+                                                                      width:
+                                                                      0.4),
+                                                                  borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                      5)),
+                                                              enabledBorder: OutlineInputBorder(
+                                                                  borderSide: const BorderSide(
+                                                                      color: Colors
+                                                                          .grey,
+                                                                      width:
+                                                                      0.4),
+                                                                  borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                      5))),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Flexible(
+                                                child: Column(
+                                                  children: [
+                                                    Material(
+                                                        child: Text(
+                                                          "Disc amount",
+                                                          style: TextStyle(
+                                                              color: bgColor,
+                                                              fontSize: 8,
+                                                              fontWeight:
+                                                              FontWeight.bold),
+                                                        )),
+                                                    SizedBox(
+                                                      height: 15,
+                                                    ),
+                                                    Material(
+                                                      child: Container(
+                                                        width: 48,
+                                                        height: 48,
+                                                        child: TextField(
+                                                          controller:
+                                                          _discAmountController,
+                                                          keyboardType:
+                                                          TextInputType.number,
+                                                          inputFormatters: [
+                                                            FilteringTextInputFormatter
+                                                                .digitsOnly,
+                                                          ],
+                                                          decoration:
+                                                          InputDecoration(
+                                                            //  labelText: "Email Address",
+                                                              hintText: "  0.0",
+                                                              hintStyle:
+                                                              TextStyle(
+                                                                fontSize: 12,
+                                                              ),
+                                                              focusedBorder: OutlineInputBorder(
+                                                                  borderSide:
+                                                                  const BorderSide(
+                                                                      color:
+                                                                      primaryColor,
+                                                                      width:
+                                                                      0.4),
+                                                                  borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                      5)),
+                                                              enabledBorder: OutlineInputBorder(
+                                                                  borderSide: const BorderSide(
+                                                                      color: Colors
+                                                                          .grey,
+                                                                      width:
+                                                                      0.4),
+                                                                  borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                      5))),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Flexible(
+                                                child: Column(
+                                                  children: [
+                                                    Material(
+                                                        child: Text(
+                                                          "VAT amount",
+                                                          style: TextStyle(
+                                                              color: bgColor,
+                                                              fontSize: 8,
+                                                              fontWeight:
+                                                              FontWeight.bold),
+                                                        )),
+                                                    SizedBox(
+                                                      height: 15,
+                                                    ),
+                                                    Material(
+                                                      child: Container(
+                                                        width: 48,
+                                                        height: 48,
+                                                        child: TextField(
+                                                          controller:
+                                                          _vatAmountController,
+                                                          keyboardType:
+                                                          TextInputType.number,
+                                                          inputFormatters: [
+                                                            FilteringTextInputFormatter
+                                                                .digitsOnly,
+                                                          ],
+                                                          decoration:
+                                                          InputDecoration(
+                                                            //  labelText: "Email Address",
+                                                              hintText: "  0.0",
+                                                              hintStyle:
+                                                              TextStyle(
+                                                                fontSize: 12,
+                                                              ),
+                                                              focusedBorder: OutlineInputBorder(
+                                                                  borderSide:
+                                                                  const BorderSide(
+                                                                      color:
+                                                                      primaryColor,
+                                                                      width:
+                                                                      0.4),
+                                                                  borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                      5)),
+                                                              enabledBorder: OutlineInputBorder(
+                                                                  borderSide: const BorderSide(
+                                                                      color: Colors
+                                                                          .grey,
+                                                                      width:
+                                                                      0.4),
+                                                                  borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                      5))),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Flexible(
+                                                child: Column(
+                                                  children: [
+                                                    Material(
+                                                        child: Text(
+                                                          "VAT percentage",
+                                                          style: TextStyle(
+                                                              color: bgColor,
+                                                              fontSize: 8,
+                                                              fontWeight:
+                                                              FontWeight.bold),
+                                                        )),
+                                                    SizedBox(
+                                                      height: 15,
+                                                    ),
+                                                    Material(
+                                                      child: Container(
+                                                        width: 48,
+                                                        height: 48,
+                                                        child: TextField(
+                                                          controller:
+                                                          _vatPercentageController,
+                                                          keyboardType:
+                                                          TextInputType.number,
+                                                          inputFormatters: [
+                                                            FilteringTextInputFormatter
+                                                                .digitsOnly,
+                                                          ],
+                                                          decoration:
+                                                          InputDecoration(
+                                                            //  labelText: "Email Address",
+                                                              hintText: "  0.0",
+                                                              hintStyle:
+                                                              TextStyle(
+                                                                fontSize: 12,
+                                                              ),
+                                                              focusedBorder: OutlineInputBorder(
+                                                                  borderSide:
+                                                                  const BorderSide(
+                                                                      color:
+                                                                      primaryColor,
+                                                                      width:
+                                                                      0.4),
+                                                                  borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                      5)),
+                                                              enabledBorder: OutlineInputBorder(
+                                                                  borderSide: const BorderSide(
+                                                                      color: Colors
+                                                                          .grey,
+                                                                      width:
+                                                                      0.4),
+                                                                  borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                      5))),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Flexible(
+                                                child: Column(
+                                                  children: [
+                                                    Material(
+                                                        child: Text(
+                                                          "Net amount",
+                                                          style: TextStyle(
+                                                              color: bgColor,
+                                                              fontSize: 8,
+                                                              fontWeight:
+                                                              FontWeight.bold),
+                                                        )),
+                                                    SizedBox(
+                                                      height: 15,
+                                                    ),
+                                                    Material(
+                                                      child: Container(
+                                                        width: 48,
+                                                        height: 48,
+                                                        child: TextField(
+                                                          controller:
+                                                          _netAmountController,
+                                                          keyboardType:
+                                                          TextInputType.number,
+                                                          inputFormatters: [
+                                                            FilteringTextInputFormatter
+                                                                .digitsOnly,
+                                                          ],
+                                                          decoration:
+                                                          InputDecoration(
+                                                              hintText: "  0.0",
+                                                              hintStyle:
+                                                              TextStyle(
+                                                                fontSize: 12,
+                                                              ),
+                                                              focusedBorder: OutlineInputBorder(
+                                                                  borderSide:
+                                                                  const BorderSide(
+                                                                      color:
+                                                                      primaryColor,
+                                                                      width:
+                                                                      0.4),
+                                                                  borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                      5)),
+                                                              enabledBorder: OutlineInputBorder(
+                                                                  borderSide: const BorderSide(
+                                                                      color: Colors
+                                                                          .grey,
+                                                                      width:
+                                                                      0.4),
+                                                                  borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                      5))),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Flexible(
+                                                child: Padding(
+                                                  padding: const EdgeInsets.only(
+                                                      right: 15.0),
+                                                  child: Column(
+                                                    children: [
+                                                      Material(
+                                                          child: Text(
+                                                            "Total Amount",
+                                                            style: TextStyle(
+                                                                color: bgColor,
+                                                                fontSize: 8,
+                                                                fontWeight:
+                                                                FontWeight.bold),
+                                                          )),
+                                                      SizedBox(
+                                                        height: 15,
+                                                      ),
+                                                      Material(
+                                                        child:
+                                                        Text(
+                                                          "${qty+bns}",
+                                                          style: TextStyle(
+                                                            color: primaryColor,
+                                                            fontSize: 18.0,
+                                                          ),
+
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                        height: 5,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          Column(
+                                            children: [
+                                              Material(
+                                                child: InkWell(
+                                                  onTap: () {
+                                                    var tableSale = new TableSale();
+                                                    tableSale.item = itemTextField
+                                                        .textField.controller.text;
+                                                    tableSale.bonus =
+                                                        _bonusController.text;
+                                                    tableSale.totalQty =
+                                                        _totalQuantityController.text;
+                                                    tableSale.quantity =
+                                                        _quantityController.text;
+                                                    tableSale.netAmount =
+                                                        _netAmountController.text;
+                                                    tableSale.unitPrice =
+                                                        _unitPriceController.text;
+                                                    tableSale.vatAmount =
+                                                        _vatAmountController.text;
+                                                    tableSale.vatPer =
+                                                        _vatPercentageController
+                                                            .text;
+                                                    tableSale.disc =
+                                                        _discAmountController.text;
+                                                    tableSale.discPer =
+                                                        _discPercentageController
+                                                            .text;
+                                                    tableSale.netAmount =
+                                                        _netAmountController.text;
+                                                    tableSale.totalAmount =
+                                                        _totalAmountController.text;
+                                                    tablesSale.add(tableSale);
+                                                    print(tableSale.quantity);
+                                                    // if (_quantityController.value.text.isNotEmpty &&
+                                                    //     _discAmountController
+                                                    //         .value
+                                                    //         .text
+                                                    //         .isNotEmpty &&
+                                                    //     _discPercentageController
+                                                    //         .value
+                                                    //         .text
+                                                    //         .isNotEmpty &&
+                                                    //     _netAmountController.value
+                                                    //         .text.isNotEmpty &&
+                                                    //     _unitCostController.value
+                                                    //         .text.isNotEmpty &&
+                                                    //     _unitPriceController.value
+                                                    //         .text.isNotEmpty &&
+                                                    //     _bonusController.value
+                                                    //         .text.isNotEmpty) {
+                                                    setState(() {
+                                                      _quantityController.clear();
+                                                      _discAmountController.clear();
+                                                      _discPercentageController
+                                                          .clear();
+                                                      _netAmountController.clear();
+                                                      _unitPriceController.clear();
+                                                      _bonusController.clear();
+                                                      _vatPercentageController
+                                                          .clear();
+                                                      _vatAmountController.clear();
+                                                      _totalQuantityController.clear();
+                                                      _totalAmountController
+                                                          .clear();
+                                                      branchTextField
+                                                          .textField.controller
+                                                          .clear();
+                                                      itemTextField
+                                                          .textField.controller
+                                                          .clear();
+                                                      searchTextField
+                                                          .textField.controller
+                                                          .clear();
+                                                    });
+                                                    // }else{
+                                                    //   null;
+                                                    // }
+                                                  },
+                                                  child: Container(
+                                                      width: MediaQuery.of(context)
+                                                          .size
+                                                          .width,
+                                                      height: 45,
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                        BorderRadius.circular(
+                                                            5.0),
+                                                        color: primaryColor,
+                                                      ),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                        children: [
+                                                          Icon(
+                                                            Icons.add,
+                                                            color: Colors.white,
+                                                          ),
+                                                          Text("Add Item",
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .white)),
+                                                        ],
+                                                      )),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: 5,
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    )),
+                              ),
+                              //ToDo: Set state  to show the below widget
+                              // rowsItem.length >0 ?
+                              Expanded(
+                                child: SingleChildScrollView(
+                                  child: SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: DataTable(
+                                      sortAscending: sort,
+                                      sortColumnIndex: 0,
+                                      columns: [
+                                        DataColumn(
+                                            label: Text(
+                                              "Item",
+                                              style: TextStyle(
+                                                  color: bgColor,
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            onSort: (columnIndex, ascending) {
+                                              setState(() {
+                                                sort = !sort;
+                                              });
+                                              onSortColumn(columnIndex, ascending);
+                                            }),
+                                        DataColumn(
+                                            label: Text(
+                                              "Quantity",
+                                              style: TextStyle(
+                                                  color: bgColor,
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.bold),
+                                            )),
+                                        DataColumn(
+                                            label: Text(
+                                              "Bonus",
+                                              style: TextStyle(
+                                                  color: bgColor,
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.bold),
+                                            )),
+                                        DataColumn(
+                                            label: Text(
+                                              "Total Qty",
+                                              style: TextStyle(
+                                                  color: bgColor,
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.bold),
+                                            )),
+                                        DataColumn(
+                                            label: Text(
+                                              "Disc",
+                                              style: TextStyle(
+                                                  color: bgColor,
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.bold),
+                                            )),
+                                        DataColumn(
+                                            label: Text(
+                                              "Disc %",
+                                              style: TextStyle(
+                                                  color: bgColor,
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.bold),
+                                            )),
+                                        DataColumn(
+                                            label: Text(
+                                              "UP",
+                                              style: TextStyle(
+                                                  color: bgColor,
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.bold),
+                                            )),
+
+                                        DataColumn(
+                                            label: Text(
+                                              "Net",
+                                              style: TextStyle(
+                                                  color: bgColor,
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.bold),
+                                            )),
+                                        DataColumn(
+                                            label: Text(
+                                              "VAT",
+                                              style: TextStyle(
+                                                  color: bgColor,
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.bold),
+                                            )),
+                                        DataColumn(
+                                            label: Text(
+                                              "VAT %",
+                                              style: TextStyle(
+                                                  color: bgColor,
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.bold),
+                                            )),
+                                        DataColumn(
+                                            label: Text(
+                                              "Total",
+                                              style: TextStyle(
+                                                  color: bgColor,
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.bold),
+                                            )),
+                                      ],
+                                      rows: tablesSale
+                                          .map((e) => DataRow(
+                                          selected: selectedSales.contains(e),
+                                          onSelectChanged: (b) {
+                                            onSelectedRow(b, e);
+                                          },
+                                          cells: [
+                                            DataCell(Text(
+                                              e.item,
+                                              style: TextStyle(
+                                                  color: bgColor,
+                                                  fontSize: 10,
+                                                  fontWeight:
+                                                  FontWeight.bold),
+                                            )),
+                                            DataCell(Text(
+                                              e.quantity,
+                                              style: TextStyle(
+                                                  color: bgColor,
+                                                  fontSize: 10,
+                                                  fontWeight:
+                                                  FontWeight.bold),
+                                            )),
+                                            DataCell(Text(
+                                              e.bonus,
+                                              style: TextStyle(
+                                                  color: bgColor,
+                                                  fontSize: 10,
+                                                  fontWeight:
+                                                  FontWeight.bold),
+                                            )),
+                                            DataCell(Text(
+                                              e.totalQty,
+                                              style: TextStyle(
+                                                  color: bgColor,
+                                                  fontSize: 10,
+                                                  fontWeight:
+                                                  FontWeight.bold),
+                                            )),
+                                            DataCell(Text(
+                                              e.disc,
+                                              style: TextStyle(
+                                                  color: bgColor,
+                                                  fontSize: 10,
+                                                  fontWeight:
+                                                  FontWeight.bold),
+                                            )),
+                                            DataCell(Text(
+                                              e.discPer,
+                                              style: TextStyle(
+                                                  color: bgColor,
+                                                  fontSize: 10,
+                                                  fontWeight:
+                                                  FontWeight.bold),
+                                            )),
+                                            DataCell(Text(
+                                              e.unitPrice,
+                                              style: TextStyle(
+                                                  color: bgColor,
+                                                  fontSize: 10,
+                                                  fontWeight:
+                                                  FontWeight.bold),
+                                            )),
+
+                                            DataCell(Text(
+                                              e.netAmount,
+                                              style: TextStyle(
+                                                  color: bgColor,
+                                                  fontSize: 10,
+                                                  fontWeight:
+                                                  FontWeight.bold),
+                                            )),
+                                            DataCell(Text(
+                                              e.vatAmount,
+                                              style: TextStyle(
+                                                  color: bgColor,
+                                                  fontSize: 10,
+                                                  fontWeight:
+                                                  FontWeight.bold),
+                                            )),
+                                            DataCell(Text(
+                                              e.vatPer,
+                                              style: TextStyle(
+                                                  color: bgColor,
+                                                  fontSize: 10,
+                                                  fontWeight:
+                                                  FontWeight.bold),
+                                            )),
+                                            DataCell(Text(
+                                              e.totalAmount,
+                                              style: TextStyle(
+                                                  color: bgColor,
+                                                  fontSize: 10,
+                                                  fontWeight:
+                                                  FontWeight.bold),
+                                            )),
+                                          ]))
                                           .toList(),
                                     ),
                                   ),
@@ -2012,7 +3628,7 @@ class _POSPageState extends State<POSPage> with TickerProviderStateMixin {
                         flex: 3,
                         child: Padding(
                           padding:
-                              const EdgeInsets.only(right: 15.0, left: 3.0),
+                          const EdgeInsets.only(right: 15.0, left: 3.0),
                           child: Container(
                             height: MediaQuery.of(context).size.height,
                             decoration: BoxDecoration(
@@ -2026,28 +3642,141 @@ class _POSPageState extends State<POSPage> with TickerProviderStateMixin {
                                 ),
                               ],
                             ),
-                          ),
-                        ))
-                  ],
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                        flex: 5,
-                        child: Container(
-                          height: MediaQuery.of(context).size.height,
-                          color: Colors.red,
-                          child: Text("SALES RETURN"),
-                        )),
-                    Expanded(
-                        flex: 3,
-                        child: Padding(
-                          padding:
-                              const EdgeInsets.only(right: 15.0, left: 3.0),
-                          child: Container(
-                            height: MediaQuery.of(context).size.height,
-                            color: Colors.blue,
+                            child: Padding(
+                              padding: const EdgeInsets.only(top:17.0, left:8.0, right: 8.0),
+                              child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children:[
+                                          Text("Subtotal", style: TextStyle(color:bgColor,
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
+                                          )),
+                                          Text("Ksh200.00", style: TextStyle(color:bgColor,
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
+                                          )),
+                                        ]
+                                    ),
+                                    SizedBox(height:15.0),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 8.0, right: 8.0),
+                                      child: Divider(),
+                                    ),
+                                    SizedBox(height:10.0),
+                                    Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children:[
+                                          Text("Discounts", style: TextStyle(color:bgColor,
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
+                                          )),
+                                          Text("Ksh10.00", style: TextStyle(color:bgColor,
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
+                                          )),
+                                        ]
+                                    ),
+                                    SizedBox(height:15.0),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 8.0, right: 8.0),
+                                      child: Divider(),
+                                    ),
+                                    SizedBox(height:10.0),
+                                    Column(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children:[
+                                              Text("Others", style: TextStyle(color:bgColor,
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.bold,
+                                              )),
+                                              Padding(
+                                                padding: const EdgeInsets.only(right:28.0),
+                                                child: Text("~", style: TextStyle(color:bgColor,
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.bold,
+                                                )),
+                                              ),
+                                            ]
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children:[
+                                                Text("VAT", style: TextStyle(color:Colors.red,
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.bold,
+                                                )),
+                                                Text("--------------", style: TextStyle(color:Colors.grey,
+                                                  fontSize: 8,
+                                                  fontWeight: FontWeight.bold,
+                                                )),
+                                                Padding(
+                                                  padding: const EdgeInsets.only(right:28.0),
+                                                  child: Text("Ksh4.0", style: TextStyle(color:bgColor,
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.bold,
+                                                  )),
+                                                ),
+                                              ]
+                                          ),
+                                        ),
+
+                                      ],
+                                    ),
+                                    SizedBox(height:15.0),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 8.0, right: 8.0),
+                                      child: Divider(),
+                                    ),
+                                    SizedBox(height:10.0),
+                                    Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children:[
+                                          Text("TOTAL", style: TextStyle(color: Colors.red,
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
+                                          )),
+                                          Text("Ksh200.00", style: TextStyle(color:bgColor,
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                          )),
+                                        ]
+                                    ),
+                                    SizedBox(height:15.0),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 8.0, right: 8.0),
+                                      child: Divider(),
+                                    ),
+                                    SizedBox(height:10),
+                                    Container(
+                                      height:40.0,
+                                      width:MediaQuery.of(context).size.width,
+                                      decoration: BoxDecoration(
+                                        color: primaryColor,
+                                        borderRadius:  BorderRadius.circular(5.0),
+                                      ),
+                                      child: Center(child: Text("Complete Sale", style: TextStyle(color: Colors.white))),
+                                    ),
+                                    SizedBox(height:15),
+                                    Center(
+                                        child: Text("A receipt will be generated and other details saved",
+                                            style: TextStyle(color: Colors.blueGrey, fontSize: 10)
+                                        )
+                                    )
+                                  ]
+                              ),
+                            ),
                           ),
                         ))
                   ],
