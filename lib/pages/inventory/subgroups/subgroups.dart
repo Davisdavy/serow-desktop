@@ -609,7 +609,7 @@ String groupId;
                                                                                       return new DropdownMenuItem<String>(child: Padding(
                                                                                         padding: const EdgeInsets.all(8.0),
                                                                                         child: Text(
-                                                                                          item.quantity,
+                                                                                          item.name,
                                                                                           style: TextStyle(fontSize:
                                                                                           12,),
                                                                                         ),

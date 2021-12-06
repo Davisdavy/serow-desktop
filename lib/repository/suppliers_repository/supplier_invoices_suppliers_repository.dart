@@ -65,20 +65,59 @@ class SupplierInvoicesSupplierRepository implements SupplierInvoicesRepository {
   }
 
   @override
-  Future<SupplierInvoices> postSupplierInvoice(String supplier, String branch, String payment_date, String no_items, List<dynamic> supplier_invoices_items, BuildContext context) async{
-    List grnItemList = [];
-    supplier_invoices_items.map((item) => grnItemList.add(item.toJson())).toList();
-
-    Auth user = Provider.of<AuthProvider>(context,listen: false).auth;
-    var response = await http.post(Uri.parse('${AppUrl.supplier_invoices}'),headers: {
-      'Content-type': 'application/json',
-      'Accept': 'application/json',
-      "Authorization":  "Bearer ${user.accessToken.toString()}"
-    }, body: jsonEncode(<dynamic, dynamic>{
+  Future<SupplierInvoices> postSupplierInvoice(String supplier, String branch,
+      String purchaseOrderId, double tradeDiscPercentage, String receivedDate, double discountAmount,
+      double totalNet, double vatAmount, double totalAmount, String status,
+      String item, double itemQty,
+      double unitPrice, double bonus,
+      double itemTotalQty, String expiryDate, String batchNo, double itemDiscPercentage, double itemDiscAmount,
+      double itemNetAmount, double itemVATPercentage,
+      double itemVATAmount, double totalCost,
+      double itemTotalAmount, BuildContext context) async{
+    ;
+    List<Map<String, dynamic>>supplierInvoiceItemList = [
+      {
+        "item": item,
+        "quantity": itemQty,
+        "unit_cost": unitPrice,
+        "bonus": bonus,
+        "total_quantity": itemTotalQty,
+        'expiry_date':'2022-10-05',
+        'batch_number': batchNo,
+        "discount_percentage": itemDiscPercentage,
+        "discount_amount": itemDiscAmount,
+        "net_amount": itemNetAmount,
+        "vat_percentage": itemVATPercentage,
+        "vat_amount": itemVATAmount,
+        "total_amount": itemTotalAmount,
+      }
+    ];
+    var body = {
       'supplier': supplier,
-      "branch": branch,
-      'grn_items': grnItemList
-    }),);
+      'branch': branch,
+      'purchase_order': purchaseOrderId,
+      'trade_discount_percentage': tradeDiscPercentage,
+      'discount_amount': discountAmount,
+      'total_net': totalNet,
+      'received_date': receivedDate,
+      'vat_amount': vatAmount,
+      'status': 'posted',
+      'total_amount':totalAmount,
+
+      'supplier_invoice_items': supplierInvoiceItemList
+    };
+    print("Post: $body");
+    Auth user = Provider.of<AuthProvider>(context,listen: false).auth;
+    var response = await http.post(Uri.parse('${AppUrl.supplier_invoices}'),
+      headers: {
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+        'Charset': 'utf-8',
+        "Authorization": "Bearer ${user.accessToken.toString()}"
+      },
+      body: jsonEncode(body) ,
+    );
+
     print('Post status code: ${response.statusCode}');
     print('Post body: ${response.body}');
     // print('Post toJSON: ${br}');
@@ -90,4 +129,43 @@ class SupplierInvoicesSupplierRepository implements SupplierInvoicesRepository {
     // TODO: implement putPurchaseOrder
     throw UnimplementedError();
   }
+
+  @override
+  Future<SupplierInvoices> postNewSupplierInvoice(String supplier, String branch,
+      String purchaseOrderId, double tradeDiscPercentage, String receivedDate,
+      double discountAmount, double totalNet, double vatAmount,
+      double totalAmount, String status, List<Map<String, dynamic>> listItems,
+      BuildContext context) async{
+    var body = {
+      'supplier': supplier,
+      'branch': branch,
+      'purchase_order': purchaseOrderId,
+      'trade_discount_percentage': tradeDiscPercentage,
+      'discount_amount': discountAmount,
+      'total_net': totalNet,
+      'received_date': receivedDate,
+      'vat_amount': vatAmount,
+      'status': 'posted',
+      'total_amount':totalAmount,
+      'supplier_invoice_items': listItems
+    };
+    print("Post: $body");
+    Auth user = Provider.of<AuthProvider>(context,listen: false).auth;
+    var response = await http.post(Uri.parse('${AppUrl.supplier_invoices}'),
+      headers: {
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+        'Charset': 'utf-8',
+        "Authorization": "Bearer ${user.accessToken.toString()}"
+      },
+      body: jsonEncode(body) ,
+    );
+
+    print('Post status code: ${response.statusCode}');
+    print('Post body: ${response.body}');
+    // print('Post toJSON: ${br}');
+    return supplierInvoicesFromJson(response.body);
+  }
+
+
 }

@@ -14,12 +14,12 @@ class PurchaseOrdersDataSource extends  DataTableSource{
   //Dependency injection
   var  purchaseOrdersController = PurchaseOrdersController(PurchaseOrdersSupplierRepository());
   PurchaseOrdersDataSource({
-    @required List<Results> resultData,
+    @required List<PurchaseOrders> resultData,
     @required this.onRowSelect,
   })  : _resultData = resultData,
         assert(resultData != null);
 
-  final List<Results> _resultData;
+  final List<PurchaseOrders> _resultData;
   final OnRowSelect onRowSelect;
 
   int _selectedCount = 0;
@@ -45,7 +45,7 @@ class PurchaseOrdersDataSource extends  DataTableSource{
         DataCell(
             Builder(
                 builder: (newContext) {
-                  return FutureBuilder<List<Results>>(
+                  return FutureBuilder<List<PurchaseOrders>>(
                     future: purchaseOrdersController.fetchPurchaseOrderList(newContext),
                     builder: (context, snapshot){
                       return PopupMenuButton(

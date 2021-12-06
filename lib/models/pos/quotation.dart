@@ -1,180 +1,103 @@
 // To parse this JSON data, do
 //
-//     final purchaseOrders = purchaseOrdersFromJson(jsonString);
+//     final quotations = quotationsFromJson(jsonString);
 
 import 'dart:convert';
 
-PurchaseOrders purchaseOrdersFromJson(String str) => PurchaseOrders.fromJson(json.decode(str));
+Quotations quotationsFromJson(String str) => Quotations.fromJson(json.decode(str));
 
-String purchaseOrdersToJson(PurchaseOrders data) => json.encode(data.toJson());
+String quotationsToJson(Quotations data) => json.encode(data.toJson());
 
-class PurchaseOrders {
-  PurchaseOrders({
+class Quotations {
+  Quotations({
     this.id,
-    this.purchaseOrderItems,
-    this.supplier,
-    this.branch,
+    this.quotationItems,
     this.createdAt,
     this.modifiedAt,
     this.isActive,
     this.isDeleted,
     this.deletedAt,
     this.code,
-    this.tradeDiscountPercentage,
-    this.expectedDate,
+    this.discountPercentage,
     this.discountAmount,
     this.totalNet,
     this.vatAmount,
+    this.totalCost,
     this.totalAmount,
     this.noOfItems,
     this.notes,
-    this.purchaseStatus,
+    this.customer,
+    this.branch,
     this.company,
   });
 
   String id;
-  List<PurchaseOrderItem> purchaseOrderItems;
-  Supplier supplier;
-  Branch branch;
+  List<QuotationItem> quotationItems;
   DateTime createdAt;
   DateTime modifiedAt;
   bool isActive;
   bool isDeleted;
   dynamic deletedAt;
   String code;
-  double tradeDiscountPercentage;
-  DateTime expectedDate;
-  double discountAmount;
-  double totalNet;
+  int discountPercentage;
+  int discountAmount;
+  int totalNet;
   double vatAmount;
+  int totalCost;
   double totalAmount;
   int noOfItems;
   dynamic notes;
-  String purchaseStatus;
+  String customer;
+  String branch;
   String company;
 
-  factory PurchaseOrders.fromJson(Map<String, dynamic> json) => PurchaseOrders(
+  factory Quotations.fromJson(Map<String, dynamic> json) => Quotations(
     id: json["id"],
-    purchaseOrderItems: json['purchase_order_items'] != null ? new List<PurchaseOrderItem>.from(json["purchase_order_items"].map((x) => PurchaseOrderItem.fromJson(x))) : List<PurchaseOrderItem>(),
-    supplier: Supplier.fromJson(json["supplier"]),
-    branch: Branch.fromJson(json["branch"]),
+    quotationItems: List<QuotationItem>.from(json["quotation_items"].map((x) => QuotationItem.fromJson(x))),
     createdAt: DateTime.parse(json["created_at"]),
     modifiedAt: DateTime.parse(json["modified_at"]),
     isActive: json["is_active"],
     isDeleted: json["is_deleted"],
     deletedAt: json["deleted_at"],
     code: json["code"],
-    tradeDiscountPercentage: json["trade_discount_percentage"],
-    expectedDate: DateTime.parse(json["expected_date"]),
+    discountPercentage: json["discount_percentage"],
     discountAmount: json["discount_amount"],
     totalNet: json["total_net"],
     vatAmount: json["vat_amount"].toDouble(),
+    totalCost: json["total_cost"],
     totalAmount: json["total_amount"].toDouble(),
     noOfItems: json["no_of_items"],
     notes: json["notes"],
-    purchaseStatus: json["purchase_status"],
+    customer: json["customer"],
+    branch: json["branch"],
     company: json["company"],
   );
 
   Map<String, dynamic> toJson() => {
     "id": id,
-    "purchase_order_items": List<dynamic>.from(purchaseOrderItems.map((x) => x.toJson())),
-    "supplier": supplier.toJson(),
-    "branch": branch.toJson(),
+    "quotation_items": List<dynamic>.from(quotationItems.map((x) => x.toJson())),
     "created_at": createdAt.toIso8601String(),
     "modified_at": modifiedAt.toIso8601String(),
     "is_active": isActive,
     "is_deleted": isDeleted,
     "deleted_at": deletedAt,
     "code": code,
-    "trade_discount_percentage": tradeDiscountPercentage,
-    "expected_date": "${expectedDate.year.toString().padLeft(4, '0')}-${expectedDate.month.toString().padLeft(2, '0')}-${expectedDate.day.toString().padLeft(2, '0')}",
+    "discount_percentage": discountPercentage,
     "discount_amount": discountAmount,
     "total_net": totalNet,
     "vat_amount": vatAmount,
+    "total_cost": totalCost,
     "total_amount": totalAmount,
     "no_of_items": noOfItems,
     "notes": notes,
-    "purchase_status": purchaseStatus,
+    "customer": customer,
+    "branch": branch,
     "company": company,
   };
 }
 
-class Branch {
-  Branch({
-    this.id,
-    this.createdAt,
-    this.modifiedAt,
-    this.isActive,
-    this.isDeleted,
-    this.deletedAt,
-    this.name,
-    this.description,
-    this.email,
-    this.location,
-    this.phone,
-    this.isHead,
-    this.region,
-    this.costCentre,
-    this.company,
-  });
-
-  String id;
-  DateTime createdAt;
-  DateTime modifiedAt;
-  bool isActive;
-  bool isDeleted;
-  dynamic deletedAt;
-  String name;
-  String description;
-  String email;
-  String location;
-  String phone;
-  bool isHead;
-  dynamic region;
-  String costCentre;
-  String company;
-
-  factory Branch.fromJson(Map<String, dynamic> json) => Branch(
-    id: json["id"],
-    createdAt: DateTime.parse(json["created_at"]),
-    modifiedAt: DateTime.parse(json["modified_at"]),
-    isActive: json["is_active"],
-    isDeleted: json["is_deleted"],
-    deletedAt: json["deleted_at"],
-    name: json["name"],
-    description: json["description"],
-    email: json["email"],
-    location: json["location"],
-    phone: json["phone"],
-    isHead: json["is_head"],
-    region: json["region"],
-    costCentre: json["cost_centre"],
-    company: json["company"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "id": id,
-    "created_at": createdAt.toIso8601String(),
-    "modified_at": modifiedAt.toIso8601String(),
-    "is_active": isActive,
-    "is_deleted": isDeleted,
-    "deleted_at": deletedAt,
-    "name": name,
-    "description": description,
-    "email": email,
-    "location": location,
-    "phone": phone,
-    "is_head": isHead,
-    "region": region,
-    "cost_centre": costCentre,
-    "company": company,
-  };
-}
-
-class PurchaseOrderItem {
-  PurchaseOrderItem({
-
+class QuotationItem {
+  QuotationItem({
     this.id,
     this.item,
     this.createdAt,
@@ -192,9 +115,10 @@ class PurchaseOrderItem {
     this.vatPercentage,
     this.vatAmount,
     this.totalCost,
-    this.purchaseOrder,
+    this.totalAmount,
+    this.quotation,
     this.company,
-
+    this.branch,
   });
 
   String id;
@@ -204,20 +128,22 @@ class PurchaseOrderItem {
   bool isActive;
   bool isDeleted;
   dynamic deletedAt;
-  double quantity;
-  double unitCost;
-  double bonus;
-  double totalQuantity;
-  double discountPercentage;
-  double discountAmount;
-  double netAmount;
-  double vatPercentage;
-  double vatAmount;
-  double totalCost;
-  String purchaseOrder;
+  int quantity;
+  int unitCost;
+  int bonus;
+  int totalQuantity;
+  int discountPercentage;
+  int discountAmount;
+  int netAmount;
+  int vatPercentage;
+  int vatAmount;
+  int totalCost;
+  int totalAmount;
+  String quotation;
   String company;
+  dynamic branch;
 
-  factory PurchaseOrderItem.fromJson(Map<String, dynamic> json) => PurchaseOrderItem(
+  factory QuotationItem.fromJson(Map<String, dynamic> json) => QuotationItem(
     id: json["id"],
     item: Item.fromJson(json["item"]),
     createdAt: DateTime.parse(json["created_at"]),
@@ -233,10 +159,12 @@ class PurchaseOrderItem {
     discountAmount: json["discount_amount"],
     netAmount: json["net_amount"],
     vatPercentage: json["vat_percentage"],
-    vatAmount: json["vat_amount"].toDouble(),
-    totalCost: json["total_cost"].toDouble(),
-    purchaseOrder: json["purchase_order"],
+    vatAmount: json["vat_amount"],
+    totalCost: json["total_cost"],
+    totalAmount: json["total_amount"],
+    quotation: json["quotation"],
     company: json["company"],
+    branch: json["branch"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -257,8 +185,10 @@ class PurchaseOrderItem {
     "vat_percentage": vatPercentage,
     "vat_amount": vatAmount,
     "total_cost": totalCost,
-    "purchase_order": purchaseOrder,
+    "total_amount": totalAmount,
+    "quotation": quotation,
     "company": company,
+    "branch": branch,
   };
 }
 
@@ -314,7 +244,7 @@ class Item {
   Category group;
   Category subgroup;
   Category category;
-  PostingCategory brand;
+  Brand brand;
   Category itemForm;
   Category strength;
   dynamic pricing;
@@ -327,32 +257,32 @@ class Item {
   String code;
   String name;
   String slug;
-  double costPrice;
+  int costPrice;
   double avgCostPrice;
-  double tradePrice;
-  double retailPrice;
-  double minimumPrice;
-  double maximumPrice;
-  double wholesalePrice;
-  double minimumWholesalePrice;
-  double maximumWholesalePrice;
-  double supplierPrice;
-  double specialPrice;
-  double vatPercentage;
+  int tradePrice;
+  int retailPrice;
+  int minimumPrice;
+  int maximumPrice;
+  int wholesalePrice;
+  int minimumWholesalePrice;
+  int maximumWholesalePrice;
+  int supplierPrice;
+  int specialPrice;
+  int vatPercentage;
   bool usePricingFormula;
   String image;
   dynamic barcode;
   int packsize;
   String description;
   String availability;
-  double balance;
+  int balance;
   String usage;
   dynamic warnings;
   bool prescription;
   int priority;
   String sellingOptions;
-  double totalRevenue;
-  double totalPurchases;
+  int totalRevenue;
+  int totalPurchases;
   String company;
 
   factory Item.fromJson(Map<String, dynamic> json) => Item(
@@ -360,7 +290,7 @@ class Item {
     group: Category.fromJson(json["group"]),
     subgroup: Category.fromJson(json["subgroup"]),
     category: Category.fromJson(json["category"]),
-    brand: PostingCategory.fromJson(json["brand"]),
+    brand: Brand.fromJson(json["brand"]),
     itemForm: Category.fromJson(json["item_form"]),
     strength: Category.fromJson(json["strength"]),
     pricing: json["pricing"],
@@ -450,8 +380,8 @@ class Item {
   };
 }
 
-class PostingCategory {
-  PostingCategory({
+class Brand {
+  Brand({
     this.id,
     this.createdAt,
     this.modifiedAt,
@@ -462,8 +392,6 @@ class PostingCategory {
     this.shortName,
     this.country,
     this.company,
-    this.code,
-    this.account,
   });
 
   String id;
@@ -476,10 +404,8 @@ class PostingCategory {
   String shortName;
   String country;
   String company;
-  String code;
-  String account;
 
-  factory PostingCategory.fromJson(Map<String, dynamic> json) => PostingCategory(
+  factory Brand.fromJson(Map<String, dynamic> json) => Brand(
     id: json["id"],
     createdAt: DateTime.parse(json["created_at"]),
     modifiedAt: DateTime.parse(json["modified_at"]),
@@ -487,11 +413,9 @@ class PostingCategory {
     isDeleted: json["is_deleted"],
     deletedAt: json["deleted_at"],
     name: json["name"],
-    shortName: json["short_name"] == null ? null : json["short_name"],
-    country: json["country"] == null ? null : json["country"],
+    shortName: json["short_name"],
+    country: json["country"],
     company: json["company"],
-    code: json["code"] == null ? null : json["code"],
-    account: json["account"] == null ? null : json["account"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -502,11 +426,9 @@ class PostingCategory {
     "is_deleted": isDeleted,
     "deleted_at": deletedAt,
     "name": name,
-    "short_name": shortName == null ? null : shortName,
-    "country": country == null ? null : country,
+    "short_name": shortName,
+    "country": country,
     "company": company,
-    "code": code == null ? null : code,
-    "account": account == null ? null : account,
   };
 }
 
@@ -571,181 +493,5 @@ class Category {
     "company": company,
     "priority": priority == null ? null : priority,
     "short_name": shortName == null ? null : shortName,
-  };
-}
-
-class Supplier {
-  Supplier({
-    this.id,
-    this.supplierContacts,
-    this.postingCategory,
-    this.createdAt,
-    this.modifiedAt,
-    this.isActive,
-    this.isDeleted,
-    this.deletedAt,
-    this.code,
-    this.name,
-    this.logo,
-    this.description,
-    this.email,
-    this.physicalAddress,
-    this.phoneCountryCode,
-    this.phone,
-    this.creditLimit,
-    this.lastPayDate,
-    this.lastPayAmount,
-    this.balance,
-    this.totalPurchases,
-    this.pinNo,
-    this.vatNo,
-    this.useLocalCurrency,
-    this.currency,
-    this.company,
-  });
-
-  String id;
-  List<SupplierContact> supplierContacts;
-  PostingCategory postingCategory;
-  DateTime createdAt;
-  DateTime modifiedAt;
-  bool isActive;
-  bool isDeleted;
-  dynamic deletedAt;
-  String code;
-  String name;
-  dynamic logo;
-  String description;
-  String email;
-  String physicalAddress;
-  String phoneCountryCode;
-  String phone;
-  double creditLimit;
-  dynamic lastPayDate;
-  double lastPayAmount;
-  double balance;
-  double totalPurchases;
-  String pinNo;
-  String vatNo;
-  bool useLocalCurrency;
-  String currency;
-  String company;
-
-  factory Supplier.fromJson(Map<String, dynamic> json) => Supplier(
-    id: json["id"],
-    supplierContacts: List<SupplierContact>.from(json["supplier_contacts"].map((x) => SupplierContact.fromJson(x))),
-    postingCategory: PostingCategory.fromJson(json["posting_category"]),
-    createdAt: DateTime.parse(json["created_at"]),
-    modifiedAt: DateTime.parse(json["modified_at"]),
-    isActive: json["is_active"],
-    isDeleted: json["is_deleted"],
-    deletedAt: json["deleted_at"],
-    code: json["code"],
-    name: json["name"],
-    logo: json["logo"],
-    description: json["description"],
-    email: json["email"],
-    physicalAddress: json["physical_address"],
-    phoneCountryCode: json["phone_country_code"],
-    phone: json["phone"],
-    creditLimit: json["credit_limit"],
-    lastPayDate: json["last_pay_date"],
-    lastPayAmount: json["last_pay_amount"],
-    balance: json["balance"],
-    totalPurchases: json["total_purchases"],
-    pinNo: json["pin_no"],
-    vatNo: json["vat_no"],
-    useLocalCurrency: json["use_local_currency"],
-    currency: json["currency"],
-    company: json["company"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "id": id,
-    "supplier_contacts": List<dynamic>.from(supplierContacts.map((x) => x.toJson())),
-    "posting_category": postingCategory.toJson(),
-    "created_at": createdAt.toIso8601String(),
-    "modified_at": modifiedAt.toIso8601String(),
-    "is_active": isActive,
-    "is_deleted": isDeleted,
-    "deleted_at": deletedAt,
-    "code": code,
-    "name": name,
-    "logo": logo,
-    "description": description,
-    "email": email,
-    "physical_address": physicalAddress,
-    "phone_country_code": phoneCountryCode,
-    "phone": phone,
-    "credit_limit": creditLimit,
-    "last_pay_date": lastPayDate,
-    "last_pay_amount": lastPayAmount,
-    "balance": balance,
-    "total_purchases": totalPurchases,
-    "pin_no": pinNo,
-    "vat_no": vatNo,
-    "use_local_currency": useLocalCurrency,
-    "currency": currency,
-    "company": company,
-  };
-}
-
-class SupplierContact {
-  SupplierContact({
-    this.id,
-    this.supplier,
-    this.createdAt,
-    this.modifiedAt,
-    this.isActive,
-    this.isDeleted,
-    this.deletedAt,
-    this.name,
-    this.physicalAddress,
-    this.email,
-    this.phone,
-    this.company,
-  });
-
-  String id;
-  String supplier;
-  DateTime createdAt;
-  DateTime modifiedAt;
-  bool isActive;
-  bool isDeleted;
-  dynamic deletedAt;
-  String name;
-  String physicalAddress;
-  String email;
-  String phone;
-  String company;
-
-  factory SupplierContact.fromJson(Map<String, dynamic> json) => SupplierContact(
-    id: json["id"],
-    supplier: json["supplier"],
-    createdAt: DateTime.parse(json["created_at"]),
-    modifiedAt: DateTime.parse(json["modified_at"]),
-    isActive: json["is_active"],
-    isDeleted: json["is_deleted"],
-    deletedAt: json["deleted_at"],
-    name: json["name"],
-    physicalAddress: json["physical_address"],
-    email: json["email"],
-    phone: json["phone"],
-    company: json["company"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "id": id,
-    "supplier": supplier,
-    "created_at": createdAt.toIso8601String(),
-    "modified_at": modifiedAt.toIso8601String(),
-    "is_active": isActive,
-    "is_deleted": isDeleted,
-    "deleted_at": deletedAt,
-    "name": name,
-    "physical_address": physicalAddress,
-    "email": email,
-    "phone": phone,
-    "company": company,
   };
 }

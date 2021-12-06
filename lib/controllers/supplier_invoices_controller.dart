@@ -26,10 +26,33 @@ class SupplierInvoicesController {
     return _repository.deletedSupplierInvoice(id, context);
   }
 
+  Future<SupplierInvoices> postNewSupplierInvoice(String supplier, String branch,
+      String purchaseOrderId, double tradeDiscPercentage, String receivedDate, double discountAmount,
+      double totalNet, double vatAmount, double totalAmount, String status, List<Map<String, dynamic>> listItems,
+      BuildContext context) async{
+    return _repository.postNewSupplierInvoice(supplier, branch, purchaseOrderId, tradeDiscPercentage, receivedDate, discountAmount, totalNet, vatAmount, totalAmount, status, listItems, context);
+  }
+
   //delete
-  Future<SupplierInvoices> postSupplierInvoice(String supplier, String branch, String payment_date, String no_items,
-      List<dynamic> purchase_order_items, BuildContext context) async {
+  Future<SupplierInvoices> postSupplierInvoice(String supplier, String branch,
+      String purchaseOrderId, double tradeDiscPercentage, String receivedDate, double discountAmount,
+      double totalNet, double vatAmount, double totalAmount, String status,
+      String item, double itemQty,
+      double unitPrice, double bonus,
+      double itemTotalQty, String expiryDate, String batchNo, double itemDiscPercentage, double itemDiscAmount,
+      double itemNetAmount, double itemVATPercentage,
+      double itemVATAmount, double totalCost,
+      double itemTotalAmount, BuildContext context) async {
     return _repository.postSupplierInvoice(
-        supplier, branch, payment_date, no_items, purchase_order_items, context);
+         supplier,  branch,
+        purchaseOrderId,  tradeDiscPercentage,  receivedDate,  discountAmount,
+         totalNet,  vatAmount,  totalAmount,  status,
+         item,  itemQty,
+         unitPrice,  bonus,
+         itemTotalQty,  expiryDate,  batchNo,  itemDiscPercentage,  itemDiscAmount,
+         itemNetAmount,  itemVATPercentage,
+         itemVATAmount, totalCost,
+         itemTotalAmount,  context
+    );
   }
 }

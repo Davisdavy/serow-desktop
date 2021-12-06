@@ -8,17 +8,17 @@ class SupplierController{
   final SuppliersRepository _repository;
   SupplierController(this._repository);
 //get
-  Future<List<Results> >fetchSupplierList(BuildContext context){
+  Future<List<Suppliers> >fetchSupplierList(BuildContext context){
     return _repository.getSupplierList(context);
   }
 
   //patch
-  Future<String >updatePatchCompleted(Results result) async{
+  Future<String >updatePatchCompleted(Suppliers result) async{
     return _repository.patchSupplier(result);
   }
 
   //put
-  Future<String >updatePutCompleted(Results result) async{
+  Future<String >updatePutCompleted(Suppliers result) async{
     return _repository.putSupplier(result);
   }
 

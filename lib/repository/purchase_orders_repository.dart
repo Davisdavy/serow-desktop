@@ -4,16 +4,19 @@ import 'package:serow/models/suppliers/purchase_orders.dart';
 
 abstract class PurchaseOrdersRepository {
   //Brands
-  Future<List<Results>> getPurchaseOrderList(BuildContext context);
-  Future<String> patchPurchaseOrder(Results result);
-  Future<String> putPurchaseOrder(Results result);
+  Future<List<PurchaseOrders>> getPurchaseOrderList(BuildContext context);
+  Future<String> patchPurchaseOrder(PurchaseOrders result);
+  Future<String> putPurchaseOrder(PurchaseOrders result);
   Future<String> deletedPurchaseOrder(String id, BuildContext context);
   Future<PurchaseOrders> postPurchaseOrder(String supplier, String branch,
-      String item, int itemQuantity, double itemUnitCost,
+      String item,double tradeDiscountPercentage,
+      double totalAmount, double discountAmount, String expectedDate,
+      double totalNetAmount, double taxAmount,
+      double itemQuantity, double itemUnitCost,
       double itemBonus, double itemDiscountPercentage,
       double itemDiscountAmount, double itemNetAmount,
       double itemTaxPercentage, double itemTaxAmount,
-      double itemTotalCost, double totalAmount, double discountAmount,
+      double itemTotalCost,
       BuildContext context);
 
 

@@ -46,7 +46,7 @@ class Results {
   Null paymentDate;
   dynamic discountAmount;
   dynamic totalNet;
-  dynamic taxAmount;
+  dynamic vatAmount;
   dynamic totalAmount;
   dynamic noOfItems;
   Null notes;
@@ -70,7 +70,7 @@ class Results {
         this.paymentDate,
         this.discountAmount,
         this.totalNet,
-        this.taxAmount,
+        this.vatAmount,
         this.totalAmount,
         this.noOfItems,
         this.notes,
@@ -99,7 +99,7 @@ class Results {
     paymentDate = json['payment_date'];
     discountAmount = json['discount_amount'];
     totalNet = json['total_net'];
-    taxAmount = json['tax_amount'];
+    vatAmount = json['vat_amount'];
     totalAmount = json['total_amount'];
     noOfItems = json['no_of_items'];
     notes = json['notes'];
@@ -128,7 +128,7 @@ class Results {
     data['payment_date'] = this.paymentDate;
     data['discount_amount'] = this.discountAmount;
     data['total_net'] = this.totalNet;
-    data['tax_amount'] = this.taxAmount;
+    data['vat_amount'] = this.vatAmount;
     data['total_amount'] = this.totalAmount;
     data['no_of_items'] = this.noOfItems;
     data['notes'] = this.notes;
@@ -158,8 +158,8 @@ class SupplierInvoiceItems {
   dynamic discountPercentage;
   dynamic discountAmount;
   dynamic netAmount;
-  dynamic taxPercentage;
-  dynamic taxAmount;
+  dynamic vatPercentage;
+  dynamic vatAmount;
   dynamic totalCost;
   String item;
   String branch;
@@ -181,8 +181,8 @@ class SupplierInvoiceItems {
         this.discountPercentage,
         this.discountAmount,
         this.netAmount,
-        this.taxPercentage,
-        this.taxAmount,
+        this.vatPercentage,
+        this.vatAmount,
         this.totalCost,
         this.item,
         this.branch,
@@ -210,8 +210,8 @@ class SupplierInvoiceItems {
     discountPercentage = json['discount_percentage'];
     discountAmount = json['discount_amount'];
     netAmount = json['net_amount'];
-    taxPercentage = json['tax_percentage'];
-    taxAmount = json['tax_amount'];
+    vatPercentage = json['vat_percentage'];
+    vatAmount = json['vat_amount'];
     totalCost = json['total_cost'];
     item = json['item'];
     branch = json['branch'];
@@ -238,8 +238,8 @@ class SupplierInvoiceItems {
     data['discount_percentage'] = this.discountPercentage;
     data['discount_amount'] = this.discountAmount;
     data['net_amount'] = this.netAmount;
-    data['tax_percentage'] = this.taxPercentage;
-    data['tax_amount'] = this.taxAmount;
+    data['vat_percentage'] = this.vatPercentage;
+    data['vat_amount'] = this.vatAmount;
     data['total_cost'] = this.totalCost;
     data['item'] = this.item;
     data['branch'] = this.branch;

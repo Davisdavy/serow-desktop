@@ -10,38 +10,6 @@ String suppliersToJson(Suppliers data) => json.encode(data.toJson());
 
 class Suppliers {
   Suppliers({
-    this.count,
-    this.next,
-    this.previous,
-    this.results,
-  });
-
-  int count;
-  dynamic next;
-  dynamic previous;
-  List<Results> results;
-
-  factory Suppliers.fromJson(Map<String, dynamic> json){
-    var list = json["results"] as List;
-    List<Results> resultList = list.map((i) => Results.fromJson(i)).toList();
-    return  Suppliers(
-      count: json["count"],
-      next: json["next"],
-      previous: json["previous"],
-      results: resultList
-    );
-  }
-
-  Map<String, dynamic> toJson() => {
-    "count": count,
-    "next": next,
-    "previous": previous,
-    "results": List<dynamic>.from(results.map((x) => x.toJson())),
-  };
-}
-
-class Results {
-  Results({
     this.id,
     this.supplierContacts,
     this.postingCategory,
@@ -97,38 +65,34 @@ class Results {
   String currency;
   String company;
 
-  factory Results.fromJson(Map<String, dynamic> json){
-    var list = json['supplier_contacts'] as List;
-    List<SupplierContact> supplierList = list.map((i) => SupplierContact.fromJson(i)).toList();
-    return  Results(
-      id: json["id"],
-      supplierContacts: supplierList,
-      postingCategory: PostingCategory.fromJson(json["posting_category"]),
-      createdAt: DateTime.parse(json["created_at"]),
-      modifiedAt: DateTime.parse(json["modified_at"]),
-      isActive: json["is_active"],
-      isDeleted: json["is_deleted"],
-      deletedAt: json["deleted_at"],
-      code: json["code"],
-      name: json["name"],
-      logo: json["logo"],
-      description: json["description"],
-      email: json["email"],
-      physicalAddress: json["physical_address"],
-      phoneCountryCode: json["phone_country_code"],
-      phone: json["phone"],
-      creditLimit: json["credit_limit"],
-      lastPayDate: json["last_pay_date"],
-      lastPayAmount: json["last_pay_amount"],
-      balance: json["balance"],
-      totalPurchases: json["total_purchases"],
-      pinNo: json["pin_no"],
-      vatNo: json["vat_no"],
-      useLocalCurrency: json["use_local_currency"],
-      currency: json["currency"],
-      company: json["company"],
-    );
-  }
+  factory Suppliers.fromJson(Map<String, dynamic> json) => Suppliers(
+    id: json["id"],
+    supplierContacts: List<SupplierContact>.from(json["supplier_contacts"].map((x) => SupplierContact.fromJson(x))),
+    postingCategory: PostingCategory.fromJson(json["posting_category"]),
+    createdAt: DateTime.parse(json["created_at"]),
+    modifiedAt: DateTime.parse(json["modified_at"]),
+    isActive: json["is_active"],
+    isDeleted: json["is_deleted"],
+    deletedAt: json["deleted_at"],
+    code: json["code"],
+    name: json["name"],
+    logo: json["logo"],
+    description: json["description"],
+    email: json["email"],
+    physicalAddress: json["physical_address"],
+    phoneCountryCode: json["phone_country_code"],
+    phone: json["phone"],
+    creditLimit: json["credit_limit"],
+    lastPayDate: json["last_pay_date"],
+    lastPayAmount: json["last_pay_amount"],
+    balance: json["balance"],
+    totalPurchases: json["total_purchases"],
+    pinNo: json["pin_no"],
+    vatNo: json["vat_no"],
+    useLocalCurrency: json["use_local_currency"],
+    currency: json["currency"],
+    company: json["company"],
+  );
 
   Map<String, dynamic> toJson() => {
     "id": id,

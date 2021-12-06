@@ -25,9 +25,9 @@ class SuppliersProvider implements SuppliersRepository {
   }
 
   @override
-  Future<List<Results>> getSupplierList(BuildContext context) async {
+  Future<List<Suppliers>> getSupplierList(BuildContext context) async {
     //https://serow.herrings.co.ke/api/v1/suppliers/posting-categories/
-    List<Results> subgroupList = [];
+    List<Suppliers> subgroupList = [];
     context.watch<AuthProvider>();
     Auth user = Provider.of<AuthProvider>(context).auth;
 
@@ -43,7 +43,7 @@ class SuppliersProvider implements SuppliersRepository {
     //parse
     print('Result body: ${body['results']}');
     for (Map<String, dynamic> i in body["results"]) {
-      subgroupList.add(Results.fromJson(i) );
+      subgroupList.add(Suppliers.fromJson(i) );
     }
 
     return subgroupList;
@@ -51,7 +51,7 @@ class SuppliersProvider implements SuppliersRepository {
   }
 
   @override
-  Future<String> patchSupplier(Results result) async {
+  Future<String> patchSupplier(Suppliers result) async {
     //call back
     String responseData = '';
 
@@ -104,7 +104,7 @@ class SuppliersProvider implements SuppliersRepository {
   }
 
   @override
-  Future<String> putSupplier(Results result) {
+  Future<String> putSupplier(Suppliers result) {
     // TODO: implement putAccount
     throw UnimplementedError();
   }

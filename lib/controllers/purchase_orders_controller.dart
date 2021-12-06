@@ -7,17 +7,17 @@ class PurchaseOrdersController {
   final PurchaseOrdersRepository _repository;
   PurchaseOrdersController(this._repository);
 //get
-  Future<List<Results>> fetchPurchaseOrderList(BuildContext context) {
+  Future<List<PurchaseOrders>> fetchPurchaseOrderList(BuildContext context) {
     return _repository.getPurchaseOrderList(context);
   }
 
   //patch
-  Future<String> updatePatchCompleted(Results result) async {
+  Future<String> updatePatchCompleted(PurchaseOrders result) async {
     return _repository.patchPurchaseOrder(result);
   }
 
   //put
-  Future<String> updatePutCompleted(Results result) async {
+  Future<String> updatePutCompleted(PurchaseOrders result) async {
     return _repository.putPurchaseOrder(result);
   }
 
@@ -28,19 +28,25 @@ class PurchaseOrdersController {
 
   //delete
   Future<PurchaseOrders> postPurchaseOrder(String supplier, String branch,
-      String item, int itemQuantity, double itemUnitCost,
+      String item,double tradeDiscountPercentage,
+      double totalAmount, double discountAmount, String expectedDate,
+      double totalNetAmount, double taxAmount,
+      double itemQuantity, double itemUnitCost,
       double itemBonus, double itemDiscountPercentage,
       double itemDiscountAmount, double itemNetAmount,
       double itemTaxPercentage, double itemTaxAmount,
-      double itemTotalCost, double totalAmount, double discountAmount,
+      double itemTotalCost,
       BuildContext context) async {
     return _repository.postPurchaseOrder(
          supplier,  branch,
-         item,  itemQuantity,  itemUnitCost,
+         item, tradeDiscountPercentage,
+         totalAmount,  discountAmount, expectedDate,
+         totalNetAmount,  taxAmount,
+         itemQuantity, itemUnitCost,
          itemBonus,  itemDiscountPercentage,
          itemDiscountAmount,  itemNetAmount,
          itemTaxPercentage,  itemTaxAmount,
-         itemTotalCost,  totalAmount,  discountAmount,
+         itemTotalCost,
          context);
   }
 }

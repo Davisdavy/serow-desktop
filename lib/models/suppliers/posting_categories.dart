@@ -1,7 +1,13 @@
+// To parse this JSON data, do
+//
+//     final postingCategories = postingCategoriesFromJson(jsonString);
 
 import 'dart:convert';
 
 PostingCategories postingCategoriesFromJson(String str) => PostingCategories.fromJson(json.decode(str));
+
+String postingCategoriesToJson(PostingCategories data) => json.encode(data.toJson());
+
 class PostingCategories {
   int count;
   Null next;
@@ -41,7 +47,7 @@ class Results {
   String modifiedAt;
   bool isActive;
   bool isDeleted;
-  dynamic deletedAt;
+  Null deletedAt;
   String code;
   String name;
   String company;
@@ -94,20 +100,20 @@ class Account {
   String id;
   Group group;
   Subgroup subgroup;
-  dynamic category;
+  Null category;
   String createdAt;
   String modifiedAt;
   bool isActive;
   bool isDeleted;
-  dynamic deletedAt;
+  Null deletedAt;
   String name;
   String code;
-  double bEGDR;
-  double bEGCR;
-  double pREVDR;
-  double pREVCR;
-  double cURDR;
-  double cURCR;
+  dynamic bEGDR;
+  dynamic bEGCR;
+  dynamic pREVDR;
+  dynamic pREVCR;
+  dynamic cURDR;
+  dynamic cURCR;
   bool hasDepreciationAccount;
   String type;
   String company;

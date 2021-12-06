@@ -24,9 +24,9 @@ class PurchaseOrdersSupplierRepository implements PurchaseOrdersRepository {
   }
 
   @override
-  Future<List<Results>> getPurchaseOrderList(BuildContext context) async{
+  Future<List<PurchaseOrders>> getPurchaseOrderList(BuildContext context) async{
     //https://serow.herrings.co.ke/api/v1/suppliers/purchase-orders/
-    List<Results> subgroupList = [];
+    List<PurchaseOrders> subgroupList = [];
     context.watch<AuthProvider>();
     Auth user = Provider.of<AuthProvider>(context).auth;
 
@@ -42,7 +42,7 @@ class PurchaseOrdersSupplierRepository implements PurchaseOrdersRepository {
       //parse
       print('Result body: ${body['results']}');
       for (Map<String, dynamic> i in body["results"]) {
-        subgroupList.add(Results.fromJson(i));
+        subgroupList.add(PurchaseOrders.fromJson(i));
       }
     } else if(response.statusCode == 401){
       //refresh token and call getUser again
@@ -50,7 +50,7 @@ class PurchaseOrdersSupplierRepository implements PurchaseOrdersRepository {
           headers: {'grant_type': 'refresh_token', 'refresh_token': '${user.refreshToken}'});
       var body = json.decode(response.body);
       for (Map<String, dynamic> i in body["results"]) {
-        subgroupList.add(Results.fromJson(i));
+        subgroupList.add(PurchaseOrders.fromJson(i));
       }
       // token = jsonDecode(response.body)['token'];
       // refresh_token = jsonDecode(response.body)['refresh_token'];
@@ -59,19 +59,19 @@ class PurchaseOrdersSupplierRepository implements PurchaseOrdersRepository {
     return subgroupList;
   }
 
-  @override
-  Future<String> patchPurchaseOrder(Results result) {
-    // TODO: implement patchPurchaseOrder
-    throw UnimplementedError();
-  }
+
 
   @override
   Future<PurchaseOrders> postPurchaseOrder(String supplier, String branch,
-      String item, int itemQuantity, double itemUnitCost,
+      String item,double tradeDiscountPercentage,
+      double totalAmount, double discountAmount, String expectedDate,
+      double totalNetAmount, double taxAmount,
+      double itemQuantity, double itemUnitCost,
       double itemBonus, double itemDiscountPercentage,
       double itemDiscountAmount, double itemNetAmount,
       double itemTaxPercentage, double itemTaxAmount,
-      double itemTotalCost, double totalAmount, double discountAmount,
+      double itemTotalQty,
+
       BuildContext context) async{
     List<Map<String, dynamic>> purchaseOrderItemList = [
       {
@@ -79,27 +79,30 @@ class PurchaseOrdersSupplierRepository implements PurchaseOrdersRepository {
         "quantity": itemQuantity,
         "unit_cost": itemUnitCost,
         "bonus": itemBonus,
-        "total_quantity": itemQuantity,
         "discount_percentage": itemDiscountPercentage,
         "discount_amount": itemDiscountAmount,
         "net_amount": itemNetAmount,
-        "tax_percentage": itemTaxPercentage,
-        "tax_amount": itemTaxAmount,
-        "total_cost": itemTotalCost
+        "vat_percentage": itemTaxPercentage,
+        "vat_amount": itemTaxAmount,
+        "total_quantity": itemTotalQty
       }
     ];
     var body={
       'supplier': supplier,
       'branch': branch,
+      'expected_date': "2021-11-05",
       "total_amount":   totalAmount,
       "discount_amount":discountAmount,
+      "trade_discount_percentage": tradeDiscountPercentage,
+      "total_net_amount": totalNetAmount,
       "purchase_order_items":purchaseOrderItemList
+
     };
 
     print("Body: $body");
     Auth user = Provider.of<AuthProvider>(context, listen: false).auth;
     var response = await http.post(
-      Uri.parse('${AppUrl.suppliers}'),
+      Uri.parse('${AppUrl.purchase_orders}'),
       headers: {
         'Content-type': 'application/json',
         'Accept': 'application/json',
@@ -113,8 +116,15 @@ class PurchaseOrdersSupplierRepository implements PurchaseOrdersRepository {
     return purchaseOrdersFromJson(response.body);
   }
 
+
   @override
-  Future<String> putPurchaseOrder(Results result) {
+  Future<String> patchPurchaseOrder(result) {
+    // TODO: implement patchPurchaseOrder
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> putPurchaseOrder(result) {
     // TODO: implement putPurchaseOrder
     throw UnimplementedError();
   }

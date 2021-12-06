@@ -14,12 +14,12 @@ class SuppliersDataSource extends  DataTableSource{
   //Dependency injection
   var suppliersController = SupplierController(SuppliersProvider());
   SuppliersDataSource({
-    @required List<Results> resultData,
+    @required List<Suppliers> resultData,
     @required this.onRowSelect,
   })  : _resultData = resultData,
         assert(resultData != null);
 
-  final List<Results> _resultData;
+  final List<Suppliers> _resultData;
   final OnRowSelect onRowSelect;
 
   int _selectedCount = 0;
@@ -45,7 +45,7 @@ class SuppliersDataSource extends  DataTableSource{
         DataCell(
             Builder(
                 builder: (newContext) {
-                  return FutureBuilder<List<Results>>(
+                  return FutureBuilder<List<Suppliers>>(
                     builder: (context, snapshot){
                       return PopupMenuButton(
                         elevation: 20.0,
