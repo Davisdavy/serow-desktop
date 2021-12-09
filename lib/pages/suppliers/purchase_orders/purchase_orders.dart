@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:serow/constants.dart';
 import 'package:serow/controllers/branches_controller.dart';
@@ -46,26 +47,28 @@ class TablePurchaseOrder {
   String sum;
   String sumVatTotal;
   String sumTotal;
+  Map<String, dynamic> supItems;
 
   TablePurchaseOrder(
       {this.quantity,
-        this.bonus,
-        this.item,
-        this.totalQty,
-        this.disc,
-        this.discPer,
-        this.unitPrice,
-        this.vatAmount,
-        this.vatPer,
-        this.totalAmount,
-        this.totalCost,
-        this.netAmount,
-        this.sumNetAmount,
-        this.sumSubTotal,
-        this.sumDiscountTotal,
-        this.tradeDiscountPercentage,
-        this.sumVatTotal,
-        this.sumTotal});
+      this.bonus,
+      this.supItems,
+      this.item,
+      this.totalQty,
+      this.disc,
+      this.discPer,
+      this.unitPrice,
+      this.vatAmount,
+      this.vatPer,
+      this.totalAmount,
+      this.totalCost,
+      this.netAmount,
+      this.sumNetAmount,
+      this.sumSubTotal,
+      this.sumDiscountTotal,
+      this.tradeDiscountPercentage,
+      this.sumVatTotal,
+      this.sumTotal});
 
   static List<TablePurchaseOrder> getTablePurchaseOrder() {
     return tablesPurchaseOrder;
@@ -80,6 +83,7 @@ class TablePurchaseOrder {
       totalAmount,
       disc,
       discPer,
+      supItems,
       vatAmount,
       vatPer,
       unitPrice,
@@ -102,11 +106,12 @@ class TablePurchaseOrder {
     tablePurchaseOrder.vatAmount = vatAmount;
     tablePurchaseOrder.vatPer = vatPer;
     tablePurchaseOrder.unitPrice = unitPrice;
+    tablePurchaseOrder.supItems = supItems;
     tablePurchaseOrder.netAmount = netAmount;
     tablePurchaseOrder.sumNetAmount = sumNetAmount;
     tablePurchaseOrder.sumSubTotal = sumSubTotal;
     tablePurchaseOrder.sumDiscountTotal = sumDiscountTotal;
-    tablePurchaseOrder.tradeDiscountPercentage =tradeDiscountPercentage;
+    tablePurchaseOrder.tradeDiscountPercentage = tradeDiscountPercentage;
     tablePurchaseOrder.sumVatTotal = sumVatTotal;
     tablePurchaseOrder.sumTotal = sumTotal;
     tablesPurchaseOrder.add(tablePurchaseOrder);
@@ -125,7 +130,11 @@ class PurchaseOrdersPage extends StatefulWidget {
 class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
   List<TablePurchaseOrder> tablesPurchaseOrder;
   List<TablePurchaseOrder> selectedPurchaseOrders;
+  List<Map<String, dynamic>> itemList;
   bool sort;
+
+  // Default Form Loading State
+  bool _loginFormLoading = false;
 
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _tradeDiscController = TextEditingController();
@@ -134,16 +143,31 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
   final TextEditingController controller = new TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
   TextEditingController _discAmountController;
-  final TextEditingController _discPercentageController =
-  TextEditingController();
+  TextEditingController _discPercentageController;
+
   final TextEditingController _netAmountController = TextEditingController();
   final TextEditingController _unitPriceController = TextEditingController();
   final TextEditingController _bonusController = TextEditingController();
   TextEditingController _vatAmountController;
   final TextEditingController _vatPercentageController =
-  TextEditingController();
+      TextEditingController();
   TextEditingController _totalAmountController;
   TextEditingController _totalQuantityController;
+
+  DateTime initialDate = DateTime.now();
+  DateTime expiryDate = DateTime.now();
+
+  var myFormat = DateFormat('yyyy-MM-d');
+
+  bool _isTradeEditingText = false;
+  TextEditingController _tradeEditingController;
+  String initialTradeText = "0.0";
+
+  String initialDiscText = "0.0";
+  String initialAmountText = "0.0";
+
+  bool _isDiscEditingText = false;
+
   bool _isEditingText = false;
   String initialText = "0.0";
 
@@ -161,6 +185,10 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
   bool balanceValue = false;
   bool branchValue = false;
   bool itemValue = false;
+  bool editValue = false;
+
+  bool discountValueController = false;
+  bool newDiscountValueController = false;
 
   bool balanceQuotationValue = false;
   bool branchQuotationValue = false;
@@ -178,20 +206,28 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
   TypeAheadField itemTextField;
   TypeAheadField branchTextField;
 
-  double qty = 0;
-  double bns = 0;
-  double vat = 0;
-  double netPrice = 0;
-  double itemPrice = 0;
-  double discAmount = 0;
-  double unitPrice = 0;
-  double discPerc = 0;
-  double vatPerc = 0;
+  double qty = 0.0;
+  double bns = 0.0;
+  double vat = 0.0;
+  double netAmount = 0.0;
+  double totalCost = 0.0;
+  double discAmount = 0.0;
+  double unitCost = 0.0;
+  double discPerc = 0.0;
+  double vatPerc = 0.0;
 
   @override
   void initState() {
     sort = false;
     selectedPurchaseOrders = [];
+
+    itemList = [];
+
+    _totalAmountController = TextEditingController(text: initialAmountText);
+    _totalQuantityController = TextEditingController(text: initialQtyText);
+    _discAmountController = TextEditingController(text: initialText);
+    _discPercentageController = TextEditingController(text: initialDiscText);
+    _vatAmountController = TextEditingController(text: "0.0");
 
     tablesPurchaseOrder = TablePurchaseOrder.getTablePurchaseOrder();
 
@@ -201,15 +237,9 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
       });
     });
 
-    _discPercentageController.addListener(() {
-      setState(() {
-        discPerc = double.parse(_discPercentageController.text);
-      });
-    });
-
     _unitPriceController.addListener(() {
       setState(() {
-        unitPrice = double.parse(_unitPriceController.text);
+        unitCost = double.parse(_unitPriceController.text);
       });
     });
 
@@ -227,16 +257,9 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
 
     _netAmountController.addListener(() {
       setState(() {
-        netPrice = double.parse(_netAmountController.text);
+        netAmount = double.parse(_netAmountController.text);
       });
     });
-
-    _totalAmountController = TextEditingController(text: initialText);
-    _totalQuantityController = TextEditingController(text: initialQtyText);
-    _discAmountController = TextEditingController(
-        text: "${discPerc.toPrecision(2) / 100 * itemPrice.toPrecision(2)}");
-    _vatAmountController = TextEditingController(
-        text: "${vatPerc.toPrecision(2) / 100 * netPrice.toPrecision(2)}");
 
     super.initState();
     //groupItemList();
@@ -270,12 +293,33 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
         for (TablePurchaseOrder sale in temp) {
           tablesPurchaseOrder.remove(sale);
           selectedPurchaseOrders.remove(sale);
+          itemList.remove(sale);
         }
       }
     });
   }
 
-  Widget _editTitleTextField() {
+  editSelected() async {
+    setState(() {
+      if (selectedPurchaseOrders.isNotEmpty) {
+        List<TablePurchaseOrder> temp = [];
+        temp.addAll(selectedPurchaseOrders);
+        for (TablePurchaseOrder sale in temp) {
+          _quantityController.text = sale.quantity;
+          _itemController.text = sale.item;
+          _bonusController.text = sale.bonus;
+          _totalQuantityController.text = sale.totalQty;
+          _discAmountController.text = sale.disc;
+          _discPercentageController.text = sale.discPer;
+          _vatAmountController.text = sale.vatAmount;
+          _vatPercentageController.text = sale.vatPer;
+          editValue = true;
+        }
+      }
+    });
+  }
+
+  Widget _editDiscAmountField() {
     if (_isEditingText)
       return Center(
         child: Material(
@@ -283,11 +327,17 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
             width: 48,
             height: 48,
             child: TextField(
+              onChanged: (disc) {
+                setState(() {
+                  discAmount = double.parse(disc);
+                  initialDiscText = "${discAmount / totalCost * 100}";
+                });
+              },
               onSubmitted: (newValue) {
                 setState(() {
                   initialText = newValue;
-                  _discAmountController.text = newValue;
                   _isEditingText = false;
+                  discountValueController = false;
                 });
               },
               autofocus: true,
@@ -297,18 +347,18 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                 FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
               ],
               decoration: InputDecoration(
-                //  labelText: "Email Address",
+                  //  labelText: "Email Address",
                   hintText: "  0.0",
                   hintStyle: TextStyle(
                     fontSize: 12,
                   ),
                   focusedBorder: OutlineInputBorder(
                       borderSide:
-                      const BorderSide(color: primaryColor, width: 0.4),
+                          const BorderSide(color: primaryColor, width: 0.4),
                       borderRadius: BorderRadius.circular(5)),
                   enabledBorder: OutlineInputBorder(
                       borderSide:
-                      const BorderSide(color: Colors.grey, width: 0.4),
+                          const BorderSide(color: Colors.grey, width: 0.4),
                       borderRadius: BorderRadius.circular(5))),
             ),
           ),
@@ -317,11 +367,100 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
     return InkWell(
         onTap: () {
           setState(() {
+            discountValueController = true;
             _isEditingText = true;
           });
         },
         child: Text(
-          "${discPerc.toPrecision(2) / 100 * itemPrice.toPrecision(2)}",
+          initialText,
+          style: TextStyle(
+            color: primaryColor,
+            fontSize: 18.0,
+          ),
+        ));
+  }
+
+  Widget _editDiscPercField() {
+    if (_isDiscEditingText)
+      return Center(
+        child: Material(
+          child: Container(
+            width: 48,
+            height: 48,
+            child: TextField(
+              onChanged: (disc) {
+                setState(() {
+                  discPerc = double.parse(disc);
+                  initialText = "${discPerc / 100 * totalCost}";
+                });
+              },
+              onSubmitted: (newValue) {
+                setState(() {
+                  initialDiscText = newValue;
+                  // initialDiscText = "${discAmount / totalCost * 100}";
+                  _isDiscEditingText = false;
+                  newDiscountValueController = false;
+                });
+              },
+              autofocus: true,
+              controller: _discPercentageController,
+              keyboardType: TextInputType.number,
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
+              ],
+              decoration: InputDecoration(
+                  hintStyle: TextStyle(
+                    fontSize: 12,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                      borderSide:
+                          const BorderSide(color: primaryColor, width: 0.4),
+                      borderRadius: BorderRadius.circular(5)),
+                  enabledBorder: OutlineInputBorder(
+                      borderSide:
+                          const BorderSide(color: Colors.grey, width: 0.4),
+                      borderRadius: BorderRadius.circular(5))),
+            ),
+          ),
+        ),
+      );
+    return InkWell(
+        onTap: () {
+          setState(() {
+            newDiscountValueController = true;
+            _isDiscEditingText = true;
+          });
+        },
+        child: Text(
+          initialDiscText,
+          style: TextStyle(
+            color: primaryColor,
+            fontSize: 18.0,
+          ),
+        ));
+  }
+
+  Widget _editDiscAmountCounterTextField() {
+    return InkWell(
+        onTap: () {
+          setState(() {});
+        },
+        child: Text(
+          initialText,
+          style: TextStyle(
+            color: primaryColor,
+            fontSize: 18.0,
+          ),
+        ));
+  }
+
+  Widget _editDiscPerCounterField() {
+    return InkWell(
+        onTap: () {
+          setState(() {});
+        },
+        child: Text(
+          initialDiscText,
           style: TextStyle(
             color: primaryColor,
             fontSize: 18.0,
@@ -350,18 +489,18 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                 FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
               ],
               decoration: InputDecoration(
-                //  labelText: "Email Address",
+                  //  labelText: "Email Address",
                   hintText: "  0.0",
                   hintStyle: TextStyle(
                     fontSize: 12,
                   ),
                   focusedBorder: OutlineInputBorder(
                       borderSide:
-                      const BorderSide(color: primaryColor, width: 0.4),
+                          const BorderSide(color: primaryColor, width: 0.4),
                       borderRadius: BorderRadius.circular(5)),
                   enabledBorder: OutlineInputBorder(
                       borderSide:
-                      const BorderSide(color: Colors.grey, width: 0.4),
+                          const BorderSide(color: Colors.grey, width: 0.4),
                       borderRadius: BorderRadius.circular(5))),
             ),
           ),
@@ -374,7 +513,7 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
           });
         },
         child: Text(
-          "${itemPrice.toPrecision(2) - discAmount.toPrecision(2)}",
+          "${totalCost.toPrecision(2) - discAmount.toPrecision(2)}",
           style: TextStyle(
             color: primaryColor,
             fontSize: 18.0,
@@ -403,18 +542,18 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                 FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
               ],
               decoration: InputDecoration(
-                //  labelText: "Email Address",
+                  //  labelText: "Email Address",
                   hintText: "  0.0",
                   hintStyle: TextStyle(
                     fontSize: 12,
                   ),
                   focusedBorder: OutlineInputBorder(
                       borderSide:
-                      const BorderSide(color: primaryColor, width: 0.4),
+                          const BorderSide(color: primaryColor, width: 0.4),
                       borderRadius: BorderRadius.circular(5)),
                   enabledBorder: OutlineInputBorder(
                       borderSide:
-                      const BorderSide(color: Colors.grey, width: 0.4),
+                          const BorderSide(color: Colors.grey, width: 0.4),
                       borderRadius: BorderRadius.circular(5))),
             ),
           ),
@@ -427,7 +566,80 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
           });
         },
         child: Text(
-          "${vatPerc.toPrecision(2) / 100 * netPrice.toPrecision(2)}",
+          "${vatPerc.toPrecision(2) / 100 * netAmount.toPrecision(2)}",
+          style: TextStyle(
+            color: primaryColor,
+            fontSize: 18.0,
+          ),
+        ));
+  }
+
+  Widget _editDateReceivedDiscountTextField() {
+    return Column(
+      children: [
+        Text(
+            "${initialDate.year}-${initialDate.month}-${initialDate.day}"),
+
+        TextButton(
+            onPressed: () {
+              _selectDate(context);
+            },
+            child: Text('Select Date', style: TextStyle(fontSize: 10),)
+
+            //hintText: ('${myFormat.format(initialDate)}'),
+            ),
+      ],
+    );
+    //));
+  }
+
+
+  Widget _editTradeDiscountTextField(String text) {
+    if (_isTradeEditingText)
+      return Center(
+        child: Material(
+          child: Container(
+            width: 48,
+            height: 48,
+            child: TextField(
+              onSubmitted: (newValue) {
+                setState(() {
+                  initialTradeText = newValue;
+                  _isTradeEditingText = false;
+                });
+              },
+              autofocus: true,
+              controller: _tradeEditingController,
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
+              ],
+              decoration: InputDecoration(
+                  //  labelText: "Email Address",
+                  // hintText: "  0.0",
+                  hintStyle: TextStyle(
+                    fontSize: 12,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                      borderSide:
+                          const BorderSide(color: primaryColor, width: 0.4),
+                      borderRadius: BorderRadius.circular(5)),
+                  enabledBorder: OutlineInputBorder(
+                      borderSide:
+                          const BorderSide(color: Colors.grey, width: 0.4),
+                      borderRadius: BorderRadius.circular(5))),
+            ),
+          ),
+        ),
+      );
+    return InkWell(
+        onTap: () {
+          setState(() {
+            _isTradeEditingText = true;
+          });
+        },
+        child: Text(
+          text,
           style: TextStyle(
             color: primaryColor,
             fontSize: 18.0,
@@ -464,12 +676,73 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
     super.dispose();
   }
 
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime picked = await showDatePicker(
+        context: context,
+        initialDate: initialDate,
+        firstDate: DateTime(2015, 8),
+        lastDate: DateTime(2101));
+    setState(() {
+      initialDate = picked ?? initialDate;
+    });
+  }
+
+  Future<void> _alertDialogBuilder(String error) async {
+    return showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("Error"),
+            content: Container(
+              child: Text(error ?? "Please enter correct details"),
+            ),
+            actions: [
+              TextButton(
+                child: Text("Close Dialog"),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              )
+            ],
+          );
+        });
+  }
+
+  Future<void> _successAlertDialogBuilder(String error) async {
+    return showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("Success"),
+            content: Container(
+              child: Text(error ?? "Invoice successfully saved!"),
+            ),
+            actions: [
+              TextButton(
+                child: Text("View Invoice"),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              TextButton(
+                child: Text("Close Dialog"),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              )
+            ],
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
-    itemPrice = unitPrice.toPrecision(2) * qty;
-    discAmount = discPerc.toPrecision(2) / 100 * itemPrice.toPrecision(2);
-    vat = vatPerc.toPrecision(2) / 100 * netPrice.toPrecision(2);
-    netPrice = itemPrice.toPrecision(2) - discAmount.toPrecision(2);
+    totalCost = unitCost.toPrecision(2) * qty;
+    discAmount = discPerc.toPrecision(2) / 100 * totalCost.toPrecision(2);
+    vat = vatPerc.toPrecision(2) / 100 * netAmount.toPrecision(2);
+    netAmount = totalCost.toPrecision(2) - discAmount.toPrecision(2);
 
     branchTextField = TypeAheadField<Branches>(
       suggestionsCallback: BranchApi.getBranchSuggestions,
@@ -558,34 +831,34 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
     );
 
     //Dependency injection
-    var purchaseOrdersController = PurchaseOrdersController(PurchaseOrdersSupplierRepository());
+    var purchaseOrdersController =
+        PurchaseOrdersController(PurchaseOrdersSupplierRepository());
 
-    var supplierController = SupplierController(SuppliersProvider());
-    var branchController = BranchesController(BranchesEntitiesRepository());
     return Container(
         color: Colors.blueGrey.shade100.withOpacity(0.1),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Obx(
-                    () => Row(
-                  children: [
-                    Container(
-                        margin: EdgeInsets.only(top: 90),
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 60.0),
-                          child: CustomText(
-                            text: menuController.activeItem.value,
-                            size: 28,
-                            color: bgColor,
-                            weight: FontWeight.bold,
-                          ),
-                        )),
-                  ],
-                ),
+        child: Column(
+          children: [
+            Obx(
+              () => Row(
+                children: [
+                  Container(
+                      margin: EdgeInsets.only(top: 90),
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 60.0),
+                        child: CustomText(
+                          text: menuController.activeItem.value,
+                          size: 28,
+                          color: bgColor,
+                          weight: FontWeight.bold,
+                        ),
+                      )),
+                ],
               ),
-              Container(
-                height: MediaQuery.of(context).size.height,
+            ),
+            Container(
+              height: MediaQuery.of(context).size.height /1.22,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 5.0),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -607,1119 +880,1285 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                             children: [
                               Expanded(
                                 child: Container(
+                                  child: SingleChildScrollView(
                                     child: Column(
                                       children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
                                         Flexible(
-                                          child: Row(
-                                            mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
-                                              Flexible(
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                                  children: [
-                                                    Material(
-                                                        child: Text(
-                                                          "Customer",
-                                                          style: TextStyle(
-                                                              color: bgColor,
-                                                              fontSize: 8,
-                                                              fontWeight:
-                                                              FontWeight.bold),
-                                                        )),
-                                                    SizedBox(
-                                                      height: 5,
-                                                    ),
-                                                    Flexible(
-                                                      child: Material(
-                                                        child: Container(
-                                                          width: 240,
-                                                          height: 40,
-                                                          child: searchTextField,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
+                                              Material(
+                                                  child: Text(
+                                                "Supplier",
+                                                style: TextStyle(
+                                                    color: bgColor,
+                                                    fontSize: 8,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              )),
+                                              SizedBox(
+                                                height: 5,
+                                              ),
+                                              Material(
+                                                child: Container(
+                                                  width: 240,
+                                                  height: 40,
+                                                  child: searchTextField,
                                                 ),
                                               ),
-                                              Flexible(
-                                                child: Column(
-                                                  children: [
-                                                    Material(
-                                                        child: Text(
-                                                          "Credit limit",
-                                                          style: TextStyle(
-                                                              color: bgColor,
-                                                              fontSize: 8,
-                                                              fontWeight:
-                                                              FontWeight.bold),
-                                                        )),
-                                                    SizedBox(
-                                                      height: 15,
-                                                    ),
-                                                    Material(
-                                                        child: balanceValue == true
-                                                            ? Text(
+                                            ],
+                                          ),
+                                        ),
+                                        Flexible(
+                                          child: Column(
+                                            children: [
+                                              Material(
+                                                  child: Text(
+                                                "Credit limit",
+                                                style: TextStyle(
+                                                    color: bgColor,
+                                                    fontSize: 8,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              )),
+                                              SizedBox(
+                                                height: 15,
+                                              ),
+                                              Material(
+                                                  child: balanceValue == true
+                                                      ? Text(
                                                           "Ksh ${SupplierApi.customersList[0].creditLimit}",
                                                           style: TextStyle(
                                                               color:
-                                                              Colors.red,
+                                                                  Colors.red,
                                                               fontSize: 8,
                                                               fontWeight:
-                                                              FontWeight
-                                                                  .bold),
+                                                                  FontWeight
+                                                                      .bold),
                                                         )
-                                                            : Text(
+                                                      : Text(
                                                           "Ksh 0.0",
                                                           style: TextStyle(
                                                               color:
-                                                              Colors.red,
+                                                                  Colors.red,
                                                               fontSize: 8,
                                                               fontWeight:
-                                                              FontWeight
-                                                                  .bold),
+                                                                  FontWeight
+                                                                      .bold),
                                                         )),
-                                                    SizedBox(
-                                                      height: 5,
-                                                    ),
-                                                  ],
-                                                ),
+                                              SizedBox(
+                                                height: 5,
                                               ),
-                                              Flexible(
-                                                child: Padding(
-                                                  padding: const EdgeInsets.only(
-                                                      right: 15.0),
-                                                  child: Column(
-                                                    children: [
-                                                      Material(
-                                                          child: Text(
-                                                            "Balance",
-                                                            style: TextStyle(
-                                                                color: bgColor,
-                                                                fontSize: 8,
-                                                                fontWeight:
-                                                                FontWeight.bold),
-                                                          )),
-                                                      SizedBox(
-                                                        height: 15,
-                                                      ),
-                                                      Material(
-                                                          child: balanceValue ==
-                                                              true
-                                                              ? Text(
+                                            ],
+                                          ),
+                                        ),
+                                        Flexible(
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                                right: 15.0),
+                                            child: Column(
+                                              children: [
+                                                Material(
+                                                    child: Text(
+                                                  "Balance",
+                                                  style: TextStyle(
+                                                      color: bgColor,
+                                                      fontSize: 8,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                )),
+                                                SizedBox(
+                                                  height: 15,
+                                                ),
+                                                Material(
+                                                    child: balanceValue ==
+                                                            true
+                                                        ? Text(
                                                             "Ksh ${SupplierApi.customersList[0].balance}",
                                                             style: TextStyle(
                                                                 color: Colors
                                                                     .red,
                                                                 fontSize: 8,
                                                                 fontWeight:
-                                                                FontWeight
-                                                                    .bold),
+                                                                    FontWeight
+                                                                        .bold),
                                                           )
-                                                              : Text(
+                                                        : Text(
                                                             "Ksh 0.0",
                                                             style: TextStyle(
                                                                 color: Colors
                                                                     .red,
                                                                 fontSize: 8,
                                                                 fontWeight:
-                                                                FontWeight
-                                                                    .bold),
+                                                                    FontWeight
+                                                                        .bold),
                                                           )),
-                                                      SizedBox(
-                                                        height: 5,
-                                                      ),
-                                                    ],
-                                                  ),
+                                                SizedBox(
+                                                  height: 5,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        Flexible(
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                                right: 15.0),
+                                            child: Column(
+                                              children: [
+                                                Material(
+                                                    child:  Text(
+                                                      "Received Date",
+                                                      style: TextStyle(
+                                                          color: bgColor,
+                                                          fontSize: 8,
+                                                          fontWeight:
+                                                          FontWeight.bold),
+                                                    )),
+                                                SizedBox(
+                                                  height: 2,
+                                                ),
+                                                Material(
+                                                    child:  _editDateReceivedDiscountTextField(),
+                                                ),
+                                                SizedBox(
+                                                                                                                  ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 12.0, right: 12.0),
+                                      child: Divider(),
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Flexible(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Material(
+                                                  child: Text(
+                                                "Branch",
+                                                style: TextStyle(
+                                                    color: bgColor,
+                                                    fontSize: 8,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              )),
+                                              SizedBox(
+                                                height: 5,
+                                              ),
+                                              Material(
+                                                child: Container(
+                                                  width: 240,
+                                                  height: 48,
+                                                  child: branchTextField,
                                                 ),
                                               ),
                                             ],
                                           ),
                                         ),
-                                        SizedBox(
-                                          height: 10.0,
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 12.0, right: 12.0),
-                                          child: Divider(),
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Flexible(
-                                              child: Column(
-                                                crossAxisAlignment:
+                                        Flexible(
+                                          child: Column(
+                                            crossAxisAlignment:
                                                 CrossAxisAlignment.start,
-                                                children: [
-                                                  Material(
-                                                      child: Text(
-                                                        "Branch",
-                                                        style: TextStyle(
-                                                            color: bgColor,
-                                                            fontSize: 8,
-                                                            fontWeight:
-                                                            FontWeight.bold),
-                                                      )),
-                                                  SizedBox(
-                                                    height: 5,
-                                                  ),
-                                                  Material(
-                                                    child: Container(
-                                                      width: 240,
-                                                      height: 48,
-                                                      child: branchTextField,
-                                                    ),
-                                                  ),
-                                                ],
+                                            children: [
+                                              Material(
+                                                  child: Text(
+                                                "Item",
+                                                style: TextStyle(
+                                                    color: bgColor,
+                                                    fontSize: 8,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              )),
+                                              SizedBox(
+                                                height: 5,
                                               ),
-                                            ),
-                                            Flexible(
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                                children: [
-                                                  Material(
-                                                      child: Text(
-                                                        "Item",
-                                                        style: TextStyle(
-                                                            color: bgColor,
-                                                            fontSize: 8,
-                                                            fontWeight:
-                                                            FontWeight.bold),
-                                                      )),
-                                                  SizedBox(
-                                                    height: 5,
-                                                  ),
-                                                  Material(
-                                                    child: Container(
-                                                      width: 240,
-                                                      height: 48,
-                                                      child: itemTextField,
-                                                    ),
-                                                  ),
-                                                ],
+                                              Material(
+                                                child: Container(
+                                                  width: 240,
+                                                  height: 48,
+                                                  child: itemTextField,
+                                                ),
                                               ),
-                                            ),
-                                            Flexible(
-                                              child: Column(
-                                                children: [
-                                                  Padding(
-                                                    padding:
-                                                    const EdgeInsets.only(
-                                                        left: 12.0),
-                                                    child: Material(
-                                                        child: Text(
-                                                          "Stock",
-                                                          style: TextStyle(
-                                                              color: bgColor,
-                                                              fontSize: 8,
-                                                              fontWeight:
-                                                              FontWeight.bold),
-                                                        )),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 15,
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                    const EdgeInsets.only(
-                                                        left: 12.0),
-                                                    child: Material(
-                                                        child: itemValue ==
-                                                            true &&
-                                                            ItemApi
-                                                                .itemList[
-                                                            0]
-                                                                .branch ==
+                                            ],
+                                          ),
+                                        ),
+                                        Flexible(
+                                          child: Column(
+                                            children: [
+                                              Material(
+                                                  child: Text(
+                                                "Trade Disc",
+                                                style: TextStyle(
+                                                    color: bgColor,
+                                                    fontSize: 8,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              )),
+                                              SizedBox(
+                                                height: 15,
+                                              ),
+                                              Material(
+                                                child:
+                                                    _editTradeDiscountTextField(
+                                                        initialTradeText),
+                                              ),
+                                              SizedBox(
+                                                height: 5,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Flexible(
+                                          child: Column(
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 12.0),
+                                                child: Material(
+                                                    child: Text(
+                                                  "Stock",
+                                                  style: TextStyle(
+                                                      color: bgColor,
+                                                      fontSize: 8,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                )),
+                                              ),
+                                              SizedBox(
+                                                height: 15,
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 12.0),
+                                                child: Material(
+                                                    child: itemValue == true &&
+                                                            ItemApi.itemList[0]
+                                                                    .branch ==
                                                                 BranchApi
                                                                     .branchList[
-                                                                0]
+                                                                        0]
                                                                     .id
-                                                            ? Text(
-                                                          "${ItemApi.itemList[0].item.balance.toString()}",
-                                                          style: TextStyle(
-                                                              color: Colors
-                                                                  .red,
-                                                              fontSize: 8,
-                                                              fontWeight:
-                                                              FontWeight
-                                                                  .bold),
-                                                        )
-                                                            : Text(
-                                                          "stock",
-                                                          style: TextStyle(
-                                                              color: Colors
-                                                                  .red,
-                                                              fontSize: 8,
-                                                              fontWeight:
-                                                              FontWeight
-                                                                  .bold),
-                                                        )),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 5,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            Flexible(
-                                              child: Column(
-                                                children: [
-                                                  Padding(
-                                                    padding:
-                                                    const EdgeInsets.only(
-                                                        left: 12.0),
-                                                    child: Material(
-                                                        child: Text(
-                                                          "Min price",
-                                                          style: TextStyle(
-                                                              color: bgColor,
-                                                              fontSize: 8,
-                                                              fontWeight:
-                                                              FontWeight.bold),
-                                                        )),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 15,
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                    const EdgeInsets.only(
-                                                        left: 12.0),
-                                                    child: Material(
-                                                        child: itemValue == true
-                                                            ? Text(
-                                                          "Ksh ${ItemApi.itemList[0].item.minimumPrice}",
-                                                          style: TextStyle(
-                                                              color: Colors
-                                                                  .red,
-                                                              fontSize: 8,
-                                                              fontWeight:
-                                                              FontWeight
-                                                                  .bold),
-                                                        )
-                                                            : Text(
-                                                          "Ksh 0.0",
-                                                          style: TextStyle(
-                                                              color: Colors
-                                                                  .red,
-                                                              fontSize: 8,
-                                                              fontWeight:
-                                                              FontWeight
-                                                                  .bold),
-                                                        )),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 5,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            Flexible(
-                                              child: Padding(
-                                                padding: const EdgeInsets.only(
-                                                    right: 15.0),
-                                                child: Column(
-                                                  children: [
-                                                    Padding(
-                                                      padding:
-                                                      const EdgeInsets.only(
-                                                        left: 12.0,
-                                                      ),
-                                                      child: Material(
-                                                          child: Text(
-                                                            "Max price",
+                                                        ? Text(
+                                                            "${ItemApi.itemList[0].item.balance.toString()}",
                                                             style: TextStyle(
-                                                                color: bgColor,
+                                                                color:
+                                                                    Colors.red,
                                                                 fontSize: 8,
                                                                 fontWeight:
-                                                                FontWeight.bold),
-                                                          )),
-                                                    ),
-                                                    SizedBox(
-                                                      height: 15,
-                                                    ),
-                                                    Padding(
-                                                      padding:
-                                                      const EdgeInsets.only(
-                                                          left: 12.0),
-                                                      child: Material(
-                                                          child: itemValue == true
-                                                              ? Text(
-                                                            "Ksh ${ItemApi.itemList[0].item.maximumPrice}",
-                                                            style: TextStyle(
-                                                                color: Colors
-                                                                    .red,
-                                                                fontSize: 8,
-                                                                fontWeight:
-                                                                FontWeight
-                                                                    .bold),
+                                                                    FontWeight
+                                                                        .bold),
                                                           )
-                                                              : Text(
+                                                        : Text(
+                                                            "stock",
+                                                            style: TextStyle(
+                                                                color:
+                                                                    Colors.red,
+                                                                fontSize: 8,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                          )),
+                                              ),
+                                              SizedBox(
+                                                height: 5,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Flexible(
+                                          child: Column(
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 12.0),
+                                                child: Material(
+                                                    child: Text(
+                                                  "Min price",
+                                                  style: TextStyle(
+                                                      color: bgColor,
+                                                      fontSize: 8,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                )),
+                                              ),
+                                              SizedBox(
+                                                height: 15,
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 12.0),
+                                                child: Material(
+                                                    child: itemValue == true
+                                                        ? Text(
+                                                            "Ksh ${ItemApi.itemList[0].item.minimumPrice}",
+                                                            style: TextStyle(
+                                                                color:
+                                                                    Colors.red,
+                                                                fontSize: 8,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                          )
+                                                        : Text(
                                                             "Ksh 0.0",
                                                             style: TextStyle(
-                                                                color: Colors
-                                                                    .red,
+                                                                color:
+                                                                    Colors.red,
                                                                 fontSize: 8,
                                                                 fontWeight:
-                                                                FontWeight
-                                                                    .bold),
+                                                                    FontWeight
+                                                                        .bold),
                                                           )),
-                                                    ),
-                                                    SizedBox(
-                                                      height: 5,
-                                                    ),
-                                                  ],
-                                                ),
                                               ),
-                                            ),
-                                          ],
+                                              SizedBox(
+                                                height: 5,
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 12.0, right: 12.0),
-                                          child: Divider(),
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Flexible(
-                                              child: Column(
-                                                children: [
-                                                  Padding(
-                                                    padding:
-                                                    const EdgeInsets.only(
-                                                        left: 12.0),
-                                                    child: Material(
-                                                        child: Text(
-                                                          "Order item",
-                                                          style: TextStyle(
-                                                              color: bgColor,
-                                                              fontSize: 12,
-                                                              fontWeight:
-                                                              FontWeight.bold),
-                                                        )),
+                                        Flexible(
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                                right: 15.0),
+                                            child: Column(
+                                              children: [
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                    left: 12.0,
                                                   ),
-                                                  SizedBox(
-                                                    height: 15,
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                    const EdgeInsets.only(
-                                                        left: 12.0),
-                                                    child: Material(
-                                                        child: itemValue == true
-                                                            ? Text(
-                                                          "${ItemApi.itemList[0].item.name}",
-                                                          style: TextStyle(
-                                                              color: Colors
-                                                                  .red,
-                                                              fontSize: 8,
-                                                              fontWeight:
-                                                              FontWeight
-                                                                  .bold),
-                                                        )
-                                                            : Text(
-                                                          "Item",
-                                                          style: TextStyle(
-                                                              color: Colors
-                                                                  .red,
-                                                              fontSize: 12,
-                                                              fontWeight:
-                                                              FontWeight
-                                                                  .bold),
-                                                        )),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 5,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            Flexible(
-                                              child: Column(
-                                                children: [
-                                                  Material(
+                                                  child: Material(
                                                       child: Text(
-                                                        "Trade Disc",
-                                                        style: TextStyle(
-                                                            color: bgColor,
-                                                            fontSize: 8,
-                                                            fontWeight:
+                                                    "Max price",
+                                                    style: TextStyle(
+                                                        color: bgColor,
+                                                        fontSize: 8,
+                                                        fontWeight:
                                                             FontWeight.bold),
-                                                      )),
-                                                  SizedBox(
-                                                    height: 15,
-                                                  ),
-                                                  Material(
-                                                    child: Container(
-                                                      width: 48,
-                                                      height: 48,
-                                                      child: TextField(
-                                                        controller:
-                                                        _tradeDiscController,
-                                                        keyboardType:
-                                                        TextInputType.number,
-                                                        inputFormatters: [
-                                                          FilteringTextInputFormatter
-                                                              .allow(RegExp(
-                                                              r'^\d*\.?\d{0,2}')),
-                                                        ],
-                                                        decoration:
-                                                        InputDecoration(
-                                                          //  labelText: "Email Address",
-                                                            hintText: "  0",
-                                                            hintStyle:
-                                                            TextStyle(
-                                                              fontSize: 12,
-                                                            ),
-                                                            focusedBorder: OutlineInputBorder(
-                                                                borderSide:
-                                                                const BorderSide(
-                                                                    color:
-                                                                    primaryColor,
-                                                                    width:
-                                                                    0.4),
-                                                                borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                    5)),
-                                                            enabledBorder: OutlineInputBorder(
-                                                                borderSide: const BorderSide(
-                                                                    color: Colors
-                                                                        .grey,
-                                                                    width:
-                                                                    0.4),
-                                                                borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                    5))),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 5,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            Flexible(
-                                              child: Column(
-                                                children: [
-                                                  Material(
-                                                      child: Text(
-                                                        "Quantity",
-                                                        style: TextStyle(
-                                                            color: bgColor,
-                                                            fontSize: 8,
-                                                            fontWeight:
-                                                            FontWeight.bold),
-                                                      )),
-                                                  SizedBox(
-                                                    height: 15,
-                                                  ),
-                                                  Material(
-                                                    child: Container(
-                                                      width: 48,
-                                                      height: 48,
-                                                      child: TextField(
-                                                        controller:
-                                                        _quantityController,
-                                                        keyboardType:
-                                                        TextInputType.number,
-                                                        inputFormatters: [
-                                                          FilteringTextInputFormatter
-                                                              .allow(RegExp(
-                                                              r'^\d*\.?\d{0,2}')),
-                                                        ],
-                                                        decoration:
-                                                        InputDecoration(
-                                                          //  labelText: "Email Address",
-                                                            hintText: "  0",
-                                                            hintStyle:
-                                                            TextStyle(
-                                                              fontSize: 12,
-                                                            ),
-                                                            focusedBorder: OutlineInputBorder(
-                                                                borderSide:
-                                                                const BorderSide(
-                                                                    color:
-                                                                    primaryColor,
-                                                                    width:
-                                                                    0.4),
-                                                                borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                    5)),
-                                                            enabledBorder: OutlineInputBorder(
-                                                                borderSide: const BorderSide(
-                                                                    color: Colors
-                                                                        .grey,
-                                                                    width:
-                                                                    0.4),
-                                                                borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                    5))),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 5,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            Flexible(
-                                              child: Column(
-                                                children: [
-                                                  Material(
-                                                      child: Text(
-                                                        "Unit price",
-                                                        style: TextStyle(
-                                                            color: bgColor,
-                                                            fontSize: 8,
-                                                            fontWeight:
-                                                            FontWeight.bold),
-                                                      )),
-                                                  SizedBox(
-                                                    height: 15,
-                                                  ),
-                                                  Material(
-                                                    child: Container(
-                                                      width: 48,
-                                                      height: 48,
-                                                      child: TextField(
-                                                        controller:
-                                                        _unitPriceController,
-                                                        keyboardType:
-                                                        TextInputType.number,
-                                                        inputFormatters: [
-                                                          FilteringTextInputFormatter
-                                                              .allow(RegExp(
-                                                              r'^\d*\.?\d{0,2}')),
-                                                        ],
-                                                        decoration:
-                                                        InputDecoration(
-                                                          //  labelText: "Email Address",
-                                                            hintText: "  0.0",
-                                                            hintStyle:
-                                                            TextStyle(
-                                                              fontSize: 12,
-                                                            ),
-                                                            focusedBorder: OutlineInputBorder(
-                                                                borderSide:
-                                                                const BorderSide(
-                                                                    color:
-                                                                    primaryColor,
-                                                                    width:
-                                                                    0.4),
-                                                                borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                    5)),
-                                                            enabledBorder: OutlineInputBorder(
-                                                                borderSide: const BorderSide(
-                                                                    color: Colors
-                                                                        .grey,
-                                                                    width:
-                                                                    0.4),
-                                                                borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                    5))),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 5,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            Flexible(
-                                              child: Column(
-                                                children: [
-                                                  Material(
-                                                      child: Text(
-                                                        "Bonus",
-                                                        style: TextStyle(
-                                                            color: bgColor,
-                                                            fontSize: 8,
-                                                            fontWeight:
-                                                            FontWeight.bold),
-                                                      )),
-                                                  SizedBox(
-                                                    height: 15,
-                                                  ),
-                                                  Material(
-                                                    child: Container(
-                                                      width: 48,
-                                                      height: 48,
-                                                      child: TextField(
-                                                        controller:
-                                                        _bonusController,
-                                                        keyboardType:
-                                                        TextInputType.number,
-                                                        inputFormatters: [
-                                                          FilteringTextInputFormatter
-                                                              .allow(RegExp(
-                                                              r'^\d*\.?\d{0,2}')),
-                                                        ],
-                                                        decoration:
-                                                        InputDecoration(
-                                                          //  labelText: "Email Address",
-                                                            hintText: "  0",
-                                                            hintStyle:
-                                                            TextStyle(
-                                                              fontSize: 12,
-                                                            ),
-                                                            focusedBorder: OutlineInputBorder(
-                                                                borderSide:
-                                                                const BorderSide(
-                                                                    color:
-                                                                    primaryColor,
-                                                                    width:
-                                                                    0.4),
-                                                                borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                    5)),
-                                                            enabledBorder: OutlineInputBorder(
-                                                                borderSide: const BorderSide(
-                                                                    color: Colors
-                                                                        .grey,
-                                                                    width:
-                                                                    0.4),
-                                                                borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                    5))),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 5,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            Flexible(
-                                              child: Padding(
-                                                padding: const EdgeInsets.only(
-                                                    right: 15.0),
-                                                child: Column(
-                                                  children: [
-                                                    Material(
-                                                        child: Text(
-                                                          "Total Quantity",
-                                                          style: TextStyle(
-                                                              color: bgColor,
-                                                              fontSize: 8,
-                                                              fontWeight:
-                                                              FontWeight.bold),
-                                                        )),
-                                                    SizedBox(
-                                                      height: 30,
-                                                    ),
-                                                    Material(
-                                                      child: Text(
-                                                        "${qty.floor() + bns.floor()}",
-                                                        style: TextStyle(
-                                                          color: primaryColor,
-                                                          fontSize: 18.0,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      height: 5,
-                                                    ),
-                                                  ],
+                                                  )),
                                                 ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Flexible(
-                                              child: Column(
-                                                children: [
-                                                  Material(
-                                                      child: Text(
-                                                        "Disc percentage",
-                                                        style: TextStyle(
-                                                            color: bgColor,
-                                                            fontSize: 8,
-                                                            fontWeight:
-                                                            FontWeight.bold),
-                                                      )),
-                                                  SizedBox(
-                                                    height: 15,
-                                                  ),
-                                                  Material(
-                                                    child: Container(
-                                                      width: 48,
-                                                      height: 48,
-                                                      child: TextField(
-                                                        controller:
-                                                        _discPercentageController,
-                                                        keyboardType:
-                                                        TextInputType.number,
-                                                        inputFormatters: [
-                                                          FilteringTextInputFormatter
-                                                              .allow(RegExp(
-                                                              r'^\d*\.?\d{0,2}')),
-                                                        ],
-                                                        decoration:
-                                                        InputDecoration(
-                                                          //  labelText: "Email Address",
-                                                            hintText: "  0.0",
-                                                            hintStyle:
-                                                            TextStyle(
-                                                              fontSize: 12,
-                                                            ),
-                                                            focusedBorder: OutlineInputBorder(
-                                                                borderSide:
-                                                                const BorderSide(
-                                                                    color:
-                                                                    primaryColor,
-                                                                    width:
-                                                                    0.4),
-                                                                borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                    5)),
-                                                            enabledBorder: OutlineInputBorder(
-                                                                borderSide: const BorderSide(
-                                                                    color: Colors
-                                                                        .grey,
-                                                                    width:
-                                                                    0.4),
-                                                                borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                    5))),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 5,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            Flexible(
-                                              child: Column(
-                                                children: [
-                                                  Material(
-                                                      child: Text(
-                                                        "Disc amount",
-                                                        style: TextStyle(
-                                                            color: bgColor,
-                                                            fontSize: 8,
-                                                            fontWeight:
-                                                            FontWeight.bold),
-                                                      )),
-                                                  SizedBox(
-                                                    height: 15,
-                                                  ),
-                                                  _editTitleTextField(),
-                                                  SizedBox(
-                                                    height: 5,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            Flexible(
-                                              child: Column(
-                                                children: [
-                                                  Material(
-                                                      child: Text(
-                                                        "VAT amount",
-                                                        style: TextStyle(
-                                                            color: bgColor,
-                                                            fontSize: 8,
-                                                            fontWeight:
-                                                            FontWeight.bold),
-                                                      )),
-                                                  SizedBox(
-                                                    height: 15,
-                                                  ),
-                                                  _editVATAmountTextField(),
-                                                  SizedBox(
-                                                    height: 5,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            Flexible(
-                                              child: Column(
-                                                children: [
-                                                  Material(
-                                                      child: Text(
-                                                        "VAT percentage",
-                                                        style: TextStyle(
-                                                            color: bgColor,
-                                                            fontSize: 8,
-                                                            fontWeight:
-                                                            FontWeight.bold),
-                                                      )),
-                                                  SizedBox(
-                                                    height: 15,
-                                                  ),
-                                                  Material(
-                                                    child: Container(
-                                                      width: 48,
-                                                      height: 48,
-                                                      child: TextField(
-                                                        controller:
-                                                        _vatPercentageController,
-                                                        keyboardType: TextInputType
-                                                            .numberWithOptions(
-                                                            decimal: true),
-                                                        inputFormatters: [
-                                                          FilteringTextInputFormatter
-                                                              .allow(RegExp(
-                                                              r'^\d*\.?\d{0,2}')),
-                                                        ],
-                                                        decoration:
-                                                        InputDecoration(
-                                                          //  labelText: "Email Address",
-                                                            hintText: "  0.0",
-                                                            hintStyle:
-                                                            TextStyle(
-                                                              fontSize: 12,
-                                                            ),
-                                                            focusedBorder: OutlineInputBorder(
-                                                                borderSide:
-                                                                const BorderSide(
-                                                                    color:
-                                                                    primaryColor,
-                                                                    width:
-                                                                    0.4),
-                                                                borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                    5)),
-                                                            enabledBorder: OutlineInputBorder(
-                                                                borderSide: const BorderSide(
-                                                                    color: Colors
-                                                                        .grey,
-                                                                    width:
-                                                                    0.4),
-                                                                borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                    5))),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 5,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            Flexible(
-                                              child: Column(
-                                                children: [
-                                                  Material(
-                                                      child: Text(
-                                                        "Net amount",
-                                                        style: TextStyle(
-                                                            color: bgColor,
-                                                            fontSize: 8,
-                                                            fontWeight:
-                                                            FontWeight.bold),
-                                                      )),
-                                                  SizedBox(
-                                                    height: 15,
-                                                  ),
-                                                  _editNetTextField(),
-                                                  SizedBox(
-                                                    height: 5,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            Flexible(
-                                              child: Padding(
-                                                padding: const EdgeInsets.only(
-                                                    right: 15.0),
-                                                child: Column(
-                                                  children: [
-                                                    Material(
-                                                        child: Text(
-                                                          "Total Amount",
-                                                          style: TextStyle(
-                                                              color: bgColor,
-                                                              fontSize: 8,
-                                                              fontWeight:
-                                                              FontWeight.bold),
-                                                        )),
-                                                    SizedBox(
-                                                      height: 15,
-                                                    ),
-                                                    Material(
-                                                      child: Text(
-                                                        "${vat - discAmount + netPrice}",
-                                                        style: TextStyle(
-                                                          color: primaryColor,
-                                                          fontSize: 18.0,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      height: 5,
-                                                    ),
-                                                  ],
+                                                SizedBox(
+                                                  height: 15,
                                                 ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        Column(
-                                          children: [
-                                            Material(
-                                              child: InkWell(
-                                                onTap: () {
-                                                  var tableInvoice =
-                                                  new TablePurchaseOrder();
-
-                                                  tableInvoice.item =
-                                                      _itemController.text;
-                                                  tableInvoice.bonus =
-                                                      _bonusController.text;
-                                                  tableInvoice.totalQty =
-                                                  "${qty + bns}";
-                                                  tableInvoice.quantity =
-                                                      _quantityController.text;
-                                                  tableInvoice.netAmount =
-                                                      _netAmountController.text;
-                                                  tableInvoice.unitPrice =
-                                                      _unitPriceController.text;
-                                                  tableInvoice.vatAmount =
-                                                  "${vatPerc.toPrecision(2) / 100 * netPrice.toPrecision(2)}";
-                                                  tableInvoice.vatPer =
-                                                      _vatPercentageController
-                                                          .text;
-                                                  tableInvoice.disc =
-                                                  "${discPerc.toPrecision(2) / 100 * itemPrice.toPrecision(2)}";
-                                                  tableInvoice.discPer =
-                                                      _discPercentageController
-                                                          .text;
-                                                  tableInvoice.netAmount =
-                                                  "${itemPrice - discAmount}";
-                                                  tableInvoice.totalAmount =
-                                                  "${vat - discAmount + netPrice}";
-                                                  tableInvoice.sumSubTotal =
-                                                  "${vat.toPrecision(2) - discAmount.toPrecision(2) + netPrice.toPrecision(2) - vat.toPrecision(2) + discAmount.toPrecision(2)}";
-                                                  tableInvoice.sumNetAmount =
-                                                  "${netPrice.toPrecision(2)}";
-                                                  tableInvoice.sumDiscountTotal =
-                                                  "${discAmount.toPrecision(2)}";
-                                                  tableInvoice.tradeDiscountPercentage = _tradeDiscController.value.text.isEmpty ? "0.0" : _tradeDiscController.text;
-                                                  tableInvoice.sumVatTotal =
-                                                  "${vat.toPrecision(2)}";
-                                                  tableInvoice.sumTotal =
-                                                  "${vat.toPrecision(2) - discAmount.toPrecision(2) + netPrice.toPrecision(2) - vat.toPrecision(2) + discAmount.toPrecision(2) + vat.toPrecision(2) - discAmount.toPrecision(2)}";
-                                                  tablesPurchaseOrder.add(tableInvoice);
-                                                  setState(() {});
-                                                },
-                                                child: Container(
-                                                    width: MediaQuery.of(context)
-                                                        .size
-                                                        .width,
-                                                    height: 45,
-                                                    decoration: BoxDecoration(
-                                                      borderRadius:
-                                                      BorderRadius.circular(
-                                                          5.0),
-                                                      color: primaryColor,
-                                                    ),
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .center,
-                                                      children: [
-                                                        Icon(
-                                                          Icons.add,
-                                                          color: Colors.white,
-                                                        ),
-                                                        Text("Add Item",
-                                                            style: TextStyle(
-                                                                color: Colors
-                                                                    .white)),
-                                                      ],
-                                                    )
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 12.0),
+                                                  child: Material(
+                                                      child: itemValue == true
+                                                          ? Text(
+                                                              "Ksh ${ItemApi.itemList[0].item.maximumPrice}",
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .red,
+                                                                  fontSize: 8,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold),
+                                                            )
+                                                          : Text(
+                                                              "Ksh 0.0",
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .red,
+                                                                  fontSize: 8,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold),
+                                                            )),
                                                 ),
-                                              ),
+                                                SizedBox(
+                                                  height: 5,
+                                                ),
+                                              ],
                                             ),
-                                            SizedBox(
-                                              height: 5,
-                                            ),
-                                          ],
+                                          ),
                                         ),
                                       ],
-                                    )),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 12.0, right: 12.0),
+                                      child: Divider(),
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Flexible(
+                                          child: Column(
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 12.0),
+                                                child: Material(
+                                                    child: Text(
+                                                  "Order item",
+                                                  style: TextStyle(
+                                                      color: bgColor,
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                )),
+                                              ),
+                                              SizedBox(
+                                                height: 15,
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 12.0),
+                                                child: Material(
+                                                    child: itemValue == true
+                                                        ? Text(
+                                                            "${ItemApi.itemList[0].item.name}",
+                                                            style: TextStyle(
+                                                                color:
+                                                                    Colors.red,
+                                                                fontSize: 8,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                          )
+                                                        : Text(
+                                                            "Item",
+                                                            style: TextStyle(
+                                                                color:
+                                                                    Colors.red,
+                                                                fontSize: 12,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                          )),
+                                              ),
+                                              SizedBox(
+                                                height: 5,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+
+                                        Flexible(
+                                          child: Column(
+                                            children: [
+                                              Material(
+                                                  child: Text(
+                                                "Quantity",
+                                                style: TextStyle(
+                                                    color: bgColor,
+                                                    fontSize: 8,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              )),
+                                              SizedBox(
+                                                height: 15,
+                                              ),
+                                              Material(
+                                                child: Container(
+                                                  width: 48,
+                                                  height: 48,
+                                                  child: TextField(
+                                                    controller:
+                                                        _quantityController,
+                                                    keyboardType:
+                                                        TextInputType.number,
+                                                    inputFormatters: [
+                                                      FilteringTextInputFormatter
+                                                          .allow(RegExp(
+                                                              r'^\d*\.?\d{0,2}')),
+                                                    ],
+                                                    decoration: InputDecoration(
+                                                        //  labelText: "Email Address",
+                                                        hintText: "  0",
+                                                        hintStyle: TextStyle(
+                                                          fontSize: 12,
+                                                        ),
+                                                        focusedBorder: OutlineInputBorder(
+                                                            borderSide:
+                                                                const BorderSide(
+                                                                    color:
+                                                                        primaryColor,
+                                                                    width: 0.4),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        5)),
+                                                        enabledBorder: OutlineInputBorder(
+                                                            borderSide:
+                                                                const BorderSide(
+                                                                    color: Colors
+                                                                        .grey,
+                                                                    width: 0.4),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        5))),
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: 5,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Flexible(
+                                          child: Column(
+                                            children: [
+                                              Material(
+                                                  child: Text(
+                                                "Unit price",
+                                                style: TextStyle(
+                                                    color: bgColor,
+                                                    fontSize: 8,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              )),
+                                              SizedBox(
+                                                height: 15,
+                                              ),
+                                              Material(
+                                                child: Container(
+                                                  width: 48,
+                                                  height: 48,
+                                                  child: TextField(
+                                                    controller:
+                                                        _unitPriceController,
+                                                    keyboardType:
+                                                        TextInputType.number,
+                                                    inputFormatters: [
+                                                      FilteringTextInputFormatter
+                                                          .allow(RegExp(
+                                                              r'^\d*\.?\d{0,2}')),
+                                                    ],
+                                                    decoration: InputDecoration(
+                                                        //  labelText: "Email Address",
+                                                        hintText: "  0.0",
+                                                        hintStyle: TextStyle(
+                                                          fontSize: 12,
+                                                        ),
+                                                        focusedBorder: OutlineInputBorder(
+                                                            borderSide:
+                                                                const BorderSide(
+                                                                    color:
+                                                                        primaryColor,
+                                                                    width: 0.4),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        5)),
+                                                        enabledBorder: OutlineInputBorder(
+                                                            borderSide:
+                                                                const BorderSide(
+                                                                    color: Colors
+                                                                        .grey,
+                                                                    width: 0.4),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        5))),
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: 5,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Flexible(
+                                          child: Column(
+                                            children: [
+                                              Material(
+                                                  child: Text(
+                                                "Bonus",
+                                                style: TextStyle(
+                                                    color: bgColor,
+                                                    fontSize: 8,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              )),
+                                              SizedBox(
+                                                height: 15,
+                                              ),
+                                              Material(
+                                                child: Container(
+                                                  width: 48,
+                                                  height: 48,
+                                                  child: TextField(
+                                                    controller:
+                                                        _bonusController,
+                                                    keyboardType:
+                                                        TextInputType.number,
+                                                    inputFormatters: [
+                                                      FilteringTextInputFormatter
+                                                          .allow(RegExp(
+                                                              r'^\d*\.?\d{0,2}')),
+                                                    ],
+                                                    decoration: InputDecoration(
+                                                        //  labelText: "Email Address",
+                                                        hintText: "  0",
+                                                        hintStyle: TextStyle(
+                                                          fontSize: 12,
+                                                        ),
+                                                        focusedBorder: OutlineInputBorder(
+                                                            borderSide:
+                                                                const BorderSide(
+                                                                    color:
+                                                                        primaryColor,
+                                                                    width: 0.4),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        5)),
+                                                        enabledBorder: OutlineInputBorder(
+                                                            borderSide:
+                                                                const BorderSide(
+                                                                    color: Colors
+                                                                        .grey,
+                                                                    width: 0.4),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        5))),
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: 5,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Flexible(
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                                right: 15.0),
+                                            child: Column(
+                                              children: [
+                                                Material(
+                                                    child: Text(
+                                                  "Total Quantity",
+                                                  style: TextStyle(
+                                                      color: bgColor,
+                                                      fontSize: 8,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                )),
+                                                SizedBox(
+                                                  height: 30,
+                                                ),
+                                                Material(
+                                                  child: Text(
+                                                    "${qty.floor() + bns.floor()}",
+                                                    style: TextStyle(
+                                                      color: primaryColor,
+                                                      fontSize: 18.0,
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  height: 5,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Flexible(
+                                          child: Column(
+                                            children: [
+                                              Material(
+                                                  child: Text(
+                                                "Disc percentage",
+                                                style: TextStyle(
+                                                    color: bgColor,
+                                                    fontSize: 8,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              )),
+                                              SizedBox(
+                                                height: 15,
+                                              ),
+                                              discountValueController == true
+                                                  ? _editDiscPerCounterField()
+                                                  : _editDiscPercField(),
+                                              SizedBox(
+                                                height: 5,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Flexible(
+                                          child: Column(
+                                            children: [
+                                              Material(
+                                                  child: Text(
+                                                "Disc amount",
+                                                style: TextStyle(
+                                                    color: bgColor,
+                                                    fontSize: 8,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              )),
+                                              SizedBox(
+                                                height: 15,
+                                              ),
+                                              newDiscountValueController == true
+                                                  ? _editDiscAmountCounterTextField()
+                                                  : _editDiscAmountField(),
+                                              SizedBox(
+                                                height: 5,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Flexible(
+                                          child: Column(
+                                            children: [
+                                              Material(
+                                                  child: Text(
+                                                "VAT amount",
+                                                style: TextStyle(
+                                                    color: bgColor,
+                                                    fontSize: 8,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              )),
+                                              SizedBox(
+                                                height: 15,
+                                              ),
+                                              _editVATAmountTextField(),
+                                              SizedBox(
+                                                height: 5,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Flexible(
+                                          child: Column(
+                                            children: [
+                                              Material(
+                                                  child: Text(
+                                                "VAT percentage",
+                                                style: TextStyle(
+                                                    color: bgColor,
+                                                    fontSize: 8,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              )),
+                                              SizedBox(
+                                                height: 15,
+                                              ),
+                                              Material(
+                                                child: Container(
+                                                  width: 48,
+                                                  height: 48,
+                                                  child: TextField(
+                                                    controller:
+                                                        _vatPercentageController,
+                                                    keyboardType: TextInputType
+                                                        .numberWithOptions(
+                                                            decimal: true),
+                                                    inputFormatters: [
+                                                      FilteringTextInputFormatter
+                                                          .allow(RegExp(
+                                                              r'^\d*\.?\d{0,2}')),
+                                                    ],
+                                                    decoration: InputDecoration(
+                                                        //  labelText: "Email Address",
+                                                        hintText: "  0.0",
+                                                        hintStyle: TextStyle(
+                                                          fontSize: 12,
+                                                        ),
+                                                        focusedBorder: OutlineInputBorder(
+                                                            borderSide:
+                                                                const BorderSide(
+                                                                    color:
+                                                                        primaryColor,
+                                                                    width: 0.4),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        5)),
+                                                        enabledBorder: OutlineInputBorder(
+                                                            borderSide:
+                                                                const BorderSide(
+                                                                    color: Colors
+                                                                        .grey,
+                                                                    width: 0.4),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        5))),
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: 5,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Flexible(
+                                          child: Column(
+                                            children: [
+                                              Material(
+                                                  child: Text(
+                                                "Net amount",
+                                                style: TextStyle(
+                                                    color: bgColor,
+                                                    fontSize: 8,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              )),
+                                              SizedBox(
+                                                height: 15,
+                                              ),
+                                              _editNetTextField(),
+                                              SizedBox(
+                                                height: 5,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Flexible(
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                                right: 15.0),
+                                            child: Column(
+                                              children: [
+                                                Material(
+                                                    child: Text(
+                                                  "Total Amount",
+                                                  style: TextStyle(
+                                                      color: bgColor,
+                                                      fontSize: 8,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                )),
+                                                SizedBox(
+                                                  height: 15,
+                                                ),
+                                                Material(
+                                                  child: Text(
+                                                    "${vat - discAmount + netAmount}",
+                                                    style: TextStyle(
+                                                      color: primaryColor,
+                                                      fontSize: 18.0,
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  height: 5,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Column(
+                                      children: [
+                                        editValue == true
+                                            ? Material(
+                                                child: InkWell(
+                                                  onTap: () {
+                                                    var tableInvoice =
+                                                        new TablePurchaseOrder();
+
+                                                    tableInvoice.item =
+                                                        _itemController.text;
+                                                    tableInvoice.bonus =
+                                                        _bonusController.text;
+                                                    tableInvoice.totalQty =
+                                                        "${qty + bns}";
+                                                    tableInvoice.quantity =
+                                                        _quantityController
+                                                            .text;
+                                                    tableInvoice.netAmount =
+                                                        _netAmountController
+                                                            .text;
+                                                    tableInvoice.unitPrice =
+                                                        _unitPriceController
+                                                            .text;
+                                                    tableInvoice.vatAmount =
+                                                        "${vatPerc.toPrecision(2) / 100 * netAmount.toPrecision(2)}";
+                                                    tableInvoice.vatPer =
+                                                        _vatPercentageController
+                                                            .text;
+                                                    tableInvoice.supItems = {
+                                                      "item": itemId,
+                                                      "quantity":
+                                                          _quantityController
+                                                              .text,
+                                                      "unit_cost": unitCost,
+                                                      'total_cost': qty +
+                                                          bns *
+                                                              double.parse(
+                                                                  _unitPriceController
+                                                                      .text),
+                                                      "bonus":
+                                                          _bonusController.text,
+                                                      "total_quantity":
+                                                          qty + bns,
+                                                      "discount_percentage":
+                                                          _discPercentageController
+                                                              .text,
+                                                      "discount_amount":
+                                                          discPerc.toPrecision(
+                                                                  2) /
+                                                              100 *
+                                                              totalCost
+                                                                  .toPrecision(
+                                                                      2),
+                                                      "net_amount": totalCost -
+                                                          discAmount,
+                                                      "vat_percentage":
+                                                          _vatPercentageController
+                                                              .text,
+                                                      "vat_amount": vatPerc
+                                                              .toPrecision(2) /
+                                                          100 *
+                                                          netAmount
+                                                              .toPrecision(2),
+                                                      "total_amount": vat -
+                                                          discAmount +
+                                                          netAmount,
+                                                    };
+                                                    tableInvoice.disc =
+                                                        initialText;
+                                                    tableInvoice.discPer =initialDiscText;
+                                                    tableInvoice.netAmount =
+                                                        "${totalCost - discAmount}";
+                                                    tableInvoice.totalAmount =
+                                                        "${vat - discAmount + netAmount}";
+                                                    tableInvoice.sumSubTotal =
+                                                        "${vat.toPrecision(2) - discAmount.toPrecision(2) + netAmount.toPrecision(2) - vat.toPrecision(2) + discAmount.toPrecision(2)}";
+                                                    tableInvoice.sumNetAmount =
+                                                        "${netAmount.toPrecision(2)}";
+                                                    tableInvoice
+                                                            .sumDiscountTotal =
+                                                        "${discAmount.toPrecision(2)}";
+                                                    tableInvoice
+                                                            .tradeDiscountPercentage =
+                                                        _tradeDiscController
+                                                                .value
+                                                                .text
+                                                                .isEmpty
+                                                            ? "0.0"
+                                                            : _tradeDiscController
+                                                                .text;
+                                                    tableInvoice.sumVatTotal =
+                                                        "${vat.toPrecision(2)}";
+                                                    tableInvoice.sumTotal =
+                                                        "${vat.toPrecision(2) - discAmount.toPrecision(2) + netAmount.toPrecision(2) - vat.toPrecision(2) + discAmount.toPrecision(2) + vat.toPrecision(2) - discAmount.toPrecision(2)}";
+                                                    tablesPurchaseOrder
+                                                        .add(tableInvoice);
+                                                    itemList.add(
+                                                        tablesPurchaseOrder[0]
+                                                            .supItems);
+                                                    setState(() {
+                                                      if (selectedPurchaseOrders
+                                                          .isNotEmpty) {
+                                                        List<TablePurchaseOrder>
+                                                            temp = [];
+                                                        temp.addAll(
+                                                            selectedPurchaseOrders);
+                                                        for (TablePurchaseOrder sale
+                                                            in temp) {
+                                                          tablesPurchaseOrder
+                                                              .remove(sale);
+                                                          selectedPurchaseOrders
+                                                              .remove(sale);
+                                                          itemList.remove(sale);
+                                                        }
+                                                        editValue = false;
+                                                      }
+                                                    });
+                                                  },
+                                                  child: Container(
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                              .size
+                                                              .width,
+                                                      height: 45,
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(5.0),
+                                                        color: primaryColor,
+                                                      ),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Icon(
+                                                            Icons.add,
+                                                            color: Colors.white,
+                                                          ),
+                                                          Text("Edit Item",
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .white)),
+                                                        ],
+                                                      )),
+                                                ),
+                                              )
+                                            : Material(
+                                                child: InkWell(
+                                                  onTap: () {
+                                                    var tableInvoice =
+                                                        new TablePurchaseOrder();
+
+                                                    tableInvoice.item =
+                                                        _itemController.text;
+                                                    tableInvoice.bonus =
+                                                        _bonusController.text;
+                                                    tableInvoice.totalQty =
+                                                        "${qty + bns}";
+                                                    tableInvoice.quantity =
+                                                        _quantityController
+                                                            .text;
+                                                    tableInvoice.netAmount =
+                                                        _netAmountController
+                                                            .text;
+                                                    tableInvoice.unitPrice =
+                                                        _unitPriceController
+                                                            .text;
+                                                    tableInvoice.vatAmount =
+                                                        "${vatPerc.toPrecision(2) / 100 * netAmount.toPrecision(2)}";
+                                                    tableInvoice.vatPer =
+                                                        _vatPercentageController
+                                                            .text;
+                                                    tableInvoice.supItems = {
+                                                      "item": itemId,
+                                                      "quantity":
+                                                          _quantityController
+                                                              .text,
+                                                      "unit_cost": unitCost,
+                                                      'total_cost': qty +
+                                                          bns *
+                                                              double.parse(
+                                                                  _unitPriceController
+                                                                      .text),
+                                                      "bonus":
+                                                          _bonusController.text,
+                                                      "total_quantity":
+                                                          qty + bns,
+                                                      "discount_percentage":
+                                                          _discPercentageController
+                                                              .text,
+                                                      "discount_amount":
+                                                          discPerc.toPrecision(
+                                                                  2) /
+                                                              100 *
+                                                              totalCost
+                                                                  .toPrecision(
+                                                                      2),
+                                                      "net_amount": totalCost -
+                                                          discAmount,
+                                                      "vat_percentage":
+                                                          _vatPercentageController
+                                                              .text,
+                                                      "vat_amount": vatPerc
+                                                              .toPrecision(2) /
+                                                          100 *
+                                                          netAmount
+                                                              .toPrecision(2),
+                                                      "total_amount": vat -
+                                                          discAmount +
+                                                          netAmount,
+                                                    };
+                                                    tableInvoice.disc =
+                                                        "${discPerc.toPrecision(2) / 100 * totalCost.toPrecision(2)}";
+                                                    tableInvoice.discPer =
+                                                        _discPercentageController
+                                                            .text;
+                                                    tableInvoice.netAmount =
+                                                        "${totalCost - discAmount}";
+                                                    tableInvoice.totalAmount =
+                                                        "${vat - discAmount + netAmount}";
+                                                    tableInvoice.sumSubTotal =
+                                                        "${vat.toPrecision(2) - discAmount.toPrecision(2) + netAmount.toPrecision(2) - vat.toPrecision(2) + discAmount.toPrecision(2)}";
+                                                    tableInvoice.sumNetAmount =
+                                                        "${netAmount.toPrecision(2)}";
+                                                    tableInvoice
+                                                            .sumDiscountTotal =
+                                                        "${discAmount.toPrecision(2)}";
+                                                    tableInvoice
+                                                            .tradeDiscountPercentage =
+                                                        _tradeDiscController
+                                                                .value
+                                                                .text
+                                                                .isEmpty
+                                                            ? "0.0"
+                                                            : _tradeDiscController
+                                                                .text;
+                                                    tableInvoice.sumVatTotal =
+                                                        "${vat.toPrecision(2)}";
+                                                    tableInvoice.sumTotal =
+                                                        "${vat.toPrecision(2) - discAmount.toPrecision(2) + netAmount.toPrecision(2) - vat.toPrecision(2) + discAmount.toPrecision(2) + vat.toPrecision(2) - discAmount.toPrecision(2)}";
+                                                    tablesPurchaseOrder
+                                                        .add(tableInvoice);
+                                                    itemList.add(
+                                                        tablesPurchaseOrder[0]
+                                                            .supItems);
+                                                    setState(() {});
+                                                  },
+                                                  child: Container(
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                              .size
+                                                              .width,
+                                                      height: 45,
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(5.0),
+                                                        color: primaryColor,
+                                                      ),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Icon(
+                                                            Icons.add,
+                                                            color: Colors.white,
+                                                          ),
+                                                          Text("Add Item",
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .white)),
+                                                        ],
+                                                      )),
+                                                ),
+                                              ),
+                                        SizedBox(
+                                          height: 5,
+                                        ),
+                                      ],
+                                    ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
                               ),
-                              //ToDo: Set state  to show the below widget
-                              // rowsItem.length >0 ?
                               Expanded(
                                 child: SingleChildScrollView(
                                   child: SingleChildScrollView(
                                     scrollDirection: Axis.horizontal,
                                     child: Column(
                                       mainAxisAlignment:
-                                      MainAxisAlignment.start,
+                                          MainAxisAlignment.start,
                                       crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                          CrossAxisAlignment.start,
                                       children: [
                                         selectedPurchaseOrders.isEmpty != true
-                                            ? InkWell(
-                                          onTap: selectedPurchaseOrders.isEmpty
-                                              ? null
-                                              : () {
-                                            deleteSelected();
-                                          },
-                                          child: Container(
-                                            width: 100,
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                              BorderRadius.circular(
-                                                  5.0),
-                                              color: bgColor
-                                                  .withOpacity(0.2),
-                                            ),
-                                            child: Row(
-                                              children: [
-                                                Container(
-                                                    width: 48,
-                                                    height: 48,
-                                                    child: Icon(
-                                                        Icons.delete,
-                                                        color:
-                                                        Colors.red)),
-                                                Text(
-                                                  "Delete",
-                                                  style: TextStyle(
-                                                      color: bgColor,
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                      FontWeight
-                                                          .bold),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        )
+                                            ? Row(
+                                                children: [
+                                                  InkWell(
+                                                    onTap:
+                                                        selectedPurchaseOrders
+                                                                .isEmpty
+                                                            ? null
+                                                            : () {
+                                                                deleteSelected();
+                                                              },
+                                                    child: Container(
+                                                      width: 100,
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(5.0),
+                                                        color: bgColor
+                                                            .withOpacity(0.2),
+                                                      ),
+                                                      child: Row(
+                                                        children: [
+                                                          Container(
+                                                              width: 48,
+                                                              height: 48,
+                                                              child: Icon(
+                                                                  Icons.delete,
+                                                                  color: Colors
+                                                                      .red)),
+                                                          Text(
+                                                            "Delete",
+                                                            style: TextStyle(
+                                                                color: bgColor,
+                                                                fontSize: 12,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(width: 15.0),
+                                                  InkWell(
+                                                    onTap:
+                                                    selectedPurchaseOrders.isEmpty
+                                                        ? null
+                                                        : () {
+                                                      editSelected();
+                                                    },
+                                                    child: Container(
+                                                      width: 100,
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                        BorderRadius
+                                                            .circular(5.0),
+                                                        color: bgColor
+                                                            .withOpacity(0.2),
+                                                      ),
+                                                      child: Row(
+                                                        children: [
+                                                          Container(
+                                                              width: 48,
+                                                              height: 48,
+                                                              child: Icon(
+                                                                  Icons.edit,
+                                                                  color:
+                                                                  primaryColor)),
+                                                          Text(
+                                                            "Edit",
+                                                            style: TextStyle(
+                                                                color: bgColor,
+                                                                fontSize: 12,
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  )
+                                                ],
+                                              )
                                             : Container(),
                                         DataTable(
                                           sortAscending: sort,
@@ -1732,7 +2171,7 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                                                       color: bgColor,
                                                       fontSize: 10,
                                                       fontWeight:
-                                                      FontWeight.bold),
+                                                          FontWeight.bold),
                                                 ),
                                                 onSort:
                                                     (columnIndex, ascending) {
@@ -1744,327 +2183,328 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                                                 }),
                                             DataColumn(
                                                 label: Text(
-                                                  "Quantity",
-                                                  style: TextStyle(
-                                                      color: bgColor,
-                                                      fontSize: 10,
-                                                      fontWeight: FontWeight.bold),
-                                                )),
+                                              "Quantity",
+                                              style: TextStyle(
+                                                  color: bgColor,
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.bold),
+                                            )),
                                             DataColumn(
                                                 label: Text(
-                                                  "Bonus",
-                                                  style: TextStyle(
-                                                      color: bgColor,
-                                                      fontSize: 10,
-                                                      fontWeight: FontWeight.bold),
-                                                )),
+                                              "Bonus",
+                                              style: TextStyle(
+                                                  color: bgColor,
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.bold),
+                                            )),
                                             DataColumn(
                                                 label: Text(
-                                                  "Total Qty",
-                                                  style: TextStyle(
-                                                      color: bgColor,
-                                                      fontSize: 10,
-                                                      fontWeight: FontWeight.bold),
-                                                )),
+                                              "Total Qty",
+                                              style: TextStyle(
+                                                  color: bgColor,
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.bold),
+                                            )),
                                             DataColumn(
                                                 label: Text(
-                                                  "Disc",
-                                                  style: TextStyle(
-                                                      color: bgColor,
-                                                      fontSize: 10,
-                                                      fontWeight: FontWeight.bold),
-                                                )),
+                                              "Disc",
+                                              style: TextStyle(
+                                                  color: bgColor,
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.bold),
+                                            )),
                                             DataColumn(
                                                 label: Text(
-                                                  "Disc %",
-                                                  style: TextStyle(
-                                                      color: bgColor,
-                                                      fontSize: 10,
-                                                      fontWeight: FontWeight.bold),
-                                                )),
+                                              "Disc %",
+                                              style: TextStyle(
+                                                  color: bgColor,
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.bold),
+                                            )),
                                             DataColumn(
                                                 label: Text(
-                                                  "UP",
-                                                  style: TextStyle(
-                                                      color: bgColor,
-                                                      fontSize: 10,
-                                                      fontWeight: FontWeight.bold),
-                                                )),
+                                              "UP",
+                                              style: TextStyle(
+                                                  color: bgColor,
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.bold),
+                                            )),
                                             DataColumn(
                                                 label: Text(
-                                                  "Net",
-                                                  style: TextStyle(
-                                                      color: bgColor,
-                                                      fontSize: 10,
-                                                      fontWeight: FontWeight.bold),
-                                                )),
+                                              "Net",
+                                              style: TextStyle(
+                                                  color: bgColor,
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.bold),
+                                            )),
                                             DataColumn(
                                                 label: Text(
-                                                  "VAT",
-                                                  style: TextStyle(
-                                                      color: bgColor,
-                                                      fontSize: 10,
-                                                      fontWeight: FontWeight.bold),
-                                                )),
+                                              "VAT",
+                                              style: TextStyle(
+                                                  color: bgColor,
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.bold),
+                                            )),
                                             DataColumn(
                                                 label: Text(
-                                                  "VAT %",
-                                                  style: TextStyle(
-                                                      color: bgColor,
-                                                      fontSize: 10,
-                                                      fontWeight: FontWeight.bold),
-                                                )),
+                                              "VAT %",
+                                              style: TextStyle(
+                                                  color: bgColor,
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.bold),
+                                            )),
                                             DataColumn(
                                                 label: Text(
-                                                  "Total",
-                                                  style: TextStyle(
-                                                      color: bgColor,
-                                                      fontSize: 10,
-                                                      fontWeight: FontWeight.bold),
-                                                )),
+                                              "Total",
+                                              style: TextStyle(
+                                                  color: bgColor,
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.bold),
+                                            )),
                                           ],
                                           rows: tablesPurchaseOrder
                                               .map((e) => DataRow(
-                                              selected: selectedPurchaseOrders
-                                                  .contains(e),
-                                              onSelectChanged: (b) {
-                                                onSelectedRow(b, e);
-                                              },
-                                              cells: [
-                                                DataCell(Text(
-                                                  e.item,
-                                                  style: TextStyle(
-                                                      color: bgColor,
-                                                      fontSize: 10,
-                                                      fontWeight:
-                                                      FontWeight
-                                                          .bold),
-                                                )),
-                                                DataCell(
-                                                    TextFormField(
-                                                      initialValue:
-                                                      e.quantity,
-                                                      style: TextStyle(
-                                                          color:
-                                                          bgColor,
-                                                          fontSize: 10,
-                                                          fontWeight:
-                                                          FontWeight
-                                                              .bold),
-                                                      keyboardType: TextInputType
-                                                          .numberWithOptions(
-                                                          decimal:
-                                                          true),
-                                                      onFieldSubmitted:
-                                                          (val) {
-                                                        setState(() {
-                                                          e.quantity =
-                                                              val;
-                                                        });
+                                                      selected:
+                                                          selectedPurchaseOrders
+                                                              .contains(e),
+                                                      onSelectChanged: (b) {
+                                                        onSelectedRow(b, e);
                                                       },
-                                                    ),
-                                                    showEditIcon: true),
-                                                DataCell(
-                                                    TextFormField(
-                                                      initialValue:
-                                                      e.bonus,
-                                                      style: TextStyle(
-                                                          color:
-                                                          bgColor,
-                                                          fontSize: 10,
-                                                          fontWeight:
-                                                          FontWeight
-                                                              .bold),
-                                                      keyboardType: TextInputType
-                                                          .numberWithOptions(
-                                                          decimal:
-                                                          true),
-                                                      onFieldSubmitted:
-                                                          (val) {
-                                                        setState(() {
-                                                          e.bonus = val;
-                                                        });
-                                                      },
-                                                    ),
-                                                    showEditIcon: true),
-                                                DataCell(
-                                                    TextFormField(
-                                                      initialValue:
-                                                      e.totalQty,
-                                                      style: TextStyle(
-                                                          color:
-                                                          bgColor,
-                                                          fontSize: 10,
-                                                          fontWeight:
-                                                          FontWeight
-                                                              .bold),
-                                                      keyboardType: TextInputType
-                                                          .numberWithOptions(
-                                                          decimal:
-                                                          true),
-                                                      onFieldSubmitted:
-                                                          (val) {
-                                                        setState(() {
-                                                          e.totalQty =
-                                                              val;
-                                                        });
-                                                      },
-                                                    ),
-                                                    showEditIcon: true),
-                                                DataCell(
-                                                    TextFormField(
-                                                      initialValue:
-                                                      e.disc,
-                                                      style: TextStyle(
-                                                          color:
-                                                          bgColor,
-                                                          fontSize: 10,
-                                                          fontWeight:
-                                                          FontWeight
-                                                              .bold),
-                                                      keyboardType: TextInputType
-                                                          .numberWithOptions(
-                                                          decimal:
-                                                          true),
-                                                      onFieldSubmitted:
-                                                          (val) {
-                                                        setState(() {
-                                                          e.disc = val;
-                                                        });
-                                                      },
-                                                    ),
-                                                    showEditIcon: true),
-                                                DataCell(
-                                                    TextFormField(
-                                                      initialValue:
-                                                      e.discPer,
-                                                      style: TextStyle(
-                                                          color:
-                                                          bgColor,
-                                                          fontSize: 10,
-                                                          fontWeight:
-                                                          FontWeight
-                                                              .bold),
-                                                      keyboardType: TextInputType
-                                                          .numberWithOptions(
-                                                          decimal:
-                                                          true),
-                                                      onFieldSubmitted:
-                                                          (val) {
-                                                        setState(() {
-                                                          e.discPer =
-                                                              val;
-                                                        });
-                                                      },
-                                                    ),
-                                                    showEditIcon: true),
-                                                DataCell(
-                                                    TextFormField(
-                                                      initialValue:
-                                                      e.unitPrice,
-                                                      style: TextStyle(
-                                                          color:
-                                                          bgColor,
-                                                          fontSize: 10,
-                                                          fontWeight:
-                                                          FontWeight
-                                                              .bold),
-                                                      keyboardType: TextInputType
-                                                          .numberWithOptions(
-                                                          decimal:
-                                                          true),
-                                                      onFieldSubmitted:
-                                                          (val) {
-                                                        setState(() {
-                                                          e.unitPrice =
-                                                              val;
-                                                        });
-                                                      },
-                                                    ),
-                                                    showEditIcon: true),
-                                                DataCell(
-                                                    TextFormField(
-                                                      initialValue:
-                                                      e.netAmount,
-                                                      style: TextStyle(
-                                                          color:
-                                                          bgColor,
-                                                          fontSize: 10,
-                                                          fontWeight:
-                                                          FontWeight
-                                                              .bold),
-                                                      keyboardType: TextInputType
-                                                          .numberWithOptions(
-                                                          decimal:
-                                                          true),
-                                                      onFieldSubmitted:
-                                                          (val) {
-                                                        setState(() {
-                                                          e.netAmount =
-                                                              val;
-                                                        });
-                                                      },
-                                                    ),
-                                                    showEditIcon: true),
-                                                DataCell(
-                                                    TextFormField(
-                                                      initialValue:
-                                                      e.vatAmount,
-                                                      style: TextStyle(
-                                                          color:
-                                                          bgColor,
-                                                          fontSize: 10,
-                                                          fontWeight:
-                                                          FontWeight
-                                                              .bold),
-                                                      keyboardType: TextInputType
-                                                          .numberWithOptions(
-                                                          decimal:
-                                                          true),
-                                                      onFieldSubmitted:
-                                                          (val) {
-                                                        setState(() {
-                                                          e.vatAmount =
-                                                              val;
-                                                        });
-                                                      },
-                                                    ),
-                                                    showEditIcon: true),
-                                                DataCell(
-                                                    TextFormField(
-                                                      initialValue:
-                                                      e.vatPer,
-                                                      style: TextStyle(
-                                                          color:
-                                                          bgColor,
-                                                          fontSize: 10,
-                                                          fontWeight:
-                                                          FontWeight
-                                                              .bold),
-                                                      keyboardType: TextInputType
-                                                          .numberWithOptions(
-                                                          decimal:
-                                                          true),
-                                                      onFieldSubmitted:
-                                                          (val) {
-                                                        setState(() {
-                                                          e.vatPer =
-                                                              val;
-                                                        });
-                                                      },
-                                                    ),
-                                                    showEditIcon: true),
-                                                DataCell(Text(
-                                                  e.totalAmount,
-                                                  style: TextStyle(
-                                                      color:
-                                                      primaryColor,
-                                                      fontSize: 10,
-                                                      fontWeight:
-                                                      FontWeight
-                                                          .bold),
-                                                )),
-                                              ]))
+                                                      cells: [
+                                                        DataCell(Text(
+                                                          e.item,
+                                                          style: TextStyle(
+                                                              color: bgColor,
+                                                              fontSize: 10,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        )),
+                                                        DataCell(
+                                                            TextFormField(
+                                                              initialValue:
+                                                                  e.quantity,
+                                                              style: TextStyle(
+                                                                  color:
+                                                                      bgColor,
+                                                                  fontSize: 10,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold),
+                                                              keyboardType: TextInputType
+                                                                  .numberWithOptions(
+                                                                      decimal:
+                                                                          true),
+                                                              onFieldSubmitted:
+                                                                  (val) {
+                                                                setState(() {
+                                                                  e.quantity =
+                                                                      val;
+                                                                });
+                                                              },
+                                                            ),
+                                                            showEditIcon: true),
+                                                        DataCell(
+                                                            TextFormField(
+                                                              initialValue:
+                                                                  e.bonus,
+                                                              style: TextStyle(
+                                                                  color:
+                                                                      bgColor,
+                                                                  fontSize: 10,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold),
+                                                              keyboardType: TextInputType
+                                                                  .numberWithOptions(
+                                                                      decimal:
+                                                                          true),
+                                                              onFieldSubmitted:
+                                                                  (val) {
+                                                                setState(() {
+                                                                  e.bonus = val;
+                                                                });
+                                                              },
+                                                            ),
+                                                            showEditIcon: true),
+                                                        DataCell(
+                                                            TextFormField(
+                                                              initialValue:
+                                                                  e.totalQty,
+                                                              style: TextStyle(
+                                                                  color:
+                                                                      bgColor,
+                                                                  fontSize: 10,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold),
+                                                              keyboardType: TextInputType
+                                                                  .numberWithOptions(
+                                                                      decimal:
+                                                                          true),
+                                                              onFieldSubmitted:
+                                                                  (val) {
+                                                                setState(() {
+                                                                  e.totalQty =
+                                                                      val;
+                                                                });
+                                                              },
+                                                            ),
+                                                            showEditIcon: true),
+                                                        DataCell(
+                                                            TextFormField(
+                                                              initialValue:
+                                                                  e.disc,
+                                                              style: TextStyle(
+                                                                  color:
+                                                                      bgColor,
+                                                                  fontSize: 10,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold),
+                                                              keyboardType: TextInputType
+                                                                  .numberWithOptions(
+                                                                      decimal:
+                                                                          true),
+                                                              onFieldSubmitted:
+                                                                  (val) {
+                                                                setState(() {
+                                                                  e.disc = val;
+                                                                });
+                                                              },
+                                                            ),
+                                                            showEditIcon: true),
+                                                        DataCell(
+                                                            TextFormField(
+                                                              initialValue:
+                                                                  e.discPer,
+                                                              style: TextStyle(
+                                                                  color:
+                                                                      bgColor,
+                                                                  fontSize: 10,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold),
+                                                              keyboardType: TextInputType
+                                                                  .numberWithOptions(
+                                                                      decimal:
+                                                                          true),
+                                                              onFieldSubmitted:
+                                                                  (val) {
+                                                                setState(() {
+                                                                  e.discPer =
+                                                                      val;
+                                                                });
+                                                              },
+                                                            ),
+                                                            showEditIcon: true),
+                                                        DataCell(
+                                                            TextFormField(
+                                                              initialValue:
+                                                                  e.unitPrice,
+                                                              style: TextStyle(
+                                                                  color:
+                                                                      bgColor,
+                                                                  fontSize: 10,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold),
+                                                              keyboardType: TextInputType
+                                                                  .numberWithOptions(
+                                                                      decimal:
+                                                                          true),
+                                                              onFieldSubmitted:
+                                                                  (val) {
+                                                                setState(() {
+                                                                  e.unitPrice =
+                                                                      val;
+                                                                });
+                                                              },
+                                                            ),
+                                                            showEditIcon: true),
+                                                        DataCell(
+                                                            TextFormField(
+                                                              initialValue:
+                                                                  e.netAmount,
+                                                              style: TextStyle(
+                                                                  color:
+                                                                      bgColor,
+                                                                  fontSize: 10,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold),
+                                                              keyboardType: TextInputType
+                                                                  .numberWithOptions(
+                                                                      decimal:
+                                                                          true),
+                                                              onFieldSubmitted:
+                                                                  (val) {
+                                                                setState(() {
+                                                                  e.netAmount =
+                                                                      val;
+                                                                });
+                                                              },
+                                                            ),
+                                                            showEditIcon: true),
+                                                        DataCell(
+                                                            TextFormField(
+                                                              initialValue:
+                                                                  e.vatAmount,
+                                                              style: TextStyle(
+                                                                  color:
+                                                                      bgColor,
+                                                                  fontSize: 10,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold),
+                                                              keyboardType: TextInputType
+                                                                  .numberWithOptions(
+                                                                      decimal:
+                                                                          true),
+                                                              onFieldSubmitted:
+                                                                  (val) {
+                                                                setState(() {
+                                                                  e.vatAmount =
+                                                                      val;
+                                                                });
+                                                              },
+                                                            ),
+                                                            showEditIcon: true),
+                                                        DataCell(
+                                                            TextFormField(
+                                                              initialValue:
+                                                                  e.vatPer,
+                                                              style: TextStyle(
+                                                                  color:
+                                                                      bgColor,
+                                                                  fontSize: 10,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold),
+                                                              keyboardType: TextInputType
+                                                                  .numberWithOptions(
+                                                                      decimal:
+                                                                          true),
+                                                              onFieldSubmitted:
+                                                                  (val) {
+                                                                setState(() {
+                                                                  e.vatPer =
+                                                                      val;
+                                                                });
+                                                              },
+                                                            ),
+                                                            showEditIcon: true),
+                                                        DataCell(Text(
+                                                          e.totalAmount,
+                                                          style: TextStyle(
+                                                              color:
+                                                                  primaryColor,
+                                                              fontSize: 10,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        )),
+                                                      ]))
                                               .toList(),
                                         ),
                                       ],
@@ -2082,7 +2522,7 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                         flex: 3,
                         child: Padding(
                           padding:
-                          const EdgeInsets.only(right: 15.0, left: 3.0),
+                              const EdgeInsets.only(right: 15.0, left: 3.0),
                           child: Container(
                             height: MediaQuery.of(context).size.height,
                             decoration: BoxDecoration(
@@ -2104,7 +2544,7 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                                   children: [
                                     Row(
                                         mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text("Subtotal",
                                               style: TextStyle(
@@ -2129,7 +2569,7 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                                     SizedBox(height: 10.0),
                                     Row(
                                         mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text("Discounts",
                                               style: TextStyle(
@@ -2154,11 +2594,11 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                                     SizedBox(height: 10.0),
                                     Column(
                                       mainAxisAlignment:
-                                      MainAxisAlignment.start,
+                                          MainAxisAlignment.start,
                                       children: [
                                         Row(
                                             mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                                MainAxisAlignment.spaceBetween,
                                             children: [
                                               Text("Others",
                                                   style: TextStyle(
@@ -2174,7 +2614,7 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                                                       color: bgColor,
                                                       fontSize: 15,
                                                       fontWeight:
-                                                      FontWeight.bold,
+                                                          FontWeight.bold,
                                                     )),
                                               ),
                                             ]),
@@ -2182,34 +2622,34 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                                           padding: const EdgeInsets.all(10.0),
                                           child: Row(
                                               mainAxisAlignment:
-                                              MainAxisAlignment
-                                                  .spaceBetween,
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: [
                                                 Text("VAT",
                                                     style: TextStyle(
                                                       color: Colors.red,
                                                       fontSize: 10,
                                                       fontWeight:
-                                                      FontWeight.bold,
+                                                          FontWeight.bold,
                                                     )),
                                                 Text("-----------------",
                                                     style: TextStyle(
                                                       color: Colors.grey,
                                                       fontSize: 8,
                                                       fontWeight:
-                                                      FontWeight.bold,
+                                                          FontWeight.bold,
                                                     )),
                                                 Padding(
                                                   padding:
-                                                  const EdgeInsets.only(
-                                                      right: 28.0),
+                                                      const EdgeInsets.only(
+                                                          right: 28.0),
                                                   child: Text(
                                                       "Ksh ${tablesPurchaseOrder.map((e) => double.parse(e.sumVatTotal)).fold(0, (previousValue, current) => previousValue + current)}",
                                                       style: TextStyle(
                                                         color: bgColor,
                                                         fontSize: 12,
                                                         fontWeight:
-                                                        FontWeight.bold,
+                                                            FontWeight.bold,
                                                       )),
                                                 ),
                                               ]),
@@ -2225,7 +2665,7 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                                     SizedBox(height: 10.0),
                                     Row(
                                         mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text("TOTAL",
                                               style: TextStyle(
@@ -2250,40 +2690,24 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                                     SizedBox(height: 10),
                                     InkWell(
                                       onTap: () async {
+                                        setState(() {
+
+                                        });
                                         purchaseOrdersController.postPurchaseOrder(
                                             supplierId,
                                             branchId,
-                                            itemId,
                                             double.parse(
                                                 "${tablesPurchaseOrder.map((e) => double.parse(e.tradeDiscountPercentage)).fold(0, (previousValue, current) => previousValue + current)}"),
                                             double.parse(
                                                 "${tablesPurchaseOrder.map((e) => double.parse(e.totalAmount)).fold(0, (previousValue, current) => previousValue + current)}"),
                                             double.parse(
                                                 "${tablesPurchaseOrder.map((e) => double.parse(e.sumDiscountTotal)).fold(0, (previousValue, current) => previousValue + current)}"),
-                                            "2021-11-25",
+                                            myFormat.format(initialDate),
                                             double.parse(
                                                 "${tablesPurchaseOrder.map((e) => double.parse(e.sumNetAmount)).fold(0, (previousValue, current) => previousValue + current)}"),
                                             double.parse(
                                                 "${tablesPurchaseOrder.map((e) => double.parse(e.sumVatTotal)).fold(0, (previousValue, current) => previousValue + current)}"),
-
-                                            double.parse(
-                                                "${tablesPurchaseOrder.map((e) => double.parse(e.quantity)).fold(0, (previousValue, current) => previousValue + current)}"),
-                                            double.parse(
-                                                "${tablesPurchaseOrder.map((e) => double.parse(e.unitPrice)).fold(0, (previousValue, element) => previousValue + element)}"),
-                                            double.parse(
-                                                "${tablesPurchaseOrder.map((e) => double.parse(e.bonus)).fold(0, (previousValue, current) => previousValue + current)}"),
-                                            double.parse(
-                                                "${tablesPurchaseOrder.map((e) => double.parse(e.discPer)).fold(0, (previousValue, current) => previousValue + current)}"),
-                                            double.parse(
-                                                "${tablesPurchaseOrder.map((e) => double.parse(e.disc)).fold(0, (previousValue, current) => previousValue + current)}"),
-                                            double.parse(
-                                                "${tablesPurchaseOrder.map((e) => double.parse(e.netAmount)).fold(0, (previousValue, current) => previousValue + current)}"),
-                                            double.parse(
-                                                "${tablesPurchaseOrder.map((e) => double.parse(e.vatPer)).fold(0, (previousValue, current) => previousValue + current)}"),
-                                            double.parse(
-                                                "${tablesPurchaseOrder.map((e) => double.parse(e.vatAmount)).fold(0, (previousValue, current) => previousValue + current)}"),
-                                            double.parse(
-                                                "${tablesPurchaseOrder.map((e) => double.parse(e.totalQty)).fold(0, (previousValue, current) => previousValue + current)}"),
+                                            itemList,
                                             context);
                                       },
                                       child: Container(
@@ -2295,10 +2719,30 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                                           borderRadius:
                                           BorderRadius.circular(5.0),
                                         ),
-                                        child: Center(
-                                            child: Text("Complete Sale",
-                                                style: TextStyle(
-                                                    color: Colors.white))),
+                                        child: Stack(children: [
+                                          Visibility(
+                                              visible: _loginFormLoading
+                                                  ? false
+                                                  : true,
+                                              child: Center(
+                                                  child: Text("Complete Sale",
+                                                      style: TextStyle(
+                                                          color:
+                                                          Colors.white)))),
+                                          Visibility(
+                                            visible: _loginFormLoading,
+                                            child: const Center(
+                                              child: SizedBox(
+                                                height: 30.0,
+                                                width: 30.0,
+                                                child:
+                                                CircularProgressIndicator(
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ),
+                                          )
+                                        ]),
                                       ),
                                     ),
                                     SizedBox(height: 15),
@@ -2315,8 +2759,8 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                   ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ));
   }
 }
@@ -2401,7 +2845,7 @@ class ItemApi {
     final response = await http.get(
       Uri.parse('${AppUrl.branch_stock}'),
       headers: {
-        'Content-type': 'application/json',
+        'Content-type': 'application/json;charset=UTF-8',
         'Accept': 'application/json',
         "Authorization": "Bearer ${user.accessToken.toString()}"
       },

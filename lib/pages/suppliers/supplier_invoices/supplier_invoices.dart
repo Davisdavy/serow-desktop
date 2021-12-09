@@ -149,8 +149,7 @@ class _SupplierInvoicesPageState extends State<SupplierInvoicesPage> {
   final TextEditingController controller = new TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
   TextEditingController _discAmountController;
-  final TextEditingController _discPercentageController =
-      TextEditingController();
+   TextEditingController _discPercentageController;
   final TextEditingController _netAmountController = TextEditingController();
   final TextEditingController _unitCostController = TextEditingController();
   final TextEditingController _bonusController = TextEditingController();
@@ -162,13 +161,17 @@ class _SupplierInvoicesPageState extends State<SupplierInvoicesPage> {
 
   bool _isTradeEditingText = false;
   TextEditingController _tradeEditingController;
-  String initialTradeText = "0";
+  String initialTradeText = "0.0";
 
-  bool _isDateEditingText = false;
+  String initialAmountText = "0.0";
+
   DateTime initialDate = DateTime.now();
   DateTime expiryDate = DateTime.now();
 
   var myFormat = DateFormat('yyyy-MM-d');
+
+  bool _isDiscEditingText = false;
+  String initialDiscText = "0.0";
 
   bool _isEditingText = false;
   String initialText = "0.0";
@@ -191,6 +194,9 @@ class _SupplierInvoicesPageState extends State<SupplierInvoicesPage> {
   bool itemValue = false;
   bool editValue = false;
 
+  bool discountValueController = false;
+  bool newDiscountValueController = false;
+
   //bool purchaseValue = false;
 
   bool balanceQuotationValue = false;
@@ -212,15 +218,15 @@ class _SupplierInvoicesPageState extends State<SupplierInvoicesPage> {
   TypeAheadField branchTextField;
   TypeAheadField purchaseOrderTextField;
 
-  double qty = 0;
-  double bns = 0;
-  double vat = 0;
-  double netAmount = 0;
-  double totalCost = 0;
-  double discAmount = 0;
-  double unitCost = 0;
-  double discPerc = 0;
-  double vatPerc = 0;
+  double qty = 0.0;
+  double bns = 0.0;
+  double vat = 0.0;
+  double netAmount = 0.0;
+  double totalCost = 0.0;
+  double discAmount = 0.0;
+  double unitCost = 0.0;
+  double discPerc = 0.0;
+  double vatPerc = 0.0;
 
   @override
   void initState() {
@@ -228,24 +234,21 @@ class _SupplierInvoicesPageState extends State<SupplierInvoicesPage> {
     selectedInvoices = [];
     itemList = [];
 
-    _tradeEditingController = TextEditingController(text: initialText);
+    _tradeEditingController = TextEditingController(text: initialTradeText);
+    _totalAmountController = TextEditingController(text: initialAmountText);
+    _totalQuantityController = TextEditingController(text: initialQtyText);
+    _discAmountController = TextEditingController(
+        text: initialText);
+    _discPercentageController = TextEditingController(
+        text: initialDiscText);
+    _vatAmountController = TextEditingController(
+        text: "0.0");
 
     tablesInvoice = TableInvoice.getTableInvoice();
 
     _quantityController.addListener(() {
       setState(() {
         qty = double.parse(_quantityController.text);
-      });
-    });
-
-    _discAmountController.addListener(() {
-      setState(() {
-       discAmount =double.parse(_discAmountController.text);
-      });
-    });
-    _discPercentageController.addListener(() {
-      setState(() {
-        discPerc = double.parse(_discPercentageController.text);
       });
     });
 
@@ -272,13 +275,6 @@ class _SupplierInvoicesPageState extends State<SupplierInvoicesPage> {
         netAmount = double.parse(_netAmountController.text);
       });
     });
-
-    _totalAmountController = TextEditingController(text: initialText);
-    _totalQuantityController = TextEditingController(text: initialQtyText);
-    _discAmountController = TextEditingController(
-        text: "${discPerc.toPrecision(2) / 100 * totalCost.toPrecision(2)}");
-    _vatAmountController = TextEditingController(
-        text: "${vatPerc.toPrecision(2) / 100 * netAmount.toPrecision(2)}");
 
     super.initState();
     //groupItemList();
@@ -312,6 +308,7 @@ class _SupplierInvoicesPageState extends State<SupplierInvoicesPage> {
         for (TableInvoice sale in temp) {
           tablesInvoice.remove(sale);
           selectedInvoices.remove(sale);
+          itemList.remove(sale);
         }
       }
     });
@@ -338,20 +335,28 @@ class _SupplierInvoicesPageState extends State<SupplierInvoicesPage> {
     });
   }
 
-  Widget _editTitleTextField() {
-    if (_isEditingText)
-      return Center(
+  Widget _editDiscAmountField() {
+    if(_isEditingText)
+     return Center(
         child: Material(
           child: Container(
             width: 48,
             height: 48,
             child: TextField(
+              onChanged: (disc){
+                setState(() {
+                  discAmount = double.parse(disc);
+                  initialDiscText = "${discAmount / totalCost * 100}";
+                });
+              },
               onSubmitted: (newValue) {
                 setState(() {
                   initialText = newValue;
-                  _discAmountController.text = newValue;
+                  // initialDiscText = "${discAmount / totalCost * 100}";
                   _isEditingText = false;
-                });
+                  discountValueController = false;
+                }
+                );
               },
               autofocus: true,
               controller: _discAmountController,
@@ -365,31 +370,124 @@ class _SupplierInvoicesPageState extends State<SupplierInvoicesPage> {
                   ),
                   focusedBorder: OutlineInputBorder(
                       borderSide:
-                          const BorderSide(color: primaryColor, width: 0.4),
+                      const BorderSide(color: primaryColor, width: 0.4),
                       borderRadius: BorderRadius.circular(5)),
                   enabledBorder: OutlineInputBorder(
                       borderSide:
-                          const BorderSide(color: Colors.grey, width: 0.4),
+                      const BorderSide(color: Colors.grey, width: 0.4),
                       borderRadius: BorderRadius.circular(5))),
             ),
           ),
         ),
       );
     return InkWell(
+
         onTap: () {
           setState(() {
+            discountValueController = true;
             _isEditingText = true;
           });
         },
         child: Text(
-          "${discPerc.toPrecision(2) / 100 * totalCost.toPrecision(2)}",
+          initialText,
           style: TextStyle(
             color: primaryColor,
             fontSize: 18.0,
           ),
         ));
   }
+  Widget _editDiscPercField() {
+    if(_isDiscEditingText)
+      return Center(
+        child: Material(
+          child: Container(
+            width: 48,
+            height: 48,
+            child: TextField(
+              onChanged: (disc){
+                setState(() {
+                  discPerc = double.parse(disc);
+                  initialText = "${discPerc / 100 * totalCost}";
+                });
+              },
+              onSubmitted: (newValue) {
+                setState(() {
+                  initialDiscText = newValue;
+                  // initialDiscText = "${discAmount / totalCost * 100}";
+                  _isDiscEditingText = false;
+                  newDiscountValueController = false;
+                }
+                );
+              },
+              autofocus: true,
+              controller: _discPercentageController,
+              keyboardType: TextInputType.number,
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
+              ],
+              decoration: InputDecoration(
+                  hintStyle: TextStyle(
+                    fontSize: 12,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                      borderSide:
+                      const BorderSide(color: primaryColor, width: 0.4),
+                      borderRadius: BorderRadius.circular(5)),
+                  enabledBorder: OutlineInputBorder(
+                      borderSide:
+                      const BorderSide(color: Colors.grey, width: 0.4),
+                      borderRadius: BorderRadius.circular(5))),
+            ),
+          ),
+        ),
+      );
+    return InkWell(
 
+        onTap: () {
+          setState(() {
+            newDiscountValueController = true;
+            _isDiscEditingText = true;
+          });
+        },
+        child: Text(
+          initialDiscText,
+          style: TextStyle(
+            color: primaryColor,
+            fontSize: 18.0,
+          ),
+        ));
+  }
+  Widget _editDiscAmountCounterTextField() {
+    return InkWell(
+        onTap: () {
+          setState(() {
+
+          });
+        },
+        child: Text(
+          initialText,
+          style: TextStyle(
+            color: primaryColor,
+            fontSize: 18.0,
+          ),
+        ));
+
+  }
+  Widget _editDiscPerCounterField() {
+    return InkWell(
+        onTap: () {
+          setState(() {
+
+          });
+        },
+        child: Text(
+          initialDiscText,
+          style: TextStyle(
+            color: primaryColor,
+            fontSize: 18.0,
+          ),
+        ));
+  }
   Widget _editNetTextField() {
     if (_isNetEditingText)
       return Center(
@@ -434,7 +532,7 @@ class _SupplierInvoicesPageState extends State<SupplierInvoicesPage> {
           });
         },
         child: Text(
-          "${totalCost.toPrecision(2) - discAmount.toPrecision(2)}",
+          "${totalCost - discAmount}",
           style: TextStyle(
             color: primaryColor,
             fontSize: 18.0,
@@ -486,7 +584,7 @@ class _SupplierInvoicesPageState extends State<SupplierInvoicesPage> {
           });
         },
         child: Text(
-          "${vatPerc.toPrecision(2) / 100 * netAmount.toPrecision(2)}",
+          "${vatPerc / 100 * netAmount}",
           style: TextStyle(
             color: primaryColor,
             fontSize: 18.0,
@@ -589,60 +687,6 @@ class _SupplierInvoicesPageState extends State<SupplierInvoicesPage> {
         ));
   }
 
-  Widget _editDiscountPercentageTextField(String text) {
-    if (_isTradeEditingText)
-      return Center(
-        child: Material(
-          child: Container(
-            width: 48,
-            height: 48,
-            child: TextField(
-
-              onSubmitted: (newValue) {
-                setState(() {
-                  initialTradeText = newValue;
-                  _isTradeEditingText = false;
-                });
-
-              },
-              autofocus: true,
-              controller: _tradeEditingController,
-              keyboardType: TextInputType.numberWithOptions(decimal: true),
-              inputFormatters: [
-                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
-              ],
-              decoration: InputDecoration(
-                //  labelText: "Email Address",
-                // hintText: "  0.0",
-                  hintStyle: TextStyle(
-                    fontSize: 12,
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                      borderSide:
-                      const BorderSide(color: primaryColor, width: 0.4),
-                      borderRadius: BorderRadius.circular(5)),
-                  enabledBorder: OutlineInputBorder(
-                      borderSide:
-                      const BorderSide(color: Colors.grey, width: 0.4),
-                      borderRadius: BorderRadius.circular(5))),
-            ),
-          ),
-        ),
-      );
-    return InkWell(
-        onTap: () {
-          setState(() {
-            _isTradeEditingText = true;
-          });
-        },
-        child: Text(
-          text,
-          style: TextStyle(
-            color: primaryColor,
-            fontSize: 18.0,
-          ),
-        ));
-  }
 
   void updateUI() {
     setState(() {
@@ -750,11 +794,9 @@ class _SupplierInvoicesPageState extends State<SupplierInvoicesPage> {
   @override
   Widget build(BuildContext context) {
     totalCost = unitCost.toPrecision(2) * qty;
-    discAmount = discPerc.toPrecision(2) / 100 * totalCost.toPrecision(2);
-    vat = vatPerc.toPrecision(2) / 100 * netAmount.toPrecision(2);
-    netAmount = totalCost.toPrecision(2) - discAmount.toPrecision(2);
-
-    // discPerc = discAmount / totalCost.toPrecision(2) * 100;
+    discAmount = discPerc/ 100 * totalCost;
+    vat = vatPerc / 100 * netAmount;
+    netAmount = totalCost - discAmount;
 
     branchTextField = TypeAheadField<Branches>(
       suggestionsCallback: BranchApi.getBranchSuggestions,
@@ -783,7 +825,7 @@ class _SupplierInvoicesPageState extends State<SupplierInvoicesPage> {
       noItemsFoundBuilder: (context) => Center(child: Text("No branch found!")),
     );
     purchaseOrderTextField = TypeAheadField<PurchaseOrders>(
-      suggestionsCallback: PurchaseOrderApi.getBranchSuggestions,
+      suggestionsCallback: PurchaseOrderApi.getPurchaseOrderListSuggestions,
       textFieldConfiguration: TextFieldConfiguration(
         controller: this._purchaseOrderController,
         decoration: InputDecoration(
@@ -859,9 +901,6 @@ class _SupplierInvoicesPageState extends State<SupplierInvoicesPage> {
           'total_cost': PurchaseOrderApi.purchaseOrderList[0].purchaseOrderItems[0].totalCost,
           "bonus": PurchaseOrderApi.purchaseOrderList[0].purchaseOrderItems[0].bonus,
           "total_quantity":PurchaseOrderApi.purchaseOrderList[0].purchaseOrderItems[0].totalQuantity,
-          'expiry_date':
-          myFormat.format(
-              expiryDate),
           "discount_percentage": PurchaseOrderApi.purchaseOrderList[0].purchaseOrderItems[0].discountPercentage,
           "discount_amount": PurchaseOrderApi.purchaseOrderList[0].purchaseOrderItems[0].discountAmount,
           "net_amount":PurchaseOrderApi.purchaseOrderList[0].purchaseOrderItems[0].netAmount,
@@ -943,8 +982,6 @@ class _SupplierInvoicesPageState extends State<SupplierInvoicesPage> {
     //Dependency injection
     var supplierInvoicesController =
         SupplierInvoicesController(SupplierInvoicesSupplierRepository());
-    var supplierController = SupplierController(SuppliersProvider());
-    var branchController = BranchesController(BranchesEntitiesRepository());
     return Container(
         color: Colors.blueGrey.shade100.withOpacity(0.1),
         child: Column(
@@ -1666,7 +1703,7 @@ class _SupplierInvoicesPageState extends State<SupplierInvoicesPage> {
                                                 children: [
                                                   Material(
                                                       child: Text(
-                                                    "Unit price",
+                                                    "Unit cost",
                                                     style: TextStyle(
                                                         color: bgColor,
                                                         fontSize: 8,
@@ -1837,61 +1874,17 @@ class _SupplierInvoicesPageState extends State<SupplierInvoicesPage> {
                                                 children: [
                                                   Material(
                                                       child: Text(
-                                                    "Disc percentage",
-                                                    style: TextStyle(
-                                                        color: bgColor,
-                                                        fontSize: 8,
-                                                        fontWeight:
+                                                        "Disc Percentage",
+                                                        style: TextStyle(
+                                                            color: bgColor,
+                                                            fontSize: 8,
+                                                            fontWeight:
                                                             FontWeight.bold),
-                                                  )),
+                                                      )),
                                                   SizedBox(
                                                     height: 15,
                                                   ),
-                                                  Material(
-                                                    child: Container(
-                                                      width: 48,
-                                                      height: 48,
-                                                      child: TextField(
-                                                        controller:
-                                                            _discPercentageController,
-                                                        keyboardType:
-                                                            TextInputType
-                                                                .number,
-                                                        inputFormatters: [
-                                                          FilteringTextInputFormatter
-                                                              .allow(RegExp(
-                                                                  r'^\d*\.?\d{0,2}')),
-                                                        ],
-                                                        decoration:
-                                                            InputDecoration(
-                                                                //  labelText: "Email Address",
-                                                                hintText:
-                                                                    "  0.0",
-                                                                hintStyle:
-                                                                    TextStyle(
-                                                                  fontSize: 12,
-                                                                ),
-                                                                focusedBorder: OutlineInputBorder(
-                                                                    borderSide: const BorderSide(
-                                                                        color:
-                                                                            primaryColor,
-                                                                        width:
-                                                                            0.4),
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            5)),
-                                                                enabledBorder: OutlineInputBorder(
-                                                                    borderSide: const BorderSide(
-                                                                        color: Colors
-                                                                            .grey,
-                                                                        width:
-                                                                            0.4),
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            5))),
-                                                      ),
-                                                    ),
-                                                  ),
+                                                  discountValueController == true ? _editDiscPerCounterField() : _editDiscPercField(),
                                                   SizedBox(
                                                     height: 5,
                                                   ),
@@ -1913,7 +1906,7 @@ class _SupplierInvoicesPageState extends State<SupplierInvoicesPage> {
                                                   SizedBox(
                                                     height: 15,
                                                   ),
-                                                  _editTitleTextField(),
+                                                  newDiscountValueController == true ? _editDiscAmountCounterTextField() : _editDiscAmountField(),
                                                   SizedBox(
                                                     height: 5,
                                                   ),
@@ -2202,6 +2195,7 @@ class _SupplierInvoicesPageState extends State<SupplierInvoicesPage> {
                                                                   .remove(sale);
                                                               selectedInvoices
                                                                   .remove(sale);
+                                                              itemList.remove(sale);
                                                             }
                                                             editValue = false;
                                                           }
@@ -2322,11 +2316,9 @@ class _SupplierInvoicesPageState extends State<SupplierInvoicesPage> {
                                                               discAmount +
                                                               netAmount,
                                                         };
-                                                        tableInvoice.disc =
-                                                            "${discPerc.toPrecision(2) / 100 * totalCost.toPrecision(2)}";
-                                                        tableInvoice.discPer =
-                                                            _discPercentageController
-                                                                .text;
+                                                        tableInvoice.disc = initialText;
+                                                        tableInvoice.discPer = initialDiscText;
+
                                                         tableInvoice
                                                                 .tradeDiscountPercentage =
                                                             _tradeEditingController
@@ -2404,8 +2396,7 @@ class _SupplierInvoicesPageState extends State<SupplierInvoicesPage> {
                                   ),
                                 ),
                               ),
-                              //ToDo: Set state  to show the below widget
-                              // rowsItem.length >0 ?
+
                               Expanded(
                                 child: SingleChildScrollView(
                                   child: SingleChildScrollView(
@@ -2499,9 +2490,7 @@ class _SupplierInvoicesPageState extends State<SupplierInvoicesPage> {
                                                 ],
                                               )
                                             : Container(),
-                                        /*
-                                        Todo:Add Edit button that will trigger edit and delete functionalities
-                                         */
+
                                         DataTable(
                                           sortAscending: sort,
                                           sortColumnIndex: 0,
@@ -2921,6 +2910,23 @@ class _SupplierInvoicesPageState extends State<SupplierInvoicesPage> {
                                         // print('${tablesInvoice[0].stringItems}');
                                         setState(() {
                                           _loginFormLoading = true;
+
+                                          _loginFormLoading = false;
+                                          if(selectedInvoices.isNotEmpty) {
+                                            List<
+                                                TableInvoice> temp = [
+                                            ];
+                                            temp.addAll(
+                                                selectedInvoices);
+                                            for (TableInvoice sale in temp) {
+                                              tablesInvoice
+                                                  .remove(sale);
+                                              selectedInvoices
+                                                  .remove(sale);
+                                              itemList.remove(sale);
+                                            }
+
+                                          }
                                         });
 
                                         /*
@@ -2931,8 +2937,7 @@ class _SupplierInvoicesPageState extends State<SupplierInvoicesPage> {
                                         //     _branchController
                                         //         .value.text.isNotEmpty) {
                                         if (supplierId == null &&
-                                            branchId == null &&
-                                            itemId == null) {
+                                            branchId == null) {
                                           itemId = PurchaseOrderApi
                                               .purchaseOrderList[0]
                                               .purchaseOrderItems[0]
@@ -2963,9 +2968,7 @@ class _SupplierInvoicesPageState extends State<SupplierInvoicesPage> {
 
                                           _successAlertDialogBuilder(
                                               'Successfully saved invoice');
-                                          setState(() {
-                                            _loginFormLoading = false;
-                                          });
+
                                         } else if (supplierId != null &&
                                             branchId != null &&
                                             itemId != null) {
@@ -2992,6 +2995,21 @@ class _SupplierInvoicesPageState extends State<SupplierInvoicesPage> {
                                               'Successfully saved invoice');
                                           setState(() {
                                             _loginFormLoading = false;
+                                            if(selectedInvoices.isNotEmpty) {
+                                              List<
+                                                  TableInvoice> temp = [
+                                              ];
+                                              temp.addAll(
+                                                  selectedInvoices);
+                                              for (TableInvoice sale in temp) {
+                                                tablesInvoice
+                                                    .remove(sale);
+                                                selectedInvoices
+                                                    .remove(sale);
+                                                itemList.remove(sale);
+                                              }
+
+                                            }
                                           });
                                         } else {
                                           _alertDialogBuilder(
@@ -3135,7 +3153,7 @@ class BranchApi {
 class PurchaseOrderApi {
   static List<PurchaseOrders> purchaseOrderList = <PurchaseOrders>[];
 
-  static Future<List<PurchaseOrders>> getBranchSuggestions(
+  static Future<List<PurchaseOrders>> getPurchaseOrderListSuggestions(
       String query, BuildContext context) async {
     Auth user = Provider.of<AuthProvider>(context, listen: false).auth;
     final response = await http.get(
@@ -3149,7 +3167,7 @@ class PurchaseOrderApi {
     if (response.statusCode == 200) {
       final Map customers = json.decode(response.body);
       var categoryJson = customers['results'] as List;
-      print("Json purchase order: ${categoryJson[0]['purchase_order_items']}");
+      print("Json purchase order items: ${categoryJson[0]['purchase_order_items']}");
 
       for (int i = 0; i < categoryJson.length; i++) {
         purchaseOrderList.add(new PurchaseOrders.fromJson(categoryJson[i]));

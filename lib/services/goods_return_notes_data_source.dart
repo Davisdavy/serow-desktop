@@ -13,12 +13,12 @@ class GoodsReturnNotesDataSource extends  DataTableSource{
   //Dependency injection
   var  goodsReturnNotesController = GoodsReturnNotesController(GoodsReturnNotesSupplierRepository());
   GoodsReturnNotesDataSource({
-    @required List<Results> resultData,
+    @required List<GoodsReturnNotes> resultData,
     @required this.onRowSelect,
   })  : _resultData = resultData,
         assert(resultData != null);
 
-  final List<Results> _resultData;
+  final List<GoodsReturnNotes> _resultData;
   final OnRowSelect onRowSelect;
 
   int _selectedCount = 0;
@@ -44,7 +44,7 @@ class GoodsReturnNotesDataSource extends  DataTableSource{
         DataCell(
             Builder(
                 builder: (newContext) {
-                  return FutureBuilder<List<Results>>(
+                  return FutureBuilder<List<GoodsReturnNotes>>(
                     future: goodsReturnNotesController.fetchGoodsReturnNotesList(newContext),
                     builder: (context, snapshot){
                       return PopupMenuButton(

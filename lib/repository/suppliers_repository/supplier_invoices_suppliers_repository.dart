@@ -23,9 +23,9 @@ class SupplierInvoicesSupplierRepository implements SupplierInvoicesRepository {
   }
 
   @override
-  Future<List<Results>> getSupplierInvoiceList(BuildContext context) async{
+  Future<List<SupplierInvoices>> getSupplierInvoiceList(BuildContext context) async{
     //https://serow.herrings.co.ke/api/v1/suppliers/purchase-orders/
-    List<Results> subgroupList = [];
+    List<SupplierInvoices> subgroupList = [];
     context.watch<AuthProvider>();
     Auth user = Provider.of<AuthProvider>(context).auth;
 
@@ -41,7 +41,7 @@ class SupplierInvoicesSupplierRepository implements SupplierInvoicesRepository {
       //parse
       print('Result body: ${body['results']}');
       for (Map<String, dynamic> i in body["results"]) {
-        subgroupList.add(Results.fromJson(i));
+        subgroupList.add(SupplierInvoices.fromJson(i));
       }
     } else if(response.statusCode == 401){
       //refresh token and call getUser again
@@ -49,7 +49,7 @@ class SupplierInvoicesSupplierRepository implements SupplierInvoicesRepository {
           headers: {'grant_type': 'refresh_token', 'refresh_token': '${user.refreshToken}'});
       var body = json.decode(response.body);
       for (Map<String, dynamic> i in body["results"]) {
-        subgroupList.add(Results.fromJson(i));
+        subgroupList.add(SupplierInvoices.fromJson(i));
       }
       // token = jsonDecode(response.body)['token'];
       // refresh_token = jsonDecode(response.body)['refresh_token'];
@@ -59,7 +59,7 @@ class SupplierInvoicesSupplierRepository implements SupplierInvoicesRepository {
   }
 
   @override
-  Future<String> patchSupplierInvoice(Results result) {
+  Future<String> patchSupplierInvoice(SupplierInvoices result) {
     // TODO: implement patchPurchaseOrder
     throw UnimplementedError();
   }
@@ -121,11 +121,11 @@ class SupplierInvoicesSupplierRepository implements SupplierInvoicesRepository {
     print('Post status code: ${response.statusCode}');
     print('Post body: ${response.body}');
     // print('Post toJSON: ${br}');
-    return supplierInvoicesFromJson(response.body);
+    return SupplierInvoices.fromJson(response.body as Map);
   }
 
   @override
-  Future<String> putSupplierInvoice(Results result) {
+  Future<String> putSupplierInvoice(SupplierInvoices result) {
     // TODO: implement putPurchaseOrder
     throw UnimplementedError();
   }
@@ -164,7 +164,7 @@ class SupplierInvoicesSupplierRepository implements SupplierInvoicesRepository {
     print('Post status code: ${response.statusCode}');
     print('Post body: ${response.body}');
     // print('Post toJSON: ${br}');
-    return supplierInvoicesFromJson(response.body);
+    return SupplierInvoices.fromJson(response.body as Map);
   }
 
 

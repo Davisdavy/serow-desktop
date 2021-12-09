@@ -1,33 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:serow/constants.dart';
-import 'package:serow/controllers/branches_controller.dart';
 import 'package:serow/controllers/controller.dart';
-import 'package:serow/controllers/supliers_controller.dart';
-import 'package:serow/controllers/supplier_invoices_controller.dart';
+import 'package:serow/controllers/goods_return_notes_controller.dart';
 import 'package:serow/models/auth/auth.dart';
 import 'package:serow/models/entities/branches.dart';
 import 'package:serow/models/inventory/branch_stock.dart';
+import 'package:serow/models/suppliers/supplier_invoices.dart';
 import 'package:serow/models/suppliers/suppliers.dart';
 import 'package:serow/repository/auth_provider.dart';
-import 'package:serow/repository/entities_repository/branches_entities_repository.dart';
-import 'package:serow/repository/suppliers_repository/supplier_invoices_suppliers_repository.dart';
-import 'package:serow/repository/suppliers_repository/suppliers_provider.dart';
+import 'package:serow/repository/suppliers_repository/goods_return_notes_suppliers_repository.dart';
 import 'package:serow/services/services.dart';
-import 'package:serow/services/suppier_invoices_data_source.dart';
 import 'package:serow/widgets/custom_text.dart';
 
-class TablePurchaseOrder {
+class TableInvoice {
   String quantity;
   String bonus;
   String item;
   String totalQty;
+  String batchNo;
   String disc;
   String discPer;
   String totalCost;
@@ -39,14 +35,19 @@ class TablePurchaseOrder {
   String sumNetAmount;
   String sumSubTotal;
   String sumDiscountTotal;
+  String tradeDiscountPercentage;
   String sumVatTotal;
   String sumTotal;
 
-  TablePurchaseOrder(
+  Map<String, dynamic> supItems;
+
+  TableInvoice(
       {this.quantity,
         this.bonus,
+        this.supItems,
         this.item,
         this.totalQty,
+        this.batchNo,
         this.disc,
         this.discPer,
         this.unitPrice,
@@ -58,11 +59,12 @@ class TablePurchaseOrder {
         this.sumNetAmount,
         this.sumSubTotal,
         this.sumDiscountTotal,
+        this.tradeDiscountPercentage,
         this.sumVatTotal,
         this.sumTotal});
 
-  static List<TablePurchaseOrder> getTablePurchaseOrder() {
-    return tablesPurchaseOrder;
+  static List<TableInvoice> getTableInvoice() {
+    return tablesInvoice;
   }
 
   static addUsers(
@@ -73,7 +75,9 @@ class TablePurchaseOrder {
       totalCost,
       totalAmount,
       disc,
+      supItems,
       discPer,
+      batchNo,
       vatAmount,
       vatPer,
       unitPrice,
@@ -81,31 +85,37 @@ class TablePurchaseOrder {
       sumNetAmount,
       sumSubTotal,
       sumDiscountTotal,
+      tradeDiscountPercentage,
       sumVatTotal,
       sumTotal) {
-    var tablePurchaseOrder = new TablePurchaseOrder();
-    tablePurchaseOrder.quantity = quantity;
-    tablePurchaseOrder.bonus = bonus;
-    tablePurchaseOrder.item = item;
-    tablePurchaseOrder.totalQty = totalQty;
-    tablePurchaseOrder.totalCost = totalCost;
-    tablePurchaseOrder.totalAmount = totalAmount;
-    tablePurchaseOrder.disc = disc;
-    tablePurchaseOrder.discPer = discPer;
-    tablePurchaseOrder.vatAmount = vatAmount;
-    tablePurchaseOrder.vatPer = vatPer;
-    tablePurchaseOrder.unitPrice = unitPrice;
-    tablePurchaseOrder.netAmount = netAmount;
-    tablePurchaseOrder.sumNetAmount = sumNetAmount;
-    tablePurchaseOrder.sumSubTotal = sumSubTotal;
-    tablePurchaseOrder.sumDiscountTotal = sumDiscountTotal;
-    tablePurchaseOrder.sumVatTotal = sumVatTotal;
-    tablePurchaseOrder.sumTotal = sumTotal;
-    tablesPurchaseOrder.add(tablePurchaseOrder);
+    var tableInvoice = new TableInvoice();
+
+    tableInvoice.quantity = quantity;
+    tableInvoice.bonus = bonus;
+    tableInvoice.item = item;
+    tableInvoice.totalQty = totalQty;
+    tableInvoice.totalCost = totalCost;
+    tableInvoice.totalAmount = totalAmount;
+    tableInvoice.disc = disc;
+
+    tableInvoice.discPer = discPer;
+    tableInvoice.vatAmount = vatAmount;
+    tableInvoice.vatPer = vatPer;
+    tableInvoice.unitPrice = unitPrice;
+    tableInvoice.supItems = supItems;
+    tableInvoice.netAmount = netAmount;
+    tableInvoice.batchNo = batchNo;
+    tableInvoice.sumNetAmount = sumNetAmount;
+    tableInvoice.sumSubTotal = sumSubTotal;
+    tableInvoice.sumDiscountTotal = sumDiscountTotal;
+    tableInvoice.tradeDiscountPercentage = tradeDiscountPercentage;
+    tableInvoice.sumVatTotal = sumVatTotal;
+    tableInvoice.sumTotal = sumTotal;
+    tablesInvoice.add(tableInvoice);
   }
 }
 
-List<TablePurchaseOrder> tablesPurchaseOrder = [];
+List<TableInvoice> tablesInvoice = [];
 
 class GoodsReturnNotePage extends StatefulWidget {
   const GoodsReturnNotePage({Key key}) : super(key: key);
@@ -115,31 +125,49 @@ class GoodsReturnNotePage extends StatefulWidget {
 }
 
 class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
-  List<TablePurchaseOrder> tablesPurchaseOrder;
-  List<TablePurchaseOrder> selectedPurchaseOrders;
+  List<TableInvoice> tablesInvoice;
+  List<TableInvoice> selectedInvoices;
+  List<Map<String, dynamic>> itemList;
   bool sort;
+
+  // Default Form Loading State
+  bool _loginFormLoading = false;
 
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _itemController = TextEditingController();
   final TextEditingController _branchController = TextEditingController();
+  final TextEditingController _batchNumberController = TextEditingController();
+  final TextEditingController _purchaseOrderController =
+  TextEditingController();
   final TextEditingController controller = new TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
   TextEditingController _discAmountController;
-  final TextEditingController _discPercentageController =
-  TextEditingController();
+  TextEditingController _discPercentageController;
   final TextEditingController _netAmountController = TextEditingController();
-  final TextEditingController _unitPriceController = TextEditingController();
+  final TextEditingController _unitCostController = TextEditingController();
   final TextEditingController _bonusController = TextEditingController();
   TextEditingController _vatAmountController;
   final TextEditingController _vatPercentageController =
   TextEditingController();
   TextEditingController _totalAmountController;
   TextEditingController _totalQuantityController;
+
+  bool _isTradeEditingText = false;
+  TextEditingController _tradeEditingController;
+  String initialTradeText = "0.0";
+
+  String initialAmountText = "0.0";
+
+  bool _isDiscEditingText = false;
+  String initialDiscText = "0.0";
+
   bool _isEditingText = false;
   String initialText = "0.0";
 
   bool _isQtyEditingText = false;
   String initialQtyText = "0.0";
+
+  String initialCustomer;
 
   bool _isNetEditingText = false;
   String initialNetText = "0.0";
@@ -152,6 +180,12 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
   bool balanceValue = false;
   bool branchValue = false;
   bool itemValue = false;
+  bool editValue = false;
+
+  bool discountValueController = false;
+  bool newDiscountValueController = false;
+
+  //bool purchaseValue = false;
 
   bool balanceQuotationValue = false;
   bool branchQuotationValue = false;
@@ -160,6 +194,8 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
   String itemId;
   String supplierId;
   String branchId;
+  String purchaseOrderId;
+  String batchId;
 
   String itemQuotationId;
   String customerQuotationId;
@@ -168,23 +204,35 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
   TypeAheadField searchTextField;
   TypeAheadField itemTextField;
   TypeAheadField branchTextField;
+  TypeAheadField purchaseOrderTextField;
 
-  double qty = 0;
-  double bns = 0;
-  double vat = 0;
-  double netPrice = 0;
-  double itemPrice = 0;
-  double discAmount = 0;
-  double unitPrice = 0;
-  double discPerc = 0;
-  double vatPerc = 0;
+  double qty = 0.0;
+  double bns = 0.0;
+  double vat = 0.0;
+  double netAmount = 0.0;
+  double totalCost = 0.0;
+  double discAmount = 0.0;
+  double unitCost = 0.0;
+  double discPerc = 0.0;
+  double vatPerc = 0.0;
 
   @override
   void initState() {
     sort = false;
-    selectedPurchaseOrders = [];
+    selectedInvoices = [];
+    itemList = [];
 
-    tablesPurchaseOrder = TablePurchaseOrder.getTablePurchaseOrder();
+    _tradeEditingController = TextEditingController(text: initialTradeText);
+    _totalAmountController = TextEditingController(text: initialAmountText);
+    _totalQuantityController = TextEditingController(text: initialQtyText);
+    _discAmountController = TextEditingController(
+        text: initialText);
+    _discPercentageController = TextEditingController(
+        text: initialDiscText);
+    _vatAmountController = TextEditingController(
+        text: "0.0");
+
+    tablesInvoice = TableInvoice.getTableInvoice();
 
     _quantityController.addListener(() {
       setState(() {
@@ -192,15 +240,9 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
       });
     });
 
-    _discPercentageController.addListener(() {
+    _unitCostController.addListener(() {
       setState(() {
-        discPerc = double.parse(_discPercentageController.text);
-      });
-    });
-
-    _unitPriceController.addListener(() {
-      setState(() {
-        unitPrice = double.parse(_unitPriceController.text);
+        unitCost = double.parse(_unitCostController.text);
       });
     });
 
@@ -218,16 +260,9 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
 
     _netAmountController.addListener(() {
       setState(() {
-        netPrice = double.parse(_netAmountController.text);
+        netAmount = double.parse(_netAmountController.text);
       });
     });
-
-    _totalAmountController = TextEditingController(text: initialText);
-    _totalQuantityController = TextEditingController(text: initialQtyText);
-    _discAmountController = TextEditingController(
-        text: "${discPerc.toPrecision(2) / 100 * itemPrice.toPrecision(2)}");
-    _vatAmountController = TextEditingController(
-        text: "${vatPerc.toPrecision(2) / 100 * netPrice.toPrecision(2)}");
 
     super.initState();
     //groupItemList();
@@ -236,50 +271,80 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
   onSortColumn(int columnIndex, bool ascending) {
     if (columnIndex == 0) {
       if (ascending) {
-        tablesPurchaseOrder.sort((a, b) => a.item.compareTo(b.item));
+        tablesInvoice.sort((a, b) => a.item.compareTo(b.item));
       } else {
-        tablesPurchaseOrder.sort((a, b) => b.item.compareTo(a.item));
+        tablesInvoice.sort((a, b) => b.item.compareTo(a.item));
       }
     }
   }
 
-  onSelectedRow(bool selected, TablePurchaseOrder sale) async {
+  onSelectedRow(bool selected, TableInvoice sale) async {
     setState(() {
       if (selected) {
-        selectedPurchaseOrders.add(sale);
+        selectedInvoices.add(sale);
       } else {
-        selectedPurchaseOrders.remove(sale);
+        selectedInvoices.remove(sale);
       }
     });
   }
 
   deleteSelected() async {
     setState(() {
-      if (selectedPurchaseOrders.isNotEmpty) {
-        List<TablePurchaseOrder> temp = [];
-        temp.addAll(selectedPurchaseOrders);
-        for (TablePurchaseOrder sale in temp) {
-          tablesPurchaseOrder.remove(sale);
-          selectedPurchaseOrders.remove(sale);
+      if (selectedInvoices.isNotEmpty) {
+        List<TableInvoice> temp = [];
+        temp.addAll(selectedInvoices);
+        for (TableInvoice sale in temp) {
+          tablesInvoice.remove(sale);
+          selectedInvoices.remove(sale);
+          itemList.remove(sale);
         }
       }
     });
   }
 
-  Widget _editTitleTextField() {
-    if (_isEditingText)
+  editSelected() async {
+    setState(() {
+      if (selectedInvoices.isNotEmpty) {
+        List<TableInvoice> temp = [];
+        temp.addAll(selectedInvoices);
+        for (TableInvoice sale in temp) {
+          _quantityController.text = sale.quantity;
+          _itemController.text = sale.item;
+          _bonusController.text = sale.bonus;
+          _totalQuantityController.text = sale.totalQty;
+          _discAmountController.text = sale.disc;
+          _discPercentageController.text = sale.discPer;
+          _vatAmountController.text = sale.vatAmount;
+          _vatPercentageController.text = sale.vatPer;
+          editValue = true;
+
+        }
+      }
+    });
+  }
+
+  Widget _editDiscAmountField() {
+    if(_isEditingText)
       return Center(
         child: Material(
           child: Container(
             width: 48,
             height: 48,
             child: TextField(
+              onChanged: (disc){
+                setState(() {
+                  discAmount = double.parse(disc);
+                  initialDiscText = "${discAmount / totalCost * 100}";
+                });
+              },
               onSubmitted: (newValue) {
                 setState(() {
                   initialText = newValue;
-                  _discAmountController.text = newValue;
+                  // initialDiscText = "${discAmount / totalCost * 100}";
                   _isEditingText = false;
-                });
+                  discountValueController = false;
+                }
+                );
               },
               autofocus: true,
               controller: _discAmountController,
@@ -288,8 +353,6 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
                 FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
               ],
               decoration: InputDecoration(
-                //  labelText: "Email Address",
-                  hintText: "  0.0",
                   hintStyle: TextStyle(
                     fontSize: 12,
                   ),
@@ -306,20 +369,113 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
         ),
       );
     return InkWell(
+
         onTap: () {
           setState(() {
+            discountValueController = true;
             _isEditingText = true;
           });
         },
         child: Text(
-          "${discPerc.toPrecision(2) / 100 * itemPrice.toPrecision(2)}",
+          initialText,
           style: TextStyle(
             color: primaryColor,
             fontSize: 18.0,
           ),
         ));
   }
+  Widget _editDiscPercField() {
+    if(_isDiscEditingText)
+      return Center(
+        child: Material(
+          child: Container(
+            width: 48,
+            height: 48,
+            child: TextField(
+              onChanged: (disc){
+                setState(() {
+                  discPerc = double.parse(disc);
+                  initialText = "${discPerc / 100 * totalCost}";
+                });
+              },
+              onSubmitted: (newValue) {
+                setState(() {
+                  initialDiscText = newValue;
+                  // initialDiscText = "${discAmount / totalCost * 100}";
+                  _isDiscEditingText = false;
+                  newDiscountValueController = false;
+                }
+                );
+              },
+              autofocus: true,
+              controller: _discPercentageController,
+              keyboardType: TextInputType.number,
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
+              ],
+              decoration: InputDecoration(
+                  hintStyle: TextStyle(
+                    fontSize: 12,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                      borderSide:
+                      const BorderSide(color: primaryColor, width: 0.4),
+                      borderRadius: BorderRadius.circular(5)),
+                  enabledBorder: OutlineInputBorder(
+                      borderSide:
+                      const BorderSide(color: Colors.grey, width: 0.4),
+                      borderRadius: BorderRadius.circular(5))),
+            ),
+          ),
+        ),
+      );
+    return InkWell(
 
+        onTap: () {
+          setState(() {
+            newDiscountValueController = true;
+            _isDiscEditingText = true;
+          });
+        },
+        child: Text(
+          initialDiscText,
+          style: TextStyle(
+            color: primaryColor,
+            fontSize: 18.0,
+          ),
+        ));
+  }
+  Widget _editDiscAmountCounterTextField() {
+    return InkWell(
+        onTap: () {
+          setState(() {
+
+          });
+        },
+        child: Text(
+          initialText,
+          style: TextStyle(
+            color: primaryColor,
+            fontSize: 18.0,
+          ),
+        ));
+
+  }
+  Widget _editDiscPerCounterField() {
+    return InkWell(
+        onTap: () {
+          setState(() {
+
+          });
+        },
+        child: Text(
+          initialDiscText,
+          style: TextStyle(
+            color: primaryColor,
+            fontSize: 18.0,
+          ),
+        ));
+  }
   Widget _editNetTextField() {
     if (_isNetEditingText)
       return Center(
@@ -342,7 +498,6 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
               ],
               decoration: InputDecoration(
                 //  labelText: "Email Address",
-                  hintText: "  0.0",
                   hintStyle: TextStyle(
                     fontSize: 12,
                   ),
@@ -365,7 +520,7 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
           });
         },
         child: Text(
-          "${itemPrice.toPrecision(2) - discAmount.toPrecision(2)}",
+          "${totalCost - discAmount}",
           style: TextStyle(
             color: primaryColor,
             fontSize: 18.0,
@@ -395,7 +550,6 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
               ],
               decoration: InputDecoration(
                 //  labelText: "Email Address",
-                  hintText: "  0.0",
                   hintStyle: TextStyle(
                     fontSize: 12,
                   ),
@@ -418,13 +572,67 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
           });
         },
         child: Text(
-          "${vatPerc.toPrecision(2) / 100 * netPrice.toPrecision(2)}",
+          "${vatPerc / 100 * netAmount}",
           style: TextStyle(
             color: primaryColor,
             fontSize: 18.0,
           ),
         ));
   }
+
+  Widget _editTradeDiscountTextField(String text) {
+    if (_isTradeEditingText)
+      return Center(
+        child: Material(
+          child: Container(
+            width: 48,
+            height: 48,
+            child: TextField(
+              onSubmitted: (newValue) {
+                setState(() {
+                  initialTradeText = newValue;
+                  _isTradeEditingText = false;
+                });
+              },
+              autofocus: true,
+              controller: _tradeEditingController,
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
+              ],
+              decoration: InputDecoration(
+                //  labelText: "Email Address",
+                // hintText: "  0.0",
+                  hintStyle: TextStyle(
+                    fontSize: 12,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                      borderSide:
+                      const BorderSide(color: primaryColor, width: 0.4),
+                      borderRadius: BorderRadius.circular(5)),
+                  enabledBorder: OutlineInputBorder(
+                      borderSide:
+                      const BorderSide(color: Colors.grey, width: 0.4),
+                      borderRadius: BorderRadius.circular(5))),
+            ),
+          ),
+        ),
+      );
+    return InkWell(
+        onTap: () {
+          setState(() {
+            _isTradeEditingText = true;
+          });
+        },
+        child: Text(
+          text,
+          style: TextStyle(
+            color: primaryColor,
+            fontSize: 18.0,
+          ),
+        ));
+  }
+
 
   void updateUI() {
     setState(() {
@@ -434,8 +642,8 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     _nameController.dispose();
+    _tradeEditingController.dispose();
     controller.dispose();
     _itemController.dispose();
     _quantityController.dispose();
@@ -443,24 +651,76 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
     _branchController.dispose();
     _discPercentageController.dispose();
     _netAmountController.dispose();
-    _unitPriceController.dispose();
+    _unitCostController.dispose();
     _bonusController.dispose();
     _totalQuantityController.dispose();
     _vatAmountController.dispose();
+    _batchNumberController.dispose();
     _vatPercentageController.dispose();
+    _purchaseOrderController.dispose();
     _totalAmountController.dispose();
     _quantityController.removeListener(() {});
-    _unitPriceController.removeListener(() {});
+    _unitCostController.removeListener(() {});
 
     super.dispose();
   }
 
+  Future<void> _alertDialogBuilder(String error) async {
+    return showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("Error"),
+            content: Container(
+              child: Text(error ?? "Please enter correct details"),
+            ),
+            actions: [
+              TextButton(
+                child: Text("Close Dialog"),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              )
+            ],
+          );
+        });
+  }
+
+  Future<void> _successAlertDialogBuilder(String error) async {
+    return showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("Success"),
+            content: Container(
+              child: Text(error ?? "Invoice successfully saved!"),
+            ),
+            actions: [
+              TextButton(
+                child: Text("View Invoice"),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              TextButton(
+                child: Text("Close Dialog"),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              )
+            ],
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
-    itemPrice = unitPrice.toPrecision(2) * qty;
-    discAmount = discPerc.toPrecision(2) / 100 * itemPrice.toPrecision(2);
-    vat = vatPerc.toPrecision(2) / 100 * netPrice.toPrecision(2);
-    netPrice = itemPrice.toPrecision(2) - discAmount.toPrecision(2);
+    totalCost = unitCost.toPrecision(2) * qty;
+    discAmount = discPerc/ 100 * totalCost;
+    vat = vatPerc / 100 * netAmount;
+    netAmount = totalCost - discAmount;
 
     branchTextField = TypeAheadField<Branches>(
       suggestionsCallback: BranchApi.getBranchSuggestions,
@@ -487,6 +747,100 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
         branchId = suggestion.id;
       },
       noItemsFoundBuilder: (context) => Center(child: Text("No branch found!")),
+    );
+    purchaseOrderTextField = TypeAheadField<SupplierInvoices>(
+      suggestionsCallback: PurchaseOrderApi.getPurchaseOrderListSuggestions,
+      textFieldConfiguration: TextFieldConfiguration(
+        controller: this._purchaseOrderController,
+        decoration: InputDecoration(
+            hintText: "Search invoice",
+            hintStyle: TextStyle(fontSize: 12),
+            focusedBorder: OutlineInputBorder(
+                borderSide: const BorderSide(color: primaryColor, width: 0.4),
+                borderRadius: BorderRadius.circular(5)),
+            enabledBorder: OutlineInputBorder(
+                borderSide: const BorderSide(color: Colors.grey, width: 0.4),
+                borderRadius: BorderRadius.circular(5))),
+      ),
+      itemBuilder: (context, suggestion) {
+        final order = suggestion;
+        return ListTile(
+          title: Text(order.code),
+        );
+      },
+      onSuggestionSelected: (SupplierInvoices suggestion) {
+        this._purchaseOrderController.text = suggestion.code;
+        purchaseOrderId = suggestion.id;
+        _nameController.text =
+        "${PurchaseOrderApi.purchaseOrderList[0].supplier.name}";
+        _branchController.text =
+        "${PurchaseOrderApi.purchaseOrderList[0].branch.name}";
+        var tableInvoice = new TableInvoice();
+        tableInvoice.tradeDiscountPercentage =
+        "${PurchaseOrderApi.purchaseOrderList[0].tradeDiscountPercentage}";
+        tableInvoice.item =
+        "${PurchaseOrderApi.purchaseOrderList[0].supplierInvoiceItems[0].item.name}";
+        tableInvoice.quantity =
+        "${PurchaseOrderApi.purchaseOrderList[0].supplierInvoiceItems[0].quantity}";
+        tableInvoice.bonus =
+        "${PurchaseOrderApi.purchaseOrderList[0].supplierInvoiceItems[0].bonus}";
+        tableInvoice.totalQty =
+        "${PurchaseOrderApi.purchaseOrderList[0].supplierInvoiceItems[0].totalQuantity}";
+        tableInvoice.disc =
+        "${PurchaseOrderApi.purchaseOrderList[0].supplierInvoiceItems[0].discountAmount}";
+        tableInvoice.discPer =
+        "${PurchaseOrderApi.purchaseOrderList[0].supplierInvoiceItems[0].discountPercentage}";
+        tableInvoice.unitPrice =
+        "${PurchaseOrderApi.purchaseOrderList[0].supplierInvoiceItems[0].unitCost}";
+        tableInvoice.netAmount =
+        "${PurchaseOrderApi.purchaseOrderList[0].supplierInvoiceItems[0].netAmount}";
+        tableInvoice.vatAmount =
+        "${PurchaseOrderApi.purchaseOrderList[0].supplierInvoiceItems[0].vatAmount}";
+        tableInvoice.batchNo = _batchNumberController.text;
+        tableInvoice.vatPer =
+        "${PurchaseOrderApi.purchaseOrderList[0].supplierInvoiceItems[0].vatPercentage}";
+        tableInvoice.totalCost =
+        "${PurchaseOrderApi.purchaseOrderList[0].supplierInvoiceItems[0].totalCost}";
+        tableInvoice.totalAmount =
+        "${PurchaseOrderApi.purchaseOrderList[0].totalAmount}";
+        tableInvoice.sumSubTotal =
+        "${PurchaseOrderApi.purchaseOrderList[0].supplierInvoiceItems[0].discountAmount +
+            PurchaseOrderApi.purchaseOrderList[0].supplierInvoiceItems[0].netAmount - PurchaseOrderApi.purchaseOrderList[0].supplierInvoiceItems[0].vatAmount} ";
+        tableInvoice.sumNetAmount =
+        "${PurchaseOrderApi.purchaseOrderList[0].supplierInvoiceItems[0].netAmount}";
+        tableInvoice.sumDiscountTotal =
+        "${PurchaseOrderApi.purchaseOrderList[0].supplierInvoiceItems[0].discountAmount}";
+        tableInvoice.sumVatTotal =
+        "${PurchaseOrderApi.purchaseOrderList[0].supplierInvoiceItems[0].vatAmount}";
+        tableInvoice.sumTotal =
+        "${PurchaseOrderApi.purchaseOrderList[0].supplierInvoiceItems[0].vatAmount -
+            PurchaseOrderApi.purchaseOrderList[0].supplierInvoiceItems[0].discountAmount +
+            PurchaseOrderApi.purchaseOrderList[0].supplierInvoiceItems[0].netAmount -
+            PurchaseOrderApi.purchaseOrderList[0].supplierInvoiceItems[0].vatAmount}";
+        tableInvoice.supItems =
+        {
+          "item": PurchaseOrderApi.purchaseOrderList[0].supplierInvoiceItems[0].item.id,
+          "quantity": PurchaseOrderApi.purchaseOrderList[0].supplierInvoiceItems[0].quantity,
+          "unit_cost":PurchaseOrderApi.purchaseOrderList[0].supplierInvoiceItems[0].unitCost,
+          'total_cost': PurchaseOrderApi.purchaseOrderList[0].supplierInvoiceItems[0].totalCost,
+          "bonus": PurchaseOrderApi.purchaseOrderList[0].supplierInvoiceItems[0].bonus,
+          "total_quantity":PurchaseOrderApi.purchaseOrderList[0].supplierInvoiceItems[0].totalQuantity,
+          "discount_percentage": PurchaseOrderApi.purchaseOrderList[0].supplierInvoiceItems[0].discountPercentage,
+          "discount_amount": PurchaseOrderApi.purchaseOrderList[0].supplierInvoiceItems[0].discountAmount,
+          "net_amount":PurchaseOrderApi.purchaseOrderList[0].supplierInvoiceItems[0].netAmount,
+          "vat_percentage": PurchaseOrderApi.purchaseOrderList[0].supplierInvoiceItems[0].vatPercentage,
+          "vat_amount": PurchaseOrderApi.purchaseOrderList[0].supplierInvoiceItems[0].vatAmount,
+          "total_amount": PurchaseOrderApi.purchaseOrderList[0].totalAmount,
+        };
+        tablesInvoice.add(tableInvoice);
+        itemList.add(
+            tablesInvoice[0]
+                .supItems);
+        setState(() {});
+
+      },
+      noItemsFoundBuilder: (context) =>
+          Center(child: Text("No invoice found!")),
     );
     itemTextField = TypeAheadField<BranchStock>(
       suggestionsCallback: ItemApi.getItemSuggestions,
@@ -540,6 +894,7 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
       onSuggestionSelected: (suggestion) {
         this._nameController.text = suggestion.name;
         supplierId = suggestion.id;
+
         setState(() {
           balanceValue = true;
         });
@@ -549,34 +904,33 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
     );
 
     //Dependency injection
-    var supplierInvoicesController =
-    SupplierInvoicesController(SupplierInvoicesSupplierRepository());
-    var supplierController = SupplierController(SuppliersProvider());
-    var branchController = BranchesController(BranchesEntitiesRepository());
+    var goodsReturnNoteController =
+    GoodsReturnNotesController(GoodsReturnNotesSupplierRepository());
     return Container(
         color: Colors.blueGrey.shade100.withOpacity(0.1),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Obx(
-                    () => Row(
-                  children: [
-                    Container(
-                        margin: EdgeInsets.only(top: 90),
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 60.0),
-                          child: CustomText(
-                            text: menuController.activeItem.value,
-                            size: 28,
-                            color: bgColor,
-                            weight: FontWeight.bold,
-                          ),
-                        )),
-                  ],
-                ),
+        child: Column(
+          children: [
+            Obx(
+                  () => Row(
+                children: [
+                  Container(
+                      margin: EdgeInsets.only(top: 90),
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 60.0),
+                        child: CustomText(
+                          text: menuController.activeItem.value,
+                          size: 28,
+                          color: bgColor,
+                          weight: FontWeight.bold,
+                        ),
+                      )),
+                ],
               ),
-              Container(
-                height: MediaQuery.of(context).size.height,
+            ),
+            Container(
+              height: MediaQuery.of(context).size.height / 1.25,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 5.0),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -598,48 +952,94 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
                             children: [
                               Expanded(
                                 child: Container(
+                                  child: SingleChildScrollView(
                                     child: Column(
                                       children: [
-                                        Flexible(
-                                          child: Row(
-                                            mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Flexible(
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                                  children: [
-                                                    Material(
-                                                        child: Text(
-                                                          "Customer",
-                                                          style: TextStyle(
-                                                              color: bgColor,
-                                                              fontSize: 8,
-                                                              fontWeight:
-                                                              FontWeight.bold),
-                                                        )),
-                                                    SizedBox(
-                                                      height: 5,
+                                        Row(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Flexible(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                                children: [
+                                                  Material(
+                                                      child: Text(
+                                                        "Supplier invoice",
+                                                        style: TextStyle(
+                                                            color: bgColor,
+                                                            fontSize: 8,
+                                                            fontWeight:
+                                                            FontWeight.bold),
+                                                      )),
+                                                  SizedBox(
+                                                    height: 5,
+                                                  ),
+                                                  Material(
+                                                    child: Container(
+                                                      width: 240,
+                                                      height: 48,
+                                                      child:
+                                                      purchaseOrderTextField,
                                                     ),
-                                                    Flexible(
-                                                      child: Material(
-                                                        child: Container(
-                                                          width: 240,
-                                                          height: 40,
-                                                          child: searchTextField,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
+                                                  ),
+                                                ],
                                               ),
-                                              Flexible(
+                                            ),
+                                            Flexible(
+                                              child: Column(
+                                                children: [
+                                                  Material(
+                                                      child: Text(
+                                                        "Credit limit",
+                                                        style: TextStyle(
+                                                            color: bgColor,
+                                                            fontSize: 8,
+                                                            fontWeight:
+                                                            FontWeight.bold),
+                                                      )),
+                                                  SizedBox(
+                                                    height: 15,
+                                                  ),
+                                                  Material(
+                                                      child: balanceValue ==
+                                                          true
+                                                          ? Text(
+                                                        "Ksh ${SupplierApi.customersList[0].creditLimit}",
+                                                        style: TextStyle(
+                                                            color: Colors
+                                                                .red,
+                                                            fontSize: 8,
+                                                            fontWeight:
+                                                            FontWeight
+                                                                .bold),
+                                                      )
+                                                          : Text(
+                                                        "Ksh 0.0",
+                                                        style: TextStyle(
+                                                            color: Colors
+                                                                .red,
+                                                            fontSize: 8,
+                                                            fontWeight:
+                                                            FontWeight
+                                                                .bold),
+                                                      )),
+                                                  SizedBox(
+                                                    height: 5,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Flexible(
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(
+                                                    right: 15.0),
                                                 child: Column(
                                                   children: [
                                                     Material(
                                                         child: Text(
-                                                          "Credit limit",
+                                                          "Balance",
                                                           style: TextStyle(
                                                               color: bgColor,
                                                               fontSize: 8,
@@ -650,26 +1050,27 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
                                                       height: 15,
                                                     ),
                                                     Material(
-                                                        child: balanceValue == true
+                                                        child:
+                                                        balanceValue == true
                                                             ? Text(
-                                                          "Ksh ${SupplierApi.customersList[0].creditLimit}",
+                                                          "Ksh ${SupplierApi.customersList[0].balance}",
                                                           style: TextStyle(
-                                                              color:
-                                                              Colors.red,
-                                                              fontSize: 8,
+                                                              color: Colors
+                                                                  .red,
+                                                              fontSize:
+                                                              8,
                                                               fontWeight:
-                                                              FontWeight
-                                                                  .bold),
+                                                              FontWeight.bold),
                                                         )
                                                             : Text(
                                                           "Ksh 0.0",
                                                           style: TextStyle(
-                                                              color:
-                                                              Colors.red,
-                                                              fontSize: 8,
+                                                              color: Colors
+                                                                  .red,
+                                                              fontSize:
+                                                              8,
                                                               fontWeight:
-                                                              FontWeight
-                                                                  .bold),
+                                                              FontWeight.bold),
                                                         )),
                                                     SizedBox(
                                                       height: 5,
@@ -677,59 +1078,11 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
                                                   ],
                                                 ),
                                               ),
-                                              Flexible(
-                                                child: Padding(
-                                                  padding: const EdgeInsets.only(
-                                                      right: 15.0),
-                                                  child: Column(
-                                                    children: [
-                                                      Material(
-                                                          child: Text(
-                                                            "Balance",
-                                                            style: TextStyle(
-                                                                color: bgColor,
-                                                                fontSize: 8,
-                                                                fontWeight:
-                                                                FontWeight.bold),
-                                                          )),
-                                                      SizedBox(
-                                                        height: 15,
-                                                      ),
-                                                      Material(
-                                                          child: balanceValue ==
-                                                              true
-                                                              ? Text(
-                                                            "Ksh ${SupplierApi.customersList[0].balance}",
-                                                            style: TextStyle(
-                                                                color: Colors
-                                                                    .red,
-                                                                fontSize: 8,
-                                                                fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                          )
-                                                              : Text(
-                                                            "Ksh 0.0",
-                                                            style: TextStyle(
-                                                                color: Colors
-                                                                    .red,
-                                                                fontSize: 8,
-                                                                fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                          )),
-                                                      SizedBox(
-                                                        height: 5,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
+                                            ),
+                                          ],
                                         ),
                                         SizedBox(
-                                          height: 10.0,
+                                          height: 5.0,
                                         ),
                                         Padding(
                                           padding: const EdgeInsets.only(
@@ -774,7 +1127,7 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
                                                 children: [
                                                   Material(
                                                       child: Text(
-                                                        "Item",
+                                                        "Supplier",
                                                         style: TextStyle(
                                                             color: bgColor,
                                                             fontSize: 8,
@@ -788,8 +1141,34 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
                                                     child: Container(
                                                       width: 240,
                                                       height: 48,
-                                                      child: itemTextField,
+                                                      child: searchTextField,
                                                     ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Flexible(
+                                              child: Column(
+                                                children: [
+                                                  Material(
+                                                      child: Text(
+                                                        "Trade Disc",
+                                                        style: TextStyle(
+                                                            color: bgColor,
+                                                            fontSize: 8,
+                                                            fontWeight:
+                                                            FontWeight.bold),
+                                                      )),
+                                                  SizedBox(
+                                                    height: 15,
+                                                  ),
+                                                  Material(
+                                                    child:
+                                                    _editTradeDiscountTextField(
+                                                        initialTradeText),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 5,
                                                   ),
                                                 ],
                                               ),
@@ -803,7 +1182,7 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
                                                         left: 12.0),
                                                     child: Material(
                                                         child: Text(
-                                                          "Stock",
+                                                          "Last Pay Amount",
                                                           style: TextStyle(
                                                               color: bgColor,
                                                               fontSize: 8,
@@ -819,18 +1198,21 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
                                                     const EdgeInsets.only(
                                                         left: 12.0),
                                                     child: Material(
-                                                        child: itemValue ==
-                                                            true &&
-                                                            ItemApi
-                                                                .itemList[
-                                                            0]
-                                                                .branch ==
-                                                                BranchApi
-                                                                    .branchList[
-                                                                0]
-                                                                    .id
+                                                        child: balanceValue ==
+                                                            true
+                                                        //     ? Text(
+                                                        //         "Ksh${PurchaseOrderApi.purchaseOrderList[0].totalAmount.toString()}",
+                                                        //         style: TextStyle(
+                                                        //             color: Colors
+                                                        //                 .red,
+                                                        //             fontSize: 8,
+                                                        //             fontWeight:
+                                                        //                 FontWeight
+                                                        //                     .bold),
+                                                        //       )
+                                                        //     :
                                                             ? Text(
-                                                          "${ItemApi.itemList[0].item.balance.toString()}",
+                                                          "Ksh${SupplierApi.customersList[0].lastPayAmount}",
                                                           style: TextStyle(
                                                               color: Colors
                                                                   .red,
@@ -840,7 +1222,7 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
                                                                   .bold),
                                                         )
                                                             : Text(
-                                                          "stock",
+                                                          "Ksh0.0",
                                                           style: TextStyle(
                                                               color: Colors
                                                                   .red,
@@ -859,50 +1241,56 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
                                             Flexible(
                                               child: Column(
                                                 children: [
-                                                  Padding(
-                                                    padding:
-                                                    const EdgeInsets.only(
-                                                        left: 12.0),
-                                                    child: Material(
-                                                        child: Text(
-                                                          "Min price",
-                                                          style: TextStyle(
-                                                              color: bgColor,
-                                                              fontSize: 8,
-                                                              fontWeight:
-                                                              FontWeight.bold),
-                                                        )),
-                                                  ),
+                                                  Material(
+                                                      child: Text(
+                                                        "Posting Category",
+                                                        style: TextStyle(
+                                                            color: bgColor,
+                                                            fontSize: 8,
+                                                            fontWeight:
+                                                            FontWeight.bold),
+                                                      )),
                                                   SizedBox(
                                                     height: 15,
                                                   ),
-                                                  Padding(
-                                                    padding:
-                                                    const EdgeInsets.only(
-                                                        left: 12.0),
-                                                    child: Material(
-                                                        child: itemValue == true
-                                                            ? Text(
-                                                          "Ksh ${ItemApi.itemList[0].item.minimumPrice}",
-                                                          style: TextStyle(
-                                                              color: Colors
-                                                                  .red,
-                                                              fontSize: 8,
-                                                              fontWeight:
-                                                              FontWeight
-                                                                  .bold),
-                                                        )
-                                                            : Text(
-                                                          "Ksh 0.0",
-                                                          style: TextStyle(
-                                                              color: Colors
-                                                                  .red,
-                                                              fontSize: 8,
-                                                              fontWeight:
-                                                              FontWeight
-                                                                  .bold),
-                                                        )),
-                                                  ),
+                                                  Material(
+                                                      child: balanceValue ==
+                                                          true
+                                                      //     ? Text(
+                                                      //         "${PurchaseOrderApi.purchaseOrderList[0].expectedDate.toString()}",
+                                                      //         style: TextStyle(
+                                                      //             color: Colors
+                                                      //                 .red,
+                                                      //             fontSize: 8,
+                                                      //             fontWeight:
+                                                      //                 FontWeight
+                                                      //                     .bold),
+                                                      //       )
+                                                      //     :
+                                                          ? Text(
+                                                        SupplierApi
+                                                            .customersList[
+                                                        0]
+                                                            .postingCategory
+                                                            .name,
+                                                        style: TextStyle(
+                                                            color: Colors
+                                                                .red,
+                                                            fontSize: 8,
+                                                            fontWeight:
+                                                            FontWeight
+                                                                .bold),
+                                                      )
+                                                          : Text(
+                                                        'Category',
+                                                        style: TextStyle(
+                                                            color: Colors
+                                                                .red,
+                                                            fontSize: 8,
+                                                            fontWeight:
+                                                            FontWeight
+                                                                .bold),
+                                                      )),
                                                   SizedBox(
                                                     height: 5,
                                                   ),
@@ -922,12 +1310,13 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
                                                       ),
                                                       child: Material(
                                                           child: Text(
-                                                            "Max price",
+                                                            "Contact Number",
                                                             style: TextStyle(
                                                                 color: bgColor,
                                                                 fontSize: 8,
                                                                 fontWeight:
-                                                                FontWeight.bold),
+                                                                FontWeight
+                                                                    .bold),
                                                           )),
                                                     ),
                                                     SizedBox(
@@ -938,23 +1327,40 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
                                                       const EdgeInsets.only(
                                                           left: 12.0),
                                                       child: Material(
-                                                          child: itemValue == true
+                                                          child: balanceValue ==
+                                                              true
+                                                          //     ? Text(
+                                                          //         "Ksh ${PurchaseOrderApi.purchaseOrderList[0].noOfItems.toString()}",
+                                                          //         style: TextStyle(
+                                                          //             color: Colors
+                                                          //                 .red,
+                                                          //             fontSize:
+                                                          //                 8,
+                                                          //             fontWeight:
+                                                          //                 FontWeight.bold),
+                                                          //       )
+                                                          //     :
                                                               ? Text(
-                                                            "Ksh ${ItemApi.itemList[0].item.maximumPrice}",
+                                                            SupplierApi
+                                                                .customersList[
+                                                            0]
+                                                                .phone,
                                                             style: TextStyle(
                                                                 color: Colors
                                                                     .red,
-                                                                fontSize: 8,
+                                                                fontSize:
+                                                                8,
                                                                 fontWeight:
                                                                 FontWeight
                                                                     .bold),
                                                           )
                                                               : Text(
-                                                            "Ksh 0.0",
+                                                            'Number',
                                                             style: TextStyle(
                                                                 color: Colors
                                                                     .red,
-                                                                fontSize: 8,
+                                                                fontSize:
+                                                                8,
                                                                 fontWeight:
                                                                 FontWeight
                                                                     .bold),
@@ -987,7 +1393,7 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
                                                         left: 12.0),
                                                     child: Material(
                                                         child: Text(
-                                                          "Invoice item",
+                                                          "Search item",
                                                           style: TextStyle(
                                                               color: bgColor,
                                                               fontSize: 12,
@@ -998,32 +1404,102 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
                                                   SizedBox(
                                                     height: 15,
                                                   ),
-                                                  Padding(
-                                                    padding:
-                                                    const EdgeInsets.only(
-                                                        left: 12.0),
-                                                    child: Material(
-                                                        child: itemValue == true
-                                                            ? Text(
-                                                          "${ItemApi.itemList[0].item.name}",
-                                                          style: TextStyle(
-                                                              color: Colors
-                                                                  .red,
-                                                              fontSize: 8,
-                                                              fontWeight:
-                                                              FontWeight
-                                                                  .bold),
-                                                        )
-                                                            : Text(
-                                                          "Item",
-                                                          style: TextStyle(
-                                                              color: Colors
-                                                                  .red,
+                                                  Material(
+                                                    child: Flexible(
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                        children: [
+                                                          Material(
+                                                              child: Text(
+                                                                "Item",
+                                                                style: TextStyle(
+                                                                    color: bgColor,
+                                                                    fontSize: 8,
+                                                                    fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                              )),
+                                                          SizedBox(
+                                                            height: 5,
+                                                          ),
+                                                          Material(
+                                                            child: Container(
+                                                              width: 240,
+                                                              height: 48,
+                                                              child:
+                                                              itemTextField,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 5,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Flexible(
+                                              child: Column(
+                                                children: [
+                                                  Material(
+                                                      child: Text(
+                                                        "Batch",
+                                                        style: TextStyle(
+                                                            color: bgColor,
+                                                            fontSize: 8,
+                                                            fontWeight:
+                                                            FontWeight.bold),
+                                                      )),
+                                                  SizedBox(
+                                                    height: 15,
+                                                  ),
+                                                  Material(
+                                                    child: Container(
+                                                      width: 48,
+                                                      height: 48,
+                                                      child: TextField(
+                                                        controller:
+                                                        _batchNumberController,
+                                                        keyboardType:
+                                                        TextInputType
+                                                            .number,
+                                                        // inputFormatters: [
+                                                        //   FilteringTextInputFormatter
+                                                        //       .allow(RegExp(
+                                                        //       r'^\d*\.?\d{0,2}')),
+                                                        // ],
+                                                        decoration:
+                                                        InputDecoration(
+                                                          //  labelText: "Email Address",
+                                                            hintText: "  -",
+                                                            hintStyle:
+                                                            TextStyle(
                                                               fontSize: 12,
-                                                              fontWeight:
-                                                              FontWeight
-                                                                  .bold),
-                                                        )),
+                                                            ),
+                                                            focusedBorder: OutlineInputBorder(
+                                                                borderSide: const BorderSide(
+                                                                    color:
+                                                                    primaryColor,
+                                                                    width:
+                                                                    0.4),
+                                                                borderRadius:
+                                                                BorderRadius.circular(
+                                                                    5)),
+                                                            enabledBorder: OutlineInputBorder(
+                                                                borderSide: const BorderSide(
+                                                                    color: Colors
+                                                                        .grey,
+                                                                    width:
+                                                                    0.4),
+                                                                borderRadius:
+                                                                BorderRadius.circular(
+                                                                    5))),
+                                                      ),
+                                                    ),
                                                   ),
                                                   SizedBox(
                                                     height: 5,
@@ -1054,7 +1530,8 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
                                                         controller:
                                                         _quantityController,
                                                         keyboardType:
-                                                        TextInputType.number,
+                                                        TextInputType
+                                                            .number,
                                                         inputFormatters: [
                                                           FilteringTextInputFormatter
                                                               .allow(RegExp(
@@ -1069,15 +1546,13 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
                                                               fontSize: 12,
                                                             ),
                                                             focusedBorder: OutlineInputBorder(
-                                                                borderSide:
-                                                                const BorderSide(
+                                                                borderSide: const BorderSide(
                                                                     color:
                                                                     primaryColor,
                                                                     width:
                                                                     0.4),
                                                                 borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
+                                                                BorderRadius.circular(
                                                                     5)),
                                                             enabledBorder: OutlineInputBorder(
                                                                 borderSide: const BorderSide(
@@ -1086,8 +1561,7 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
                                                                     width:
                                                                     0.4),
                                                                 borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
+                                                                BorderRadius.circular(
                                                                     5))),
                                                       ),
                                                     ),
@@ -1103,7 +1577,7 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
                                                 children: [
                                                   Material(
                                                       child: Text(
-                                                        "Unit price",
+                                                        "Unit cost",
                                                         style: TextStyle(
                                                             color: bgColor,
                                                             fontSize: 8,
@@ -1119,9 +1593,10 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
                                                       height: 48,
                                                       child: TextField(
                                                         controller:
-                                                        _unitPriceController,
+                                                        _unitCostController,
                                                         keyboardType:
-                                                        TextInputType.number,
+                                                        TextInputType
+                                                            .number,
                                                         inputFormatters: [
                                                           FilteringTextInputFormatter
                                                               .allow(RegExp(
@@ -1130,21 +1605,20 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
                                                         decoration:
                                                         InputDecoration(
                                                           //  labelText: "Email Address",
-                                                            hintText: "  0.0",
+                                                            hintText:
+                                                            "  0.0",
                                                             hintStyle:
                                                             TextStyle(
                                                               fontSize: 12,
                                                             ),
                                                             focusedBorder: OutlineInputBorder(
-                                                                borderSide:
-                                                                const BorderSide(
+                                                                borderSide: const BorderSide(
                                                                     color:
                                                                     primaryColor,
                                                                     width:
                                                                     0.4),
                                                                 borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
+                                                                BorderRadius.circular(
                                                                     5)),
                                                             enabledBorder: OutlineInputBorder(
                                                                 borderSide: const BorderSide(
@@ -1153,8 +1627,7 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
                                                                     width:
                                                                     0.4),
                                                                 borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
+                                                                BorderRadius.circular(
                                                                     5))),
                                                       ),
                                                     ),
@@ -1188,7 +1661,8 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
                                                         controller:
                                                         _bonusController,
                                                         keyboardType:
-                                                        TextInputType.number,
+                                                        TextInputType
+                                                            .number,
                                                         inputFormatters: [
                                                           FilteringTextInputFormatter
                                                               .allow(RegExp(
@@ -1203,15 +1677,13 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
                                                               fontSize: 12,
                                                             ),
                                                             focusedBorder: OutlineInputBorder(
-                                                                borderSide:
-                                                                const BorderSide(
+                                                                borderSide: const BorderSide(
                                                                     color:
                                                                     primaryColor,
                                                                     width:
                                                                     0.4),
                                                                 borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
+                                                                BorderRadius.circular(
                                                                     5)),
                                                             enabledBorder: OutlineInputBorder(
                                                                 borderSide: const BorderSide(
@@ -1220,8 +1692,7 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
                                                                     width:
                                                                     0.4),
                                                                 borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
+                                                                BorderRadius.circular(
                                                                     5))),
                                                       ),
                                                     ),
@@ -1277,7 +1748,7 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
                                                 children: [
                                                   Material(
                                                       child: Text(
-                                                        "Disc percentage",
+                                                        "Disc Percentage",
                                                         style: TextStyle(
                                                             color: bgColor,
                                                             fontSize: 8,
@@ -1287,52 +1758,7 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
                                                   SizedBox(
                                                     height: 15,
                                                   ),
-                                                  Material(
-                                                    child: Container(
-                                                      width: 48,
-                                                      height: 48,
-                                                      child: TextField(
-                                                        controller:
-                                                        _discPercentageController,
-                                                        keyboardType:
-                                                        TextInputType.number,
-                                                        inputFormatters: [
-                                                          FilteringTextInputFormatter
-                                                              .allow(RegExp(
-                                                              r'^\d*\.?\d{0,2}')),
-                                                        ],
-                                                        decoration:
-                                                        InputDecoration(
-                                                          //  labelText: "Email Address",
-                                                            hintText: "  0.0",
-                                                            hintStyle:
-                                                            TextStyle(
-                                                              fontSize: 12,
-                                                            ),
-                                                            focusedBorder: OutlineInputBorder(
-                                                                borderSide:
-                                                                const BorderSide(
-                                                                    color:
-                                                                    primaryColor,
-                                                                    width:
-                                                                    0.4),
-                                                                borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                    5)),
-                                                            enabledBorder: OutlineInputBorder(
-                                                                borderSide: const BorderSide(
-                                                                    color: Colors
-                                                                        .grey,
-                                                                    width:
-                                                                    0.4),
-                                                                borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                    5))),
-                                                      ),
-                                                    ),
-                                                  ),
+                                                  discountValueController == true ? _editDiscPerCounterField() : _editDiscPercField(),
                                                   SizedBox(
                                                     height: 5,
                                                   ),
@@ -1354,7 +1780,7 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
                                                   SizedBox(
                                                     height: 15,
                                                   ),
-                                                  _editTitleTextField(),
+                                                  newDiscountValueController == true ? _editDiscAmountCounterTextField() : _editDiscAmountField(),
                                                   SizedBox(
                                                     height: 5,
                                                   ),
@@ -1416,21 +1842,20 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
                                                         decoration:
                                                         InputDecoration(
                                                           //  labelText: "Email Address",
-                                                            hintText: "  0.0",
+                                                            hintText:
+                                                            "  0.0",
                                                             hintStyle:
                                                             TextStyle(
                                                               fontSize: 12,
                                                             ),
                                                             focusedBorder: OutlineInputBorder(
-                                                                borderSide:
-                                                                const BorderSide(
+                                                                borderSide: const BorderSide(
                                                                     color:
                                                                     primaryColor,
                                                                     width:
                                                                     0.4),
                                                                 borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
+                                                                BorderRadius.circular(
                                                                     5)),
                                                             enabledBorder: OutlineInputBorder(
                                                                 borderSide: const BorderSide(
@@ -1439,8 +1864,7 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
                                                                     width:
                                                                     0.4),
                                                                 borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
+                                                                BorderRadius.circular(
                                                                     5))),
                                                       ),
                                                     ),
@@ -1493,7 +1917,7 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
                                                     ),
                                                     Material(
                                                       child: Text(
-                                                        "${vat - discAmount + netPrice}",
+                                                        "${vat - discAmount + netAmount}",
                                                         style: TextStyle(
                                                           color: primaryColor,
                                                           fontSize: 18.0,
@@ -1511,59 +1935,154 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
                                         ),
                                         Column(
                                           children: [
-                                            Material(
+                                            editValue == true
+                                                ? Material(
                                               child: InkWell(
                                                 onTap: () {
                                                   var tableInvoice =
-                                                  new TablePurchaseOrder();
-
+                                                  new TableInvoice();
+                                                  tableInvoice.totalCost =
+                                                  "${qty * double.parse(_unitCostController.text)}";
                                                   tableInvoice.item =
-                                                      _itemController.text;
+                                                      _itemController
+                                                          .text;
                                                   tableInvoice.bonus =
-                                                      _bonusController.text;
+                                                      _bonusController
+                                                          .text;
                                                   tableInvoice.totalQty =
                                                   "${qty + bns}";
                                                   tableInvoice.quantity =
-                                                      _quantityController.text;
+                                                      _quantityController
+                                                          .text;
                                                   tableInvoice.netAmount =
-                                                      _netAmountController.text;
+                                                      _netAmountController
+                                                          .text;
                                                   tableInvoice.unitPrice =
-                                                      _unitPriceController.text;
+                                                      _unitCostController
+                                                          .text;
                                                   tableInvoice.vatAmount =
-                                                  "${vatPerc.toPrecision(2) / 100 * netPrice.toPrecision(2)}";
+                                                  "${vatPerc.toPrecision(2) / 100 * netAmount.toPrecision(2)}";
                                                   tableInvoice.vatPer =
                                                       _vatPercentageController
                                                           .text;
+                                                  tableInvoice.batchNo =
+                                                      _batchNumberController
+                                                          .text;
+                                                  tableInvoice.supItems =
+                                                  {
+                                                    "item": itemId,
+                                                    "quantity":
+                                                    _quantityController
+                                                        .text,
+                                                    "unit_cost":
+                                                    unitCost,
+                                                    'total_cost': qty +
+                                                        bns *
+                                                            double.parse(
+                                                                _unitCostController
+                                                                    .text),
+                                                    "bonus":
+                                                    _bonusController
+                                                        .text,
+                                                    "total_quantity":
+                                                    qty + bns,
+                                                    'batch_number':
+                                                    _batchNumberController
+                                                        .text,
+                                                    "discount_percentage":
+                                                    _discPercentageController
+                                                        .text,
+                                                    "discount_amount": discPerc
+                                                        .toPrecision(
+                                                        2) /
+                                                        100 *
+                                                        totalCost
+                                                            .toPrecision(
+                                                            2),
+                                                    "net_amount":
+                                                    totalCost -
+                                                        discAmount,
+                                                    "vat_percentage":
+                                                    _vatPercentageController
+                                                        .text,
+                                                    "vat_amount": vatPerc
+                                                        .toPrecision(
+                                                        2) /
+                                                        100 *
+                                                        netAmount
+                                                            .toPrecision(
+                                                            2),
+                                                    "total_amount": vat -
+                                                        discAmount +
+                                                        netAmount,
+                                                  };
                                                   tableInvoice.disc =
-                                                  "${discPerc.toPrecision(2) / 100 * itemPrice.toPrecision(2)}";
+                                                  "${discPerc.toPrecision(2) / 100 * totalCost.toPrecision(2)}";
                                                   tableInvoice.discPer =
                                                       _discPercentageController
                                                           .text;
+                                                  tableInvoice
+                                                      .tradeDiscountPercentage =
+                                                  _tradeEditingController
+                                                      .value
+                                                      .text
+                                                      .isEmpty
+                                                      ? "0.0"
+                                                      : _tradeEditingController
+                                                      .text;
                                                   tableInvoice.netAmount =
-                                                  "${itemPrice - discAmount}";
-                                                  tableInvoice.totalAmount =
-                                                  "${vat - discAmount + netPrice}";
-                                                  tableInvoice.sumSubTotal =
-                                                  "${vat.toPrecision(2) - discAmount.toPrecision(2) + netPrice.toPrecision(2) - vat.toPrecision(2) + discAmount.toPrecision(2)}";
-                                                  tableInvoice.sumNetAmount =
-                                                  "${netPrice.toPrecision(2)}";
-                                                  tableInvoice.sumDiscountTotal =
+                                                  "${totalCost - discAmount}";
+                                                  tableInvoice
+                                                      .totalAmount =
+                                                  "${vat + netAmount}";
+                                                  tableInvoice
+                                                      .sumSubTotal =
+                                                  "${vat.toPrecision(2) - discAmount.toPrecision(2) + netAmount.toPrecision(2) - vat.toPrecision(2) + discAmount.toPrecision(2)}";
+                                                  tableInvoice
+                                                      .sumNetAmount =
+                                                  "${netAmount.toPrecision(2)}";
+                                                  tableInvoice
+                                                      .sumDiscountTotal =
                                                   "${discAmount.toPrecision(2)}";
-                                                  tableInvoice.sumVatTotal =
+                                                  tableInvoice
+                                                      .sumVatTotal =
                                                   "${vat.toPrecision(2)}";
                                                   tableInvoice.sumTotal =
-                                                  "${vat.toPrecision(2) - discAmount.toPrecision(2) + netPrice.toPrecision(2) - vat.toPrecision(2) + discAmount.toPrecision(2) + vat.toPrecision(2) - discAmount.toPrecision(2)}";
-                                                  tablesPurchaseOrder.add(tableInvoice);
-                                                  setState(() {});
+                                                  "${vat.toPrecision(2) - discAmount.toPrecision(2) + netAmount.toPrecision(2) - vat.toPrecision(2) + discAmount.toPrecision(2) + vat.toPrecision(2) - discAmount.toPrecision(2)}";
+                                                  tablesInvoice
+                                                      .add(tableInvoice);
+                                                  itemList.add(
+                                                      tablesInvoice[0]
+                                                          .supItems);
+                                                  setState(() {
+                                                    if(selectedInvoices.isNotEmpty) {
+                                                      List<
+                                                          TableInvoice> temp = [
+                                                      ];
+                                                      temp.addAll(
+                                                          selectedInvoices);
+                                                      for (TableInvoice sale in temp) {
+                                                        tablesInvoice
+                                                            .remove(sale);
+                                                        selectedInvoices
+                                                            .remove(sale);
+                                                        itemList.remove(sale);
+                                                      }
+                                                      editValue = false;
+                                                    }
+                                                  });
                                                 },
                                                 child: Container(
-                                                    width: MediaQuery.of(context)
+                                                    width: MediaQuery.of(
+                                                        context)
                                                         .size
                                                         .width,
                                                     height: 45,
-                                                    decoration: BoxDecoration(
+                                                    decoration:
+                                                    BoxDecoration(
                                                       borderRadius:
-                                                      BorderRadius.circular(
+                                                      BorderRadius
+                                                          .circular(
                                                           5.0),
                                                       color: primaryColor,
                                                     ),
@@ -1574,7 +2093,158 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
                                                       children: [
                                                         Icon(
                                                           Icons.add,
-                                                          color: Colors.white,
+                                                          color: Colors
+                                                              .white,
+                                                        ),
+                                                        Text("Edit Item",
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .white)),
+                                                      ],
+                                                    )),
+                                              ),
+                                            )
+                                                : Material(
+                                              child: InkWell(
+                                                onTap: () {
+                                                  var tableInvoice =
+                                                  new TableInvoice();
+                                                  tableInvoice.totalCost =
+                                                  "${qty * double.parse(_unitCostController.text)}";
+                                                  tableInvoice.item =
+                                                      _itemController
+                                                          .text;
+                                                  tableInvoice.bonus =
+                                                      _bonusController
+                                                          .text;
+                                                  tableInvoice.totalQty =
+                                                  "${qty + bns}";
+                                                  tableInvoice.quantity =
+                                                      _quantityController
+                                                          .text;
+                                                  tableInvoice.netAmount =
+                                                      _netAmountController
+                                                          .text;
+                                                  tableInvoice.unitPrice =
+                                                      _unitCostController
+                                                          .text;
+                                                  tableInvoice.vatAmount =
+                                                  "${vatPerc.toPrecision(2) / 100 * netAmount.toPrecision(2)}";
+                                                  tableInvoice.vatPer =
+                                                      _vatPercentageController
+                                                          .text;
+                                                  tableInvoice.batchNo =
+                                                      _batchNumberController
+                                                          .text;
+                                                  tableInvoice.supItems =
+                                                  {
+                                                    "item": itemId,
+                                                    "quantity":
+                                                    _quantityController
+                                                        .text,
+                                                    "unit_cost":
+                                                    unitCost,
+                                                    'total_cost': qty +
+                                                        bns *
+                                                            double.parse(
+                                                                _unitCostController
+                                                                    .text),
+                                                    "bonus":
+                                                    _bonusController
+                                                        .text,
+                                                    "total_quantity":
+                                                    qty + bns,
+                                                    'batch_number':
+                                                    _batchNumberController
+                                                        .text,
+                                                    "discount_percentage":
+                                                    _discPercentageController
+                                                        .text,
+                                                    "discount_amount": discPerc
+                                                        .toPrecision(
+                                                        2) /
+                                                        100 *
+                                                        totalCost
+                                                            .toPrecision(
+                                                            2),
+                                                    "net_amount":
+                                                    totalCost -
+                                                        discAmount,
+                                                    "vat_percentage":
+                                                    _vatPercentageController
+                                                        .text,
+                                                    "vat_amount": vatPerc
+                                                        .toPrecision(
+                                                        2) /
+                                                        100 *
+                                                        netAmount
+                                                            .toPrecision(
+                                                            2),
+                                                    "total_amount": vat -
+                                                        discAmount +
+                                                        netAmount,
+                                                  };
+                                                  tableInvoice.disc = initialText;
+                                                  tableInvoice.discPer = initialDiscText;
+
+                                                  tableInvoice
+                                                      .tradeDiscountPercentage =
+                                                  _tradeEditingController
+                                                      .value
+                                                      .text
+                                                      .isEmpty
+                                                      ? "0.0"
+                                                      : _tradeEditingController
+                                                      .text;
+                                                  tableInvoice.netAmount =
+                                                  "${totalCost - discAmount}";
+                                                  tableInvoice
+                                                      .totalAmount =
+                                                  "${vat + netAmount}";
+                                                  tableInvoice
+                                                      .sumSubTotal =
+                                                  "${vat.toPrecision(2) - discAmount.toPrecision(2) + netAmount.toPrecision(2) - vat.toPrecision(2) + discAmount.toPrecision(2)}";
+                                                  tableInvoice
+                                                      .sumNetAmount =
+                                                  "${netAmount.toPrecision(2)}";
+                                                  tableInvoice
+                                                      .sumDiscountTotal =
+                                                  "${discAmount.toPrecision(2)}";
+                                                  tableInvoice
+                                                      .sumVatTotal =
+                                                  "${vat.toPrecision(2)}";
+                                                  tableInvoice.sumTotal =
+                                                  "${vat.toPrecision(2) - discAmount.toPrecision(2) + netAmount.toPrecision(2) - vat.toPrecision(2) + discAmount.toPrecision(2) + vat.toPrecision(2) - discAmount.toPrecision(2)}";
+                                                  tablesInvoice
+                                                      .add(tableInvoice);
+                                                  itemList.add(
+                                                      tablesInvoice[0]
+                                                          .supItems);
+                                                  setState(() {});
+                                                },
+                                                child: Container(
+                                                    width: MediaQuery.of(
+                                                        context)
+                                                        .size
+                                                        .width,
+                                                    height: 45,
+                                                    decoration:
+                                                    BoxDecoration(
+                                                      borderRadius:
+                                                      BorderRadius
+                                                          .circular(
+                                                          5.0),
+                                                      color: primaryColor,
+                                                    ),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .center,
+                                                      children: [
+                                                        Icon(
+                                                          Icons.add,
+                                                          color: Colors
+                                                              .white,
                                                         ),
                                                         Text("Add Item",
                                                             style: TextStyle(
@@ -1590,10 +2260,11 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
                                           ],
                                         ),
                                       ],
-                                    )),
+                                    ),
+                                  ),
+                                ),
                               ),
-                              //ToDo: Set state  to show the below widget
-                              // rowsItem.length >0 ?
+
                               Expanded(
                                 child: SingleChildScrollView(
                                   child: SingleChildScrollView(
@@ -1604,45 +2275,90 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
                                       crossAxisAlignment:
                                       CrossAxisAlignment.start,
                                       children: [
-                                        selectedPurchaseOrders.isEmpty != true
-                                            ? InkWell(
-                                          onTap: selectedPurchaseOrders.isEmpty
-                                              ? null
-                                              : () {
-                                            deleteSelected();
-                                          },
-                                          child: Container(
-                                            width: 100,
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                              BorderRadius.circular(
-                                                  5.0),
-                                              color: bgColor
-                                                  .withOpacity(0.2),
-                                            ),
-                                            child: Row(
-                                              children: [
-                                                Container(
-                                                    width: 48,
-                                                    height: 48,
-                                                    child: Icon(
-                                                        Icons.delete,
-                                                        color:
-                                                        Colors.red)),
-                                                Text(
-                                                  "Delete",
-                                                  style: TextStyle(
-                                                      color: bgColor,
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                      FontWeight
-                                                          .bold),
+                                        selectedInvoices.isEmpty != true
+                                            ? Row(
+                                          children: [
+                                            InkWell(
+                                              onTap:
+                                              selectedInvoices.isEmpty
+                                                  ? null
+                                                  : () {
+                                                deleteSelected();
+                                              },
+                                              child: Container(
+                                                width: 100,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                  BorderRadius
+                                                      .circular(5.0),
+                                                  color: bgColor
+                                                      .withOpacity(0.2),
                                                 ),
-                                              ],
+                                                child: Row(
+                                                  children: [
+                                                    Container(
+                                                        width: 48,
+                                                        height: 48,
+                                                        child: Icon(
+                                                            Icons.delete,
+                                                            color: Colors
+                                                                .red)),
+                                                    Text(
+                                                      "Delete",
+                                                      style: TextStyle(
+                                                          color: bgColor,
+                                                          fontSize: 12,
+                                                          fontWeight:
+                                                          FontWeight
+                                                              .bold),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
                                             ),
-                                          ),
+                                            SizedBox(width: 15.0),
+                                            InkWell(
+                                              onTap:
+                                              selectedInvoices.isEmpty
+                                                  ? null
+                                                  : () {
+                                                editSelected();
+                                              },
+                                              child: Container(
+                                                width: 100,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                  BorderRadius
+                                                      .circular(5.0),
+                                                  color: bgColor
+                                                      .withOpacity(0.2),
+                                                ),
+                                                child: Row(
+                                                  children: [
+                                                    Container(
+                                                        width: 48,
+                                                        height: 48,
+                                                        child: Icon(
+                                                            Icons.edit,
+                                                            color:
+                                                            primaryColor)),
+                                                    Text(
+                                                      "Edit",
+                                                      style: TextStyle(
+                                                          color: bgColor,
+                                                          fontSize: 12,
+                                                          fontWeight:
+                                                          FontWeight
+                                                              .bold),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            )
+                                          ],
                                         )
                                             : Container(),
+
                                         DataTable(
                                           sortAscending: sort,
                                           sortColumnIndex: 0,
@@ -1745,9 +2461,9 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
                                                       fontWeight: FontWeight.bold),
                                                 )),
                                           ],
-                                          rows: tablesPurchaseOrder
+                                          rows: tablesInvoice
                                               .map((e) => DataRow(
-                                              selected: selectedPurchaseOrders
+                                              selected: selectedInvoices
                                                   .contains(e),
                                               onSelectChanged: (b) {
                                                 onSelectedRow(b, e);
@@ -1763,171 +2479,82 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
                                                           .bold),
                                                 )),
                                                 DataCell(
-                                                    TextFormField(
-                                                      initialValue:
-                                                      e.quantity,
+                                                  Text(e.quantity,
                                                       style: TextStyle(
                                                           color:
                                                           bgColor,
                                                           fontSize: 10,
                                                           fontWeight:
                                                           FontWeight
-                                                              .bold),
-                                                      keyboardType: TextInputType
-                                                          .numberWithOptions(
-                                                          decimal:
-                                                          true),
-                                                      onFieldSubmitted:
-                                                          (val) {
-                                                        setState(() {
-                                                          e.quantity =
-                                                              val;
-                                                        });
-                                                      },
-                                                    ),
-                                                    showEditIcon: true),
+                                                              .bold)),
+                                                ),
                                                 DataCell(
-                                                    TextFormField(
-                                                      initialValue:
-                                                      e.bonus,
-                                                      style: TextStyle(
-                                                          color:
-                                                          bgColor,
-                                                          fontSize: 10,
-                                                          fontWeight:
-                                                          FontWeight
-                                                              .bold),
-                                                      keyboardType: TextInputType
-                                                          .numberWithOptions(
-                                                          decimal:
-                                                          true),
-                                                      onFieldSubmitted:
-                                                          (val) {
-                                                        setState(() {
-                                                          e.bonus = val;
-                                                        });
-                                                      },
-                                                    ),
-                                                    showEditIcon: true),
+                                                  Text(
+                                                    e.bonus,
+                                                    style: TextStyle(
+                                                        color: bgColor,
+                                                        fontSize: 10,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold),
+                                                  ),
+                                                ),
                                                 DataCell(
-                                                    TextFormField(
-                                                      initialValue:
-                                                      e.totalQty,
-                                                      style: TextStyle(
-                                                          color:
-                                                          bgColor,
-                                                          fontSize: 10,
-                                                          fontWeight:
-                                                          FontWeight
-                                                              .bold),
-                                                      keyboardType: TextInputType
-                                                          .numberWithOptions(
-                                                          decimal:
-                                                          true),
-                                                      onFieldSubmitted:
-                                                          (val) {
-                                                        setState(() {
-                                                          e.totalQty =
-                                                              val;
-                                                        });
-                                                      },
-                                                    ),
-                                                    showEditIcon: true),
+                                                  Text(
+                                                    e.totalQty,
+                                                    style: TextStyle(
+                                                        color: bgColor,
+                                                        fontSize: 10,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold),
+                                                  ),
+                                                ),
                                                 DataCell(
-                                                    TextFormField(
-                                                      initialValue:
-                                                      e.disc,
-                                                      style: TextStyle(
-                                                          color:
-                                                          bgColor,
-                                                          fontSize: 10,
-                                                          fontWeight:
-                                                          FontWeight
-                                                              .bold),
-                                                      keyboardType: TextInputType
-                                                          .numberWithOptions(
-                                                          decimal:
-                                                          true),
-                                                      onFieldSubmitted:
-                                                          (val) {
-                                                        setState(() {
-                                                          e.disc = val;
-                                                        });
-                                                      },
-                                                    ),
-                                                    showEditIcon: true),
+                                                  Text(
+                                                    e.disc,
+                                                    style: TextStyle(
+                                                        color: bgColor,
+                                                        fontSize: 10,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold),
+                                                  ),
+                                                ),
                                                 DataCell(
-                                                    TextFormField(
-                                                      initialValue:
-                                                      e.discPer,
-                                                      style: TextStyle(
-                                                          color:
-                                                          bgColor,
-                                                          fontSize: 10,
-                                                          fontWeight:
-                                                          FontWeight
-                                                              .bold),
-                                                      keyboardType: TextInputType
-                                                          .numberWithOptions(
-                                                          decimal:
-                                                          true),
-                                                      onFieldSubmitted:
-                                                          (val) {
-                                                        setState(() {
-                                                          e.discPer =
-                                                              val;
-                                                        });
-                                                      },
-                                                    ),
-                                                    showEditIcon: true),
+                                                  Text(
+                                                    e.discPer,
+                                                    style: TextStyle(
+                                                        color: bgColor,
+                                                        fontSize: 10,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold),
+                                                  ),
+                                                ),
                                                 DataCell(
-                                                    TextFormField(
-                                                      initialValue:
-                                                      e.unitPrice,
-                                                      style: TextStyle(
-                                                          color:
-                                                          bgColor,
-                                                          fontSize: 10,
-                                                          fontWeight:
-                                                          FontWeight
-                                                              .bold),
-                                                      keyboardType: TextInputType
-                                                          .numberWithOptions(
-                                                          decimal:
-                                                          true),
-                                                      onFieldSubmitted:
-                                                          (val) {
-                                                        setState(() {
-                                                          e.unitPrice =
-                                                              val;
-                                                        });
-                                                      },
-                                                    ),
-                                                    showEditIcon: true),
+                                                  Text(
+                                                    e.unitPrice,
+                                                    style: TextStyle(
+                                                        color: bgColor,
+                                                        fontSize: 10,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold),
+                                                  ),
+                                                ),
                                                 DataCell(
-                                                    TextFormField(
-                                                      initialValue:
-                                                      e.netAmount,
-                                                      style: TextStyle(
-                                                          color:
-                                                          bgColor,
-                                                          fontSize: 10,
-                                                          fontWeight:
-                                                          FontWeight
-                                                              .bold),
-                                                      keyboardType: TextInputType
-                                                          .numberWithOptions(
-                                                          decimal:
-                                                          true),
-                                                      onFieldSubmitted:
-                                                          (val) {
-                                                        setState(() {
-                                                          e.netAmount =
-                                                              val;
-                                                        });
-                                                      },
-                                                    ),
-                                                    showEditIcon: true),
+                                                  TextFormField(
+                                                    initialValue:
+                                                    e.netAmount,
+                                                    style: TextStyle(
+                                                        color: bgColor,
+                                                        fontSize: 10,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold),
+                                                  ),
+                                                ),
                                                 DataCell(
                                                     TextFormField(
                                                       initialValue:
@@ -1939,43 +2566,19 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
                                                           fontWeight:
                                                           FontWeight
                                                               .bold),
-                                                      keyboardType: TextInputType
-                                                          .numberWithOptions(
-                                                          decimal:
-                                                          true),
-                                                      onFieldSubmitted:
-                                                          (val) {
-                                                        setState(() {
-                                                          e.vatAmount =
-                                                              val;
-                                                        });
-                                                      },
                                                     ),
                                                     showEditIcon: true),
                                                 DataCell(
-                                                    TextFormField(
-                                                      initialValue:
-                                                      e.vatPer,
-                                                      style: TextStyle(
-                                                          color:
-                                                          bgColor,
-                                                          fontSize: 10,
-                                                          fontWeight:
-                                                          FontWeight
-                                                              .bold),
-                                                      keyboardType: TextInputType
-                                                          .numberWithOptions(
-                                                          decimal:
-                                                          true),
-                                                      onFieldSubmitted:
-                                                          (val) {
-                                                        setState(() {
-                                                          e.vatPer =
-                                                              val;
-                                                        });
-                                                      },
-                                                    ),
-                                                    showEditIcon: true),
+                                                  Text(
+                                                    e.vatPer,
+                                                    style: TextStyle(
+                                                        color: bgColor,
+                                                        fontSize: 10,
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold),
+                                                  ),
+                                                ),
                                                 DataCell(Text(
                                                   e.totalAmount,
                                                   style: TextStyle(
@@ -2035,7 +2638,7 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
                                                 fontWeight: FontWeight.bold,
                                               )),
                                           Text(
-                                              "Ksh${tablesPurchaseOrder.map((e) => double.parse(e.sumSubTotal)).fold(0, (previousValue, current) => previousValue + current)}",
+                                              "Ksh${tablesInvoice.map((e) => double.parse(e.sumSubTotal)).fold(0, (previousValue, current) => previousValue + current)}",
                                               style: TextStyle(
                                                 color: bgColor,
                                                 fontSize: 15,
@@ -2060,7 +2663,7 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
                                                 fontWeight: FontWeight.bold,
                                               )),
                                           Text(
-                                              "- Ksh${tablesPurchaseOrder.map((e) => double.parse(e.sumDiscountTotal)).fold(0, (previousValue, current) => previousValue + current)}",
+                                              "- Ksh${tablesInvoice.map((e) => double.parse(e.sumDiscountTotal)).fold(0, (previousValue, current) => previousValue + current)}",
                                               style: TextStyle(
                                                 color: bgColor,
                                                 fontSize: 15,
@@ -2126,7 +2729,7 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
                                                   const EdgeInsets.only(
                                                       right: 28.0),
                                                   child: Text(
-                                                      "Ksh ${tablesPurchaseOrder.map((e) => double.parse(e.sumVatTotal)).fold(0, (previousValue, current) => previousValue + current)}",
+                                                      "Ksh ${tablesInvoice.map((e) => double.parse(e.sumVatTotal)).fold(0, (previousValue, current) => previousValue + current)}",
                                                       style: TextStyle(
                                                         color: bgColor,
                                                         fontSize: 12,
@@ -2156,7 +2759,7 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
                                                 fontWeight: FontWeight.bold,
                                               )),
                                           Text(
-                                              "Ksh${tablesPurchaseOrder.map((e) => double.parse(e.sumTotal)).fold(0, (previousValue, current) => previousValue + current)}",
+                                              "Ksh${tablesInvoice.map((e) => double.parse(e.sumTotal)).fold(0, (previousValue, current) => previousValue + current)}",
                                               style: TextStyle(
                                                 color: bgColor,
                                                 fontSize: 20,
@@ -2170,58 +2773,156 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
                                       child: Divider(),
                                     ),
                                     SizedBox(height: 10),
-                                    // InkWell(
-                                    //   onTap: () async {
-                                    //     supplierInvoicesController.postSupplierInvoice(
-                                    //         supplierId,
-                                    //         branchId,
-                                    //         double.parse(
-                                    //             "${tablesPurchaseOrder.map((e) => double.parse(e.sumDiscountTotal)).fold(0, (previousValue, current) => previousValue + current)}"),
-                                    //         double.parse(
-                                    //             "${tablesPurchaseOrder.map((e) => double.parse(e.sumNetAmount)).fold(0, (previousValue, current) => previousValue + current)}"),
-                                    //         "2021-11-25",
-                                    //         double.parse(
-                                    //             "${tablesPurchaseOrder.map((e) => double.parse(e.sumVatTotal)).fold(0, (previousValue, current) => previousValue + current)}"),
-                                    //         double.parse(
-                                    //             "${tablesPurchaseOrder.map((e) => double.parse(e.sumTotal)).fold(0, (previousValue, current) => previousValue + current)}"),
-                                    //         itemId,
-                                    //         double.parse(
-                                    //             "${tablesPurchaseOrder.map((e) => double.parse(e.quantity)).fold(0, (previousValue, current) => previousValue + current)}"),
-                                    //         double.parse(
-                                    //             "${tablesPurchaseOrder.map((e) => double.parse(e.unitPrice)).fold(0, (previousValue, element) => previousValue + element)}"),
-                                    //         double.parse(
-                                    //             "${tablesPurchaseOrder.map((e) => double.parse(e.bonus)).fold(0, (previousValue, current) => previousValue + current)}"),
-                                    //         double.parse(
-                                    //             "${tablesPurchaseOrder.map((e) => double.parse(e.totalQty)).fold(0, (previousValue, current) => previousValue + current)}"),
-                                    //         double.parse(
-                                    //             "${tablesPurchaseOrder.map((e) => double.parse(e.discPer)).fold(0, (previousValue, current) => previousValue + current)}"),
-                                    //         double.parse(
-                                    //             "${tablesPurchaseOrder.map((e) => double.parse(e.disc)).fold(0, (previousValue, current) => previousValue + current)}"),
-                                    //         double.parse(
-                                    //             "${tablesPurchaseOrder.map((e) => double.parse(e.netAmount)).fold(0, (previousValue, current) => previousValue + current)}"),
-                                    //         double.parse(
-                                    //             "${tablesPurchaseOrder.map((e) => double.parse(e.vatPer)).fold(0, (previousValue, current) => previousValue + current)}"),
-                                    //         double.parse(
-                                    //             "${tablesPurchaseOrder.map((e) => double.parse(e.vatAmount)).fold(0, (previousValue, current) => previousValue + current)}"),
-                                    //         double.parse(
-                                    //             "${tablesPurchaseOrder.map((e) => double.parse(e.totalAmount)).fold(0, (previousValue, current) => previousValue + current)}"),
-                                    //         context);
-                                    //   },
-                                    //   child: Container(
-                                    //     height: 40.0,
-                                    //     width:
-                                    //     MediaQuery.of(context).size.width,
-                                    //     decoration: BoxDecoration(
-                                    //       color: primaryColor,
-                                    //       borderRadius:
-                                    //       BorderRadius.circular(5.0),
-                                    //     ),
-                                    //     child: Center(
-                                    //         child: Text("Complete Sale",
-                                    //             style: TextStyle(
-                                    //                 color: Colors.white))),
-                                    //   ),
-                                    // ),
+                                    InkWell(
+                                      onTap: () {
+                                        // print('${tablesInvoice[0].stringItems}');
+                                        setState(() {
+                                          _loginFormLoading = true;
+
+                                          _loginFormLoading = false;
+                                          if(selectedInvoices.isNotEmpty) {
+                                            List<
+                                                TableInvoice> temp = [
+                                            ];
+                                            temp.addAll(
+                                                selectedInvoices);
+                                            for (TableInvoice sale in temp) {
+                                              tablesInvoice
+                                                  .remove(sale);
+                                              selectedInvoices
+                                                  .remove(sale);
+                                              itemList.remove(sale);
+                                            }
+
+                                          }
+                                        });
+
+                                        /*
+                                        Check invoice items object for a successful post
+                                         */
+                                        // if (_nameController
+                                        //         .value.text.isNotEmpty &&
+                                        //     _branchController
+                                        //         .value.text.isNotEmpty) {
+                                        if (supplierId == null &&
+                                            branchId == null) {
+                                          itemId = PurchaseOrderApi
+                                              .purchaseOrderList[0]
+                                              .supplierInvoiceItems[0]
+                                              .item
+                                              .id;
+                                          supplierId = PurchaseOrderApi
+                                              .purchaseOrderList[0].supplier.id;
+                                          branchId = PurchaseOrderApi
+                                              .purchaseOrderList[0].branch.id;
+                                          goodsReturnNoteController.postGoodsReturnNote(
+                                              supplierId,
+                                              branchId,
+                                              purchaseOrderId,
+                                              double.parse(tablesInvoice[0]
+                                                  .tradeDiscountPercentage),
+                                              double.parse(
+                                                  "${tablesInvoice.map((e) => double.parse(e.sumDiscountTotal)).fold(0, (previousValue, current) => previousValue + current)}"),
+                                              double.parse(
+                                                  "${tablesInvoice.map((e) => double.parse(e.sumNetAmount)).fold(0, (previousValue, current) => previousValue + current)}"),
+                                              double.parse(
+                                                  "${tablesInvoice.map((e) => double.parse(e.sumVatTotal)).fold(0, (previousValue, current) => previousValue + current)}"),
+                                              double.parse(
+                                                  "${tablesInvoice.map((e) => double.parse(e.sumTotal)).fold(0, (previousValue, current) => previousValue + current)}"),
+                                              itemList,
+                                              context);
+
+                                          _successAlertDialogBuilder(
+                                              'Successfully saved invoice');
+
+                                        } else if (supplierId != null &&
+                                            branchId != null &&
+                                            itemId != null) {
+                                          goodsReturnNoteController.postGoodsReturnNote(
+                                              supplierId,
+                                              branchId,
+                                              purchaseOrderId,
+                                              double.parse(tablesInvoice[0]
+                                                  .tradeDiscountPercentage),
+                                              double.parse(
+                                                  "${tablesInvoice.map((e) => double.parse(e.sumDiscountTotal)).fold(0, (previousValue, current) => previousValue + current)}"),
+                                              double.parse(
+                                                  "${tablesInvoice.map((e) => double.parse(e.sumNetAmount)).fold(0, (previousValue, current) => previousValue + current)}"),
+                                              double.parse(
+                                                  "${tablesInvoice.map((e) => double.parse(e.sumVatTotal)).fold(0, (previousValue, current) => previousValue + current)}"),
+                                              double.parse(
+                                                  "${tablesInvoice.map((e) => double.parse(e.sumTotal)).fold(0, (previousValue, current) => previousValue + current)}"),
+                                              itemList,
+                                              context);
+
+                                          _successAlertDialogBuilder(
+                                              'Successfully saved invoice');
+                                          setState(() {
+                                            _loginFormLoading = false;
+                                            if(selectedInvoices.isNotEmpty) {
+                                              List<
+                                                  TableInvoice> temp = [
+                                              ];
+                                              temp.addAll(
+                                                  selectedInvoices);
+                                              for (TableInvoice sale in temp) {
+                                                tablesInvoice
+                                                    .remove(sale);
+                                                selectedInvoices
+                                                    .remove(sale);
+                                                itemList.remove(sale);
+                                              }
+
+                                            }
+                                          });
+                                        } else {
+                                          _alertDialogBuilder(
+                                              'Make sure branch and supplier name is provided');
+                                          _loginFormLoading = false;
+                                        }
+                                        // else if (supplierId == null &&
+                                        //     branchId == null &&
+                                        //     itemId == null &&
+                                        //     _nameController
+                                        //         .value.text.isNotEmpty &&
+                                        //     _branchController
+                                        //         .value.text.isNotEmpty && _itemController.value.text.isNotEmpty) {}
+                                      },
+                                      child: Container(
+                                        height: 40.0,
+                                        width:
+                                        MediaQuery.of(context).size.width,
+                                        decoration: BoxDecoration(
+                                          color: primaryColor,
+                                          borderRadius:
+                                          BorderRadius.circular(5.0),
+                                        ),
+                                        child: Stack(children: [
+                                          Visibility(
+                                              visible: _loginFormLoading
+                                                  ? false
+                                                  : true,
+                                              child: Center(
+                                                  child: Text("Complete Sale",
+                                                      style: TextStyle(
+                                                          color:
+                                                          Colors.white)))),
+                                          Visibility(
+                                            visible: _loginFormLoading,
+                                            child: const Center(
+                                              child: SizedBox(
+                                                height: 30.0,
+                                                width: 30.0,
+                                                child:
+                                                CircularProgressIndicator(
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ),
+                                          )
+                                        ]),
+                                      ),
+                                    ),
                                     SizedBox(height: 15),
                                     Center(
                                         child: Text(
@@ -2236,8 +2937,8 @@ class _GoodsReturnNotePageState extends State<GoodsReturnNotePage> {
                   ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ));
   }
 }
@@ -2303,6 +3004,41 @@ class BranchApi {
           .map((json) => Branches.fromJson(json))
           .where((customer) {
         final nameLower = customer.name.toLowerCase();
+        final queryLower = query.toLowerCase();
+
+        return nameLower.contains(queryLower);
+      }).toList();
+    } else {
+      throw Exception();
+    }
+  }
+}
+
+class PurchaseOrderApi {
+  static List<SupplierInvoices> purchaseOrderList = <SupplierInvoices>[];
+
+  static Future<List<SupplierInvoices>> getPurchaseOrderListSuggestions(
+      String query, BuildContext context) async {
+    Auth user = Provider.of<AuthProvider>(context, listen: false).auth;
+    final response = await http.get(
+      Uri.parse('${AppUrl.supplier_invoices}'),
+      headers: {
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+        "Authorization": "Bearer ${user.accessToken.toString()}"
+      },
+    );
+    if (response.statusCode == 200) {
+      final Map customers = json.decode(response.body);
+      var categoryJson = customers['results'] as List;
+
+      for (int i = 0; i < categoryJson.length; i++) {
+        purchaseOrderList.add(new SupplierInvoices.fromJson(categoryJson[i]));
+      }
+      return categoryJson
+          .map((json) => SupplierInvoices.fromJson(json))
+          .where((supplierInvoice) {
+        final nameLower = supplierInvoice.code.toLowerCase();
         final queryLower = query.toLowerCase();
 
         return nameLower.contains(queryLower);

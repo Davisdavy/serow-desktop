@@ -6,17 +6,17 @@ class GoodsReturnNotesController {
   final GoodsReturnNotesRepository _repository;
   GoodsReturnNotesController(this._repository);
 //get
-  Future<List<Results>> fetchGoodsReturnNotesList(BuildContext context) {
+  Future<List<GoodsReturnNotes>> fetchGoodsReturnNotesList(BuildContext context) {
     return _repository.getGoodsReturnNoteList(context);
   }
 
   //patch
-  Future<String> updatePatchCompleted(Results result) async {
+  Future<String> updatePatchCompleted(GoodsReturnNotes result) async {
     return _repository.patchGoodsReturnNote(result);
   }
 
   //put
-  Future<String> updatePutCompleted(Results result) async {
+  Future<String> updatePutCompleted(GoodsReturnNotes result) async {
     return _repository.putGoodsReturnNote(result);
   }
 
@@ -27,13 +27,15 @@ class GoodsReturnNotesController {
 
   //delete
   Future<GoodsReturnNotes> postGoodsReturnNote(String supplier, String branch,
-      String item, int quantity, int detailQuantity, String detailLocation, double discountAmount,
-      String batchNo, String expDate,double totalAmount, double totalCost,
+      String supplierInvoiceId, double tradeDiscPercentage,
+      double discountAmount, double totalNet, double vatAmount,
+      double totalAmount, List<Map<String, dynamic>> listItems,
       BuildContext context) async {
     return _repository.postGoodsReturnNote(
-        supplier, branch, item, quantity, detailQuantity,
-        detailLocation,discountAmount, batchNo, expDate,
-        totalAmount, totalCost,
-        context);
+         supplier,  branch,
+        supplierInvoiceId,  tradeDiscPercentage,
+         discountAmount,  totalNet,  vatAmount,
+         totalAmount, listItems,
+         context);
   }
 }

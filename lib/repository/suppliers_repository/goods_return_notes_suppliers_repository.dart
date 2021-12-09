@@ -23,9 +23,9 @@ class GoodsReturnNotesSupplierRepository implements GoodsReturnNotesRepository {
   }
 
   @override
-  Future<List<Results>> getGoodsReturnNoteList(BuildContext context) async{
+  Future<List<GoodsReturnNotes>> getGoodsReturnNoteList(BuildContext context) async{
     //https://serow.herrings.co.ke/api/v1/suppliers/goods-return-note/
-    List<Results> subgroupList = [];
+    List<GoodsReturnNotes> subgroupList = [];
     context.watch<AuthProvider>();
     Auth user = Provider.of<AuthProvider>(context).auth;
 
@@ -35,65 +35,58 @@ class GoodsReturnNotesSupplierRepository implements GoodsReturnNotesRepository {
       "Authorization":
       "Bearer ${user.accessToken.toString()}"
     }, );
-    print('Get goods received notes status code: ${response.statusCode}');
+    print('Get goods return notes status code: ${response.statusCode}');
     var body = json.decode(response.body);//convert
     //parse
     print('Result body: ${body['results']}');
     for (Map<String, dynamic> i in body["results"]) {
-      subgroupList.add(Results.fromJson(i));
+      subgroupList.add(GoodsReturnNotes.fromJson(i));
     }
 
     return subgroupList;
   }
 
   @override
-  Future<String> patchGoodsReturnNote(Results result) {
+  Future<String> patchGoodsReturnNote(GoodsReturnNotes result) {
     // TODO: implement patchGoodsReceivedNote
     throw UnimplementedError();
   }
 
   @override
   Future<GoodsReturnNotes> postGoodsReturnNote(String supplier, String branch,
-      String item, int quantity, int detailQuantity, String detailLocation, double discountAmount,
-      String batchNo, String expDate,double totalAmount, double totalCost,
+      String supplierInvoiceId, double tradeDiscPercentage,
+      double discountAmount, double totalNet, double vatAmount,
+      double totalAmount, List<Map<String, dynamic>> listItems,
       BuildContext context) async {
-    List<Map<String, dynamic>> grnItemsDetailList = [
-
-      {'location':detailLocation,
-        'quantity': detailQuantity,
-        'batch_number':batchNo,
-        'expiry_date': expDate
-      }
-    ];
-    List<Map<String, dynamic>> grnItemsList = [
-      {'item':item,
-        'quantity': quantity,
-        'goods_return_note_item_details':grnItemsDetailList,
-        }
-    ];
 
     var body={
       'supplier': supplier,
       'branch': branch,
+      'supplier_invoice': supplierInvoiceId,
+      'trade_discount_percentage': tradeDiscPercentage,
       'discount_amount': discountAmount,
+      'total_net': totalNet,
       'total_amount':totalAmount,
-      "goods_return_note_items":   grnItemsList,
+      'tax_amount': vatAmount,
+      'status': 'posted',
+      "goods_return_note_items": listItems,
     };
     print("GRN Body: $body");
     Auth user = Provider.of<AuthProvider>(context,listen: false).auth;
     var response = await http.post(Uri.parse('${AppUrl.goods_return_notes}'),headers: {
       'Content-type': 'application/json',
       'Accept': 'application/json',
+      'Charset': 'utf-8',
       "Authorization":  "Bearer ${user.accessToken.toString()}"
     }, body: jsonEncode(body),);
     print('Post status code: ${response.statusCode}');
     print('Post body: ${response.body}');
     // print('Post toJSON: ${br}');
-    return goodsReturnNotesFromJson(response.body);
+    return GoodsReturnNotes.fromJson(response.body );
   }
 
   @override
-  Future<String> putGoodsReturnNote(Results result) {
+  Future<String> putGoodsReturnNote(GoodsReturnNotes result) {
     // TODO: implement putGoodsReceivedNote
     throw UnimplementedError();
   }

@@ -28,25 +28,15 @@ class PurchaseOrdersController {
 
   //delete
   Future<PurchaseOrders> postPurchaseOrder(String supplier, String branch,
-      String item,double tradeDiscountPercentage,
+      double tradeDiscountPercentage,
       double totalAmount, double discountAmount, String expectedDate,
-      double totalNetAmount, double taxAmount,
-      double itemQuantity, double itemUnitCost,
-      double itemBonus, double itemDiscountPercentage,
-      double itemDiscountAmount, double itemNetAmount,
-      double itemTaxPercentage, double itemTaxAmount,
-      double itemTotalCost,
+      double totalNetAmount, double taxAmount, List<Map<String, dynamic>> purchaseOrderItemList,
       BuildContext context) async {
     return _repository.postPurchaseOrder(
          supplier,  branch,
-         item, tradeDiscountPercentage,
+        tradeDiscountPercentage,
          totalAmount,  discountAmount, expectedDate,
-         totalNetAmount,  taxAmount,
-         itemQuantity, itemUnitCost,
-         itemBonus,  itemDiscountPercentage,
-         itemDiscountAmount,  itemNetAmount,
-         itemTaxPercentage,  itemTaxAmount,
-         itemTotalCost,
+         totalNetAmount,  taxAmount, purchaseOrderItemList,
          context);
   }
 }

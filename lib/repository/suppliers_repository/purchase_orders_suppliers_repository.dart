@@ -63,34 +63,15 @@ class PurchaseOrdersSupplierRepository implements PurchaseOrdersRepository {
 
   @override
   Future<PurchaseOrders> postPurchaseOrder(String supplier, String branch,
-      String item,double tradeDiscountPercentage,
+      double tradeDiscountPercentage,
       double totalAmount, double discountAmount, String expectedDate,
-      double totalNetAmount, double taxAmount,
-      double itemQuantity, double itemUnitCost,
-      double itemBonus, double itemDiscountPercentage,
-      double itemDiscountAmount, double itemNetAmount,
-      double itemTaxPercentage, double itemTaxAmount,
-      double itemTotalQty,
-
+      double totalNetAmount, double taxAmount, List<Map<String, dynamic>> purchaseOrderItemList,
       BuildContext context) async{
-    List<Map<String, dynamic>> purchaseOrderItemList = [
-      {
-        "item": item,
-        "quantity": itemQuantity,
-        "unit_cost": itemUnitCost,
-        "bonus": itemBonus,
-        "discount_percentage": itemDiscountPercentage,
-        "discount_amount": itemDiscountAmount,
-        "net_amount": itemNetAmount,
-        "vat_percentage": itemTaxPercentage,
-        "vat_amount": itemTaxAmount,
-        "total_quantity": itemTotalQty
-      }
-    ];
+
     var body={
       'supplier': supplier,
       'branch': branch,
-      'expected_date': "2021-11-05",
+      'expected_date': expectedDate,
       "total_amount":   totalAmount,
       "discount_amount":discountAmount,
       "trade_discount_percentage": tradeDiscountPercentage,
@@ -113,7 +94,7 @@ class PurchaseOrdersSupplierRepository implements PurchaseOrdersRepository {
     );
     print('Post status code: ${response.statusCode}');
     print('Post body: ${response.body}');
-    return purchaseOrdersFromJson(response.body);
+    return PurchaseOrders.fromJson(response.body as Map);
   }
 
 

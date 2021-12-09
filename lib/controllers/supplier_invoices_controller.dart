@@ -7,17 +7,17 @@ class SupplierInvoicesController {
   final SupplierInvoicesRepository _repository;
   SupplierInvoicesController(this._repository);
 //get
-  Future<List<Results>> fetchSupplierInvoiceList(BuildContext context) {
+  Future<List<SupplierInvoices>> fetchSupplierInvoiceList(BuildContext context) {
     return _repository.getSupplierInvoiceList(context);
   }
 
   //patch
-  Future<String> updatePatchCompleted(Results result) async {
+  Future<String> updatePatchCompleted(SupplierInvoices result) async {
     return _repository.patchSupplierInvoice(result);
   }
 
   //put
-  Future<String> updatePutCompleted(Results result) async {
+  Future<String> updatePutCompleted(SupplierInvoices result) async {
     return _repository.putSupplierInvoice(result);
   }
 

@@ -21,10 +21,10 @@ class PurchaseOrders {
     this.deletedAt,
     this.code,
     this.tradeDiscountPercentage,
-    this.expectedDate,
     this.discountAmount,
     this.totalNet,
     this.vatAmount,
+    this.totalCost,
     this.totalAmount,
     this.noOfItems,
     this.notes,
@@ -43,10 +43,10 @@ class PurchaseOrders {
   dynamic deletedAt;
   String code;
   double tradeDiscountPercentage;
-  DateTime expectedDate;
   double discountAmount;
   double totalNet;
   double vatAmount;
+  double totalCost;
   double totalAmount;
   int noOfItems;
   dynamic notes;
@@ -55,7 +55,7 @@ class PurchaseOrders {
 
   factory PurchaseOrders.fromJson(Map<String, dynamic> json) => PurchaseOrders(
     id: json["id"],
-    purchaseOrderItems: json['purchase_order_items'] != null ? new List<PurchaseOrderItem>.from(json["purchase_order_items"].map((x) => PurchaseOrderItem.fromJson(x))) : List<PurchaseOrderItem>(),
+    purchaseOrderItems: List<PurchaseOrderItem>.from(json["purchase_order_items"].map((x) => PurchaseOrderItem.fromJson(x))),
     supplier: Supplier.fromJson(json["supplier"]),
     branch: Branch.fromJson(json["branch"]),
     createdAt: DateTime.parse(json["created_at"]),
@@ -65,10 +65,10 @@ class PurchaseOrders {
     deletedAt: json["deleted_at"],
     code: json["code"],
     tradeDiscountPercentage: json["trade_discount_percentage"],
-    expectedDate: DateTime.parse(json["expected_date"]),
     discountAmount: json["discount_amount"],
     totalNet: json["total_net"],
     vatAmount: json["vat_amount"].toDouble(),
+    totalCost: json["total_cost"],
     totalAmount: json["total_amount"].toDouble(),
     noOfItems: json["no_of_items"],
     notes: json["notes"],
@@ -88,10 +88,10 @@ class PurchaseOrders {
     "deleted_at": deletedAt,
     "code": code,
     "trade_discount_percentage": tradeDiscountPercentage,
-    "expected_date": "${expectedDate.year.toString().padLeft(4, '0')}-${expectedDate.month.toString().padLeft(2, '0')}-${expectedDate.day.toString().padLeft(2, '0')}",
     "discount_amount": discountAmount,
     "total_net": totalNet,
     "vat_amount": vatAmount,
+    "total_cost": totalCost,
     "total_amount": totalAmount,
     "no_of_items": noOfItems,
     "notes": notes,
@@ -174,7 +174,6 @@ class Branch {
 
 class PurchaseOrderItem {
   PurchaseOrderItem({
-
     this.id,
     this.item,
     this.createdAt,
@@ -192,9 +191,10 @@ class PurchaseOrderItem {
     this.vatPercentage,
     this.vatAmount,
     this.totalCost,
+    this.totalAmount,
     this.purchaseOrder,
+    this.branch,
     this.company,
-
   });
 
   String id;
@@ -214,7 +214,9 @@ class PurchaseOrderItem {
   double vatPercentage;
   double vatAmount;
   double totalCost;
+  double totalAmount;
   String purchaseOrder;
+  dynamic branch;
   String company;
 
   factory PurchaseOrderItem.fromJson(Map<String, dynamic> json) => PurchaseOrderItem(
@@ -235,7 +237,9 @@ class PurchaseOrderItem {
     vatPercentage: json["vat_percentage"],
     vatAmount: json["vat_amount"].toDouble(),
     totalCost: json["total_cost"].toDouble(),
+    totalAmount: json["total_amount"],
     purchaseOrder: json["purchase_order"],
+    branch: json["branch"],
     company: json["company"],
   );
 
@@ -257,7 +261,9 @@ class PurchaseOrderItem {
     "vat_percentage": vatPercentage,
     "vat_amount": vatAmount,
     "total_cost": totalCost,
+    "total_amount": totalAmount,
     "purchase_order": purchaseOrder,
+    "branch": branch,
     "company": company,
   };
 }
@@ -398,7 +404,7 @@ class Item {
     priority: json["priority"],
     sellingOptions: json["selling_options"],
     totalRevenue: json["total_revenue"],
-    totalPurchases: json["total_purchases"],
+    totalPurchases: json["total_purchases"].toDouble(),
     company: json["company"],
   );
 
@@ -651,8 +657,8 @@ class Supplier {
     creditLimit: json["credit_limit"],
     lastPayDate: json["last_pay_date"],
     lastPayAmount: json["last_pay_amount"],
-    balance: json["balance"],
-    totalPurchases: json["total_purchases"],
+    balance: json["balance"].toDouble(),
+    totalPurchases: json["total_purchases"].toDouble(),
     pinNo: json["pin_no"],
     vatNo: json["vat_no"],
     useLocalCurrency: json["use_local_currency"],

@@ -14,12 +14,12 @@ class SupplierInvoicesDataSource extends  DataTableSource{
   //Dependency injection
   var  supplierInvoicesController = SupplierInvoicesController(SupplierInvoicesSupplierRepository());
   SupplierInvoicesDataSource({
-    @required List<Results> resultData,
+    @required List<SupplierInvoices> resultData,
     @required this.onRowSelect,
   })  : _resultData = resultData,
         assert(resultData != null);
 
-  final List<Results> _resultData;
+  final List<SupplierInvoices> _resultData;
   final OnRowSelect onRowSelect;
 
   int _selectedCount = 0;
@@ -45,7 +45,7 @@ class SupplierInvoicesDataSource extends  DataTableSource{
         DataCell(
             Builder(
                 builder: (newContext) {
-                  return FutureBuilder<List<Results>>(
+                  return FutureBuilder<List<SupplierInvoices>>(
                     future: supplierInvoicesController.fetchSupplierInvoiceList(newContext),
                     builder: (context, snapshot){
                       return PopupMenuButton(
