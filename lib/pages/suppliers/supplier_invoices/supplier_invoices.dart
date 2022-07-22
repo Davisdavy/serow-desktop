@@ -488,7 +488,7 @@ class _SupplierInvoicesPageState extends State<SupplierInvoicesPage> {
           ),
         ));
   }
-  Widget _editNetTextField() {
+  Widget _editNetTextField(){
     if (_isNetEditingText)
       return Center(
         child: Material(
@@ -539,7 +539,6 @@ class _SupplierInvoicesPageState extends State<SupplierInvoicesPage> {
           ),
         ));
   }
-
   Widget _editVATAmountTextField() {
     if (_isVATAmountEditingText)
       return Center(
@@ -1884,7 +1883,9 @@ class _SupplierInvoicesPageState extends State<SupplierInvoicesPage> {
                                                   SizedBox(
                                                     height: 15,
                                                   ),
-                                                  discountValueController == true ? _editDiscPerCounterField() : _editDiscPercField(),
+                                                  discountValueController == true ?
+                                                  _editDiscPerCounterField() :
+                                                  _editDiscPercField(),
                                                   SizedBox(
                                                     height: 5,
                                                   ),

@@ -1,4 +1,5 @@
 
+import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:serow/models/suppliers/purchase_orders.dart';
 import 'package:serow/repository/purchase_orders_repository.dart';
@@ -8,6 +9,10 @@ class PurchaseOrdersController {
   PurchaseOrdersController(this._repository);
 //get
   Future<List<PurchaseOrders>> fetchPurchaseOrderList(BuildContext context) {
+    return _repository.getPurchaseOrderList(context);
+  }
+
+  Future<List<PurchaseOrders>> fetchMultiPurchaseOrderList(BuildContext context) {
     return _repository.getPurchaseOrderList(context);
   }
 
@@ -27,10 +32,10 @@ class PurchaseOrdersController {
   }
 
   //delete
-  Future<PurchaseOrders> postPurchaseOrder(String supplier, String branch,
+  Future postPurchaseOrder(String supplier, String branch,
       double tradeDiscountPercentage,
-      double totalAmount, double discountAmount, String expectedDate,
-      double totalNetAmount, double taxAmount, List<Map<String, dynamic>> purchaseOrderItemList,
+      Decimal totalAmount, Decimal discountAmount, String expectedDate,
+      double totalNetAmount, Decimal taxAmount, List<Map<String, dynamic>> purchaseOrderItemList,
       BuildContext context) async {
     return _repository.postPurchaseOrder(
          supplier,  branch,

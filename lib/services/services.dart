@@ -33,6 +33,7 @@ class AppUrl {
 
   static const String branch_stock = baseURL + "/inventory/branch/stock/";
 
+  static const String purchase_orders_pages = baseURL + "/suppliers/purchase-orders/?page=";
 
 
 

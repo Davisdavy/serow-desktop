@@ -81,8 +81,6 @@ class _SuppliersPageState extends State<SuppliersPage> {
                     ],
                   ),
             ),
-
-
             SingleChildScrollView(
               child: FutureBuilder(
                   future: Future.wait<Object>([
@@ -610,7 +608,7 @@ class _SuppliersPageState extends State<SuppliersPage> {
                                                                                       return new DropdownMenuItem<String>(child: Padding(
                                                                                         padding: const EdgeInsets.all(8.0),
                                                                                         child: Text(
-                                                                                          item.quantity,
+                                                                                          item.name,
                                                                                           style: TextStyle(fontSize:
                                                                                           12,),
                                                                                         ),

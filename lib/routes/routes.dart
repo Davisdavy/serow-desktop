@@ -36,6 +36,7 @@ const FAQPageRoute = 'FAQ';
 const HelpSupportPageRoute = 'Help';
 const SettingPageRoute = 'Settings';
 const AuthenticationPageRoute = 'Log Out';
+const PurchaseOrderListRoute = 'PurchaseOrderList';
 const POSPageRoute ="POS";
 
 List sideMenuItems = [OverviewPageRoute, NotificationsPageRoute,POSPageRoute,];

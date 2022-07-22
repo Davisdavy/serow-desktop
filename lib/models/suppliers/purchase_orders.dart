@@ -4,6 +4,7 @@
 
 import 'dart:convert';
 
+
 PurchaseOrders purchaseOrdersFromJson(String str) => PurchaseOrders.fromJson(json.decode(str));
 
 String purchaseOrdersToJson(PurchaseOrders data) => json.encode(data.toJson());
@@ -220,8 +221,8 @@ class PurchaseOrderItem {
   String company;
 
   factory PurchaseOrderItem.fromJson(Map<String, dynamic> json) => PurchaseOrderItem(
-    id: json["id"],
-    item: Item.fromJson(json["item"]),
+    id: json["id"] as String,
+    item: Item.fromJson(json["item"] ),
     createdAt: DateTime.parse(json["created_at"]),
     modifiedAt: DateTime.parse(json["modified_at"]),
     isActive: json["is_active"],
@@ -266,6 +267,8 @@ class PurchaseOrderItem {
     "branch": branch,
     "company": company,
   };
+
+
 }
 
 class Item {

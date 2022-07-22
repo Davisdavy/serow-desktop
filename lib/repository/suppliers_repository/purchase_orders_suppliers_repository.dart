@@ -1,4 +1,5 @@
 
+import 'package:decimal/decimal.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:provider/provider.dart';
 import 'package:serow/models/auth/auth.dart';
@@ -40,6 +41,9 @@ class PurchaseOrdersSupplierRepository implements PurchaseOrdersRepository {
     if(response.statusCode == 200) {
       var body = json.decode(response.body); //convert
       //parse
+      if(body['next'] != null){
+
+      }
       print('Result body: ${body['results']}');
       for (Map<String, dynamic> i in body["results"]) {
         subgroupList.add(PurchaseOrders.fromJson(i));
@@ -60,12 +64,64 @@ class PurchaseOrdersSupplierRepository implements PurchaseOrdersRepository {
   }
 
 
-
   @override
-  Future<PurchaseOrders> postPurchaseOrder(String supplier, String branch,
+  Future<List<PurchaseOrders>> getMultiPurchaseOrderList(BuildContext context) async{
+    //https://serow.herrings.co.ke/api/v1/suppliers/purchase-orders/
+    Uri url= Uri.parse('${AppUrl.purchase_orders}');
+    List<PurchaseOrders> subgroupList = [];
+    int page = 1;
+    context.watch<AuthProvider>();
+    Auth user = Provider.of<AuthProvider>(context).auth;
+
+    page = (page > 100) ? 1 : page++;
+
+    var response = await http.get(url, headers: {
+      'Content-type': 'application/json',
+      'Accept': 'application/json',
+      "Authorization":
+      "Bearer ${user.accessToken.toString()}"
+    }, );
+    print('Get purchase orders status code: ${response.statusCode}');
+    if(response.statusCode == 200) {
+      var body = json.decode(response.body); //convert
+      //parse
+      if(body['next'] != null){
+        url = Uri.parse('${AppUrl.purchase_orders_pages}$page');
+        response = await http.get(url, headers: {
+          'Content-type': 'application/json',
+          'Accept': 'application/json',
+          "Authorization":
+          "Bearer ${user.accessToken.toString()}"
+        }, );
+
+        var newBody = json.decode(response.body);
+        for (Map<String, dynamic> i in newBody["results"]) {
+          subgroupList.add(PurchaseOrders.fromJson(i));
+        }
+      }
+      print('Result body: ${body['results']}');
+      for (Map<String, dynamic> i in body["results"]) {
+        subgroupList.add(PurchaseOrders.fromJson(i));
+      }
+    } else if(response.statusCode == 401){
+      //refresh token and call getUser again
+      final response =  await http.get(Uri.parse('${AppUrl.purchase_orders}'),
+          headers: {'grant_type': 'refresh_token', 'refresh_token': '${user.refreshToken}'});
+      var body = json.decode(response.body);
+      for (Map<String, dynamic> i in body["results"]) {
+        subgroupList.add(PurchaseOrders.fromJson(i));
+      }
+      // token = jsonDecode(response.body)['token'];
+      // refresh_token = jsonDecode(response.body)['refresh_token'];
+      // return getUser();
+    }
+    return subgroupList;
+  }
+  @override
+  Future postPurchaseOrder(String supplier, String branch,
       double tradeDiscountPercentage,
-      double totalAmount, double discountAmount, String expectedDate,
-      double totalNetAmount, double taxAmount, List<Map<String, dynamic>> purchaseOrderItemList,
+      Decimal totalAmount, Decimal discountAmount, String expectedDate,
+      double totalNetAmount, Decimal taxAmount, List<Map<String, dynamic>> purchaseOrderItemList,
       BuildContext context) async{
 
     var body={
@@ -93,8 +149,8 @@ class PurchaseOrdersSupplierRepository implements PurchaseOrdersRepository {
       body: jsonEncode(body),
     );
     print('Post status code: ${response.statusCode}');
-    print('Post body: ${response.body}');
-    return PurchaseOrders.fromJson(response.body as Map);
+    print('Response body: ${response.body}');
+    return response.body ;
   }
 
 
